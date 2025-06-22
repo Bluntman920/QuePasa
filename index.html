@@ -220,48 +220,48 @@
       flex-wrap: wrap;
     }
     .tipIcon {
-      width: 110px;
-      height: 110px;
-      border-radius: 16px;
+      width: 150px;
+      height: 150px;
+      border-radius: 20px;
       background: #fff;
       margin: 0 0.3em 0 0.3em;
       box-shadow: 0 2px 16px #27c46c11;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2.5px solid #27c46c33;
+      border: 3px solid #27c46c33;
       transition: box-shadow 0.15s;
     }
     .tipIcon img {
-      width: 100px;
-      height: 100px;
+      width: 135px;
+      height: 135px;
       object-fit: contain;
-      border-radius: 12px;
+      border-radius: 16px;
     }
     .tipPayBtn {
       display: inline-block;
       margin-top: 0.4em;
-      padding: 0.8em 2.2em;
+      padding: 1.1em 2.8em;
       background: #27c46c;
       color: #fff;
-      border-radius: 14px;
+      border-radius: 18px;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1.21em;
+      font-size: 1.4em;
       box-shadow: 0 2px 12px #27c46c22;
       transition: background 0.15s;
-      margin-right: 0.7em;
+      margin-right: 0.8em;
       letter-spacing: 0.03em;
     }
     .tipPayBtn:last-child { margin-right: 0; }
     .tipPayBtn:hover { background: #1a9c51; }
     #tipDesc {
-      font-size:1.13em;
+      font-size:1.25em;
       color:#444;
-      margin-top:0.7em;
+      margin-top:1.3em;
       margin-bottom:0.1em;
       text-align:center;
-      font-weight:500;
+      font-weight:bold;
     }
     #expiredMsg {
       font-size: 1.2em;
@@ -358,8 +358,8 @@
       #holdDisconnectBtnText, #holdFlashQRBtnText { width:65px; height:65px;}
       #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring { width:75px; height:75px; top:-5px; left:-5px;}
       .skullIcon { width:40px; height:40px; }
-      .tipIcon { width:88px; height:88px;}
-      .tipIcon img { width:80px; height:80px;}
+      .tipIcon { width:120px; height:120px;}
+      .tipIcon img { width:105px; height:105px;}
     }
   </style>
 </head>
@@ -412,16 +412,20 @@
       </div>
       <div id="tipSectionChat">
         <div class="tipIconsRow">
-          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" class="tipIcon" title="Tip with PayPal">
+          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" class="tipIcon" title="Pay via PayPal">
             <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
           </a>
-          <a href="icon.png" target="_blank" class="tipIcon" title="Tip with Cash App">
+          <a href="icon.png" target="_blank" class="tipIcon" title="Pay via Cash App">
             <img src="icon.png" alt="Cash App">
           </a>
         </div>
-        <a class="tipPayBtn" href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank">Tip with PayPal</a>
-        <a class="tipPayBtn" href="icon.png" target="_blank">Tip with Cash App</a>
-        <div id="tipDesc">Thank you for supporting Que Pasa!</div>
+        <div>
+          <a class="tipPayBtn" href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank">Pay with PayPal</a>
+          <a class="tipPayBtn" href="icon.png" target="_blank">Pay with Cash App</a>
+        </div>
+        <div id="tipDesc">
+          Give me money! Pay me by PayPal or Cash App.
+        </div>
       </div>
     </div>
     <div id="flashQROverlay">
@@ -482,7 +486,6 @@
     function goToChat() {
       document.getElementById('qrScreen').classList.remove('visible');
       document.getElementById('qrScreen').style.display = 'none';
-      // Ask for nickname on first use
       userNickname = localStorage.getItem('qp_nick') || prompt("Enter a nickname (optional):") || "User";
       localStorage.setItem('qp_nick', userNickname);
       window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
