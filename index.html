@@ -19,6 +19,47 @@
       text-align: center;
       padding: 2em;
     }
+    #quePasaLogo {
+      width: 160px;
+      max-width: 90vw;
+      margin-bottom: 12px;
+      margin-top: 8px;
+      display: block;
+      border-radius: 24px;
+      box-shadow: 0 2px 16px #0002;
+    }
+    #tipSection {
+      margin: 2em 0 1em 0;
+      background: #f9f9f9;
+      border-radius: 16px;
+      display: inline-block;
+      padding: 1.25em 2em 1.5em 2em;
+      box-shadow: 0 2px 12px #0001;
+    }
+    #tipQr {
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      margin-bottom: 0.5em;
+      box-shadow: 0 1px 8px #0001;
+      background: #fff;
+    }
+    #tipLink {
+      display: inline-block;
+      margin-top: 0.7em;
+      padding: 0.4em 1.1em;
+      background: #27c46c;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      box-shadow: 0 2px 12px #27c46c22;
+      transition: background 0.15s;
+    }
+    #tipLink:hover {
+      background: #1a9c51;
+    }
     #qrcode {
       display: none;
       margin: 2em auto;
@@ -78,8 +119,22 @@
 </head>
 <body>
   <div class="app-container">
-    <img src="icon.png" alt="Que Pasa App Icon" style="width:60px;margin-bottom:16px;">
+    <!-- Que Pasa Logo -->
+    <img id="quePasaLogo" src="icon2.png" alt="Que Pasa App Logo">
+
     <h1>Que Pasa App</h1>
+
+    <!-- Tip/Payment QR Section -->
+    <div id="tipSection">
+      <div style="font-weight:bold;margin-bottom:0.3em;font-size:1.1em;">
+        ☕ Buy Me a Coffee / Tip Me!
+      </div>
+      <img id="tipQr" src="icon.png" alt="Tip via Cash App QR">
+      <br>
+      <a id="tipLink" href="https://pay.google.com/your-link-here" target="_blank" rel="noopener">Tip via Google Pay</a>
+      <div style="font-size:0.97em;color:#666;margin-top:0.4em;">Scan the code or tap the button to tip.</div>
+    </div>
+
     <div id="languageScreen">
       <h2>Select Your Language</h2>
       <select id="languageSelect">
@@ -140,21 +195,4 @@
     }
 
     function initRoom() {
-      document.getElementById("languageScreen").classList.add("hidden");
-      document.getElementById("chatUI").classList.remove("hidden");
-      document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
-
-      // Show QR code for 5 minutes
-      const qrElement = document.getElementById("qrcode");
-      qrElement.innerHTML = "";
-      new QRCode(qrElement, {
-        text: `${window.location.origin}${window.location.pathname}?room=${room}`,
-        width: 256,
-        height: 256,
-        correctLevel: QRCode.CorrectLevel.H
-      });
-      qrElement.classList.add("visible");
-      if (qrTimeout) clearTimeout(qrTimeout);
-      qrTimeout = setTimeout(() =>
-
-
+      document.getElementById
