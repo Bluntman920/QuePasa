@@ -239,4 +239,120 @@
       qrElement.classList.add("visible");
       if (qrTimeout) clearTimeout(qrTimeout);
       qrTimeout = setTimeout(() => {
-        qrElement.classList
+        qrElement.classList.remove("visible");
+      }, 5 * 60 * 1000);
+
+      // Create a unique user ID for this browser tab
+      userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+
+      // Add this user to the room's users list
+      const userRef = db.ref(`rooms/${room}/users/${userId}`);
+      userRef.set({ nickname: userNickname, connected: true, lang: userLang });
+
+      // Remove user if they disconnect (tab closed, browser quit, etc)
+      userRef.onDisconnect().remove();
+
+      // Listen for user changes in the room
+      const usersRef = db.ref(`rooms/${room}/users`);
+      usersRef.on('value', snapshot => {
+        const users = snapshot.val();
+        const userCount = users ? Object.keys(users).length : 0;
+
+        if (userCount > 2) {
+          // Too many users: self-destruct the room immediately!
+          db.ref(`rooms/${room}`).remove();
+        }
+      });
+
+      // Listen for room deletion (self-destruct or both users gone)
+      db.ref(`rooms/${room}`).on('value', snapshot => {
+        if (!snapshot.exists()) {
+          showExpired();
+        }
+      });
+
+      listenToRoom();
+    }
+
+    function showExpired() {
+      document.getElementById("chatUI").classList.add("hidden");
+      document.getElementById("languageScreen").classList.add("hidden");
+      document.getElementById("expiredMsg").style.display = "block";
+    }
+
+    async function sendMsg(msg) {
+      if (!msg || !room) return;
+      db.ref(`rooms/${room}/messages`).push({
+        user: userNickname,
+        lang: userLang,
+        text: msg,
+        ts: Date.now()
+      });
+    }
+
+    function listenToRoom() {
+      if (!room) return;
+      // Listen for new messages
+      db.ref(`rooms/${room}/messages`).on("child_added", snapshot => {
+        const data = snapshot.val();
+        const box = document.getElementById("chatBox");
+        if (data.lang !== userLang) {
+          box.innerHTML += `<div><b>${data.user}:</b> <span title="translated">(translated) </span>${fakeTranslate(data.text, data.lang, userLang)}</div>`;
+        } else {
+          box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
+        }
+        box.scrollTop = box.scrollHeight;
+      });
+    }
+
+    document.getElementById("msgInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        const msg = this.value.trim();
+        if (msg) {
+          sendMsg(msg);
+          this.value = "";
+        }
+      }
+    });
+
+    // --- Speech-to-text ---
+    function startSpeechToText() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('Speech recognition not supported in this browser.');
+        return;
+      }
+      if (isSpeechActive) return;
+      isSpeechActive = true;
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = userLang === "es" ? "es-ES" : "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById("msgInput").value = transcript;
+        sendMsg(transcript);
+        isSpeechActive = false;
+      };
+      recognition.onerror = () => { isSpeechActive = false; };
+      recognition.onend = () => { isSpeechActive = false; };
+      recognition.start();
+    }
+
+    function fakeTranslate(text, from, to) {
+      // No real translation, only a stub for demonstration.
+      if (from === "en" && to === "es") return `[EN→ES] ${text}`;
+      if (from === "es" && to === "en") return `[ES→EN] ${text}`;
+      return text;
+    }
+
+    // --- On page load: join room if link has ?room=xxx ---
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("room")) {
+      room = query.get("room");
+      document.getElementById("languageScreen").classList.remove("hidden");
+      document.getElementById("chatUI").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
