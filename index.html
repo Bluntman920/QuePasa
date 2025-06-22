@@ -118,7 +118,6 @@
       margin-top:16px;
     }
     .mainBtn:active { background:#1a9c51; }
-    /* --- QR FLASH OVERLAY --- */
     #qrFlashOverlay {
       display: none;
       position: fixed;
@@ -195,7 +194,6 @@
       margin-bottom: 0.2em;
       font-weight: 600;
     }
-    /* --- Self-destruct button --- */
     .self-destruct-container {
       display: flex;
       justify-content: center;
@@ -231,7 +229,6 @@
       letter-spacing: 0.04em;
       vertical-align: middle;
     }
-    /* --- Tip Section --- */
     .tip-section {
       margin: 2.5em auto 1.6em auto;
       text-align: center;
@@ -239,16 +236,9 @@
       border-radius: 17px;
       box-shadow: 0 2px 16px #27c46c12;
       padding: 1.3em 1em 1.1em 1em;
-      width: 320px;
+      width: 340px;
       max-width: 94vw;
       font-size: 1.13em;
-    }
-    .tip-icon {
-      font-size: 2.3em;
-      margin-bottom: 0.18em;
-      color: #fbc02d;
-      display: block;
-      text-shadow: 0 2px 12px #ffee0055;
     }
     @media (max-width:600px) {
       .header { margin-top: 1em; }
@@ -279,13 +269,11 @@
   <!-- Chat Container -->
   <div class="chat-container">
     <div class="top-bar">
-      <!-- QR flash button at the top of chat box -->
       <button class="qr-flash-btn" id="flashQrBtn" title="Show Room QR Code" aria-label="Show Room QR Code">
         &#128273;
       </button>
     </div>
     <div class="chat-box" id="chatBox">
-      <!-- Chat messages would go here -->
       <div><b>You:</b> Welcome to this Que Pasa chat room!</div>
       <div><b>Friend:</b> Hi! Flash me the QR so I can join from my phone.</div>
     </div>
@@ -304,8 +292,22 @@
 
   <!-- Tip / Thank You Section -->
   <div class="tip-section">
-    <span class="tip-icon">&#128176;</span>
-    Thank you for your support!
+    <!-- Cash App QR (icon1.png) -->
+    <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener" title="Open in Cash App / Abrir en Cash App">
+      <img src="icon1.png" alt="Cash App QR" style="width:88px; height:88px; border-radius:18px; box-shadow:0 2px 12px #27c46c22; background:#fff;">
+    </a>
+    <div style="margin-top:0.7em; font-size:1.15em; font-weight:600;">
+      Thank you for your support!<br>
+      <span style="font-size:0.98em; color:#27c46c;">¡Gracias por tu apoyo!</span>
+    </div>
+    <div style="margin-top:0.5em;">
+      <a href="https://cash.app/$QuePasaAPP" target="_blank" style="text-decoration:none;font-weight:bold;color:#008000;margin-right:1.5em;">
+        Send with Cash App / Enviar con Cash App
+      </a>
+      <a href="https://www.paypal.me/QuePasaApp" target="_blank" style="text-decoration:none;font-weight:bold;color:#0070ba;">
+        Send with PayPal / Enviar con PayPal
+      </a>
+    </div>
   </div>
 
   <!-- QR FLASH OVERLAY -->
@@ -340,18 +342,15 @@
   // Assign room code
   let room;
   (function() {
-    // Use ?room=... if present, else create new random room
     const params = new URLSearchParams(window.location.search);
     if (params.has("room")) {
       room = params.get("room");
     } else {
-      // Generate a random room code, 10 chars
       room = Math.random().toString(36).substring(2, 12);
       window.history.replaceState({}, '', window.location.pathname + '?room=' + room);
     }
-    // Set room expiration to 2 hours (enforced in backend/app logic)
     db.ref(`rooms/${room}/createdAt`).set(Date.now());
-    db.ref(`rooms/${room}/expiresAt`).set(Date.now() + 2 * 60 * 60 * 1000); // 2 hours in ms
+    db.ref(`rooms/${room}/expiresAt`).set(Date.now() + 2 * 60 * 60 * 1000);
   })();
 
   // QR Flash overlay logic
@@ -380,7 +379,7 @@
     clearTimeout(qrFlashTimeout);
     qrFlashTimeout = setTimeout(() => {
       qrFlashOverlay.style.display = 'none';
-    }, 10000); // QR flashes for 10 seconds
+    }, 10000);
   }
 
   function closeQrFlash() {
@@ -412,10 +411,9 @@
         clearInterval(destructHoldInterval);
         selfDestructBtn.classList.remove('holding');
         destructActivated = true;
-        // Disconnect logic: Remove room from Firebase and reload
         db.ref('rooms/' + room).remove().then(() => {
           alert('Disconnected / Desconectado');
-          window.location.href = window.location.pathname; // Go back to new room
+          window.location.href = window.location.pathname;
         });
       }
     }, 100);
@@ -436,11 +434,8 @@
     clearTimeout(destructHoldTimeout);
   });
 
-  // (Optional) Language widget logic placeholder
   document.getElementById('langSelect').addEventListener('change', function(e) {
-    // You can add logic to change chat language here
-    // For now, just an alert
-    // alert('Language switched to: ' + e.target.options[e.target.selectedIndex].text);
+    // Placeholder for language switching logic
   });
 </script>
 </body>
