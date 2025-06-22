@@ -236,34 +236,65 @@
       text-align:center;
       font-weight:600;
     }
-    #showQrBtn {
-      margin:1.5em auto 1.1em auto;
-      display:block;
-      font-size:1.1em;
-      padding:0.7em 2em;
-      border-radius:14px;
-      background:#27c46c;
-      color:#fff;
-      font-weight:600;
-      cursor:pointer;
-      border:none;
-      box-shadow:0 2px 12px #27c46c22;
-      transition: background 0.16s;
-      letter-spacing:0.04em;
+    /* --- Top round action buttons --- */
+    .topActionBtns {
+      position: fixed;
+      top: 24px;
+      left: 0;
+      width: 100vw;
+      z-index: 1100;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
     }
-    #showQrBtn:active { background:#1a9c51; }
+    .roundBtn {
+      pointer-events: all;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 16px #0002;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      position: relative;
+      margin: 0 16px;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .roundBtn:active { background: #eee; }
+    .roundBtn.disconnect {
+      background: #f44336;
+      color: #fff;
+      box-shadow: 0 2px 18px #e00a;
+      margin-right: 16px;
+    }
+    .roundBtn.disconnect:active { background: #b71c1c; }
+    .roundBtn.qr {
+      background: #27a3cc;
+      color: #fff;
+      margin-left: 16px;
+      box-shadow: 0 2px 18px #27a3cc55;
+    }
+    .roundBtn.qr:active { background: #136a8a; }
+    .roundBtn svg, .roundBtn img {
+      width: 38px;
+      height: 38px;
+      display: block;
+    }
     /* --- Support section --- */
     #supportThanks.centered-support {
-      margin: 1.3em auto 0 auto;
+      margin: 2.3em auto 0 auto;
       text-align: center;
-      max-width: 350px;
+      max-width: 400px;
       background:
         #e4fbe4
         url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="48"><image href="icon2.png" x="0" y="0" height="32" width="32" opacity="0.07"/><text x="36" y="30" font-size="19" font-family="Arial" fill="%23237a48" opacity="0.18">Que Pasa App</text></svg>')
         repeat;
       border-radius: 14px;
       box-shadow: 0 1px 7px #27c46c10;
-      padding: 0.6em 0.7em 0.7em 0.7em;
+      padding: 0.9em 0.7em 1em 0.7em;
       background-size: 140px 48px;
       position: relative;
     }
@@ -271,23 +302,22 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 13px;
-      margin-bottom: 4px;
+      gap: 26px;
+      margin-bottom: 10px;
     }
-    #supportThanks .tipIcons img {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
-      box-shadow: 0 1px 4px #27c46c22;
+    #supportThanks .tipIcons img,
+    #supportThanks .tipIcons .qp-logo-support {
+      width: 70px;
+      height: 70px;
+      border-radius: 13px;
+      box-shadow: 0 1px 6px #27c46c33;
       background: #fff;
     }
     #supportThanks .tipIcons .qp-logo-support {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      box-shadow: 0 1px 7px #27c46c33;
-      background: #fff;
-      margin-right: 3px;
+      width: 90px;
+      height: 90px;
+      border-radius: 20px;
+      margin-right: 6px;
     }
     #supportThanks .thanksText { margin-top: 2px; }
     /* --- BG Switcher --- */
@@ -319,7 +349,10 @@
     @media (max-width:600px) {
       #chatBox, #chatInputArea { width: 99vw; max-width: 99vw;}
       #supportThanks.centered-support { max-width: 97vw; }
-      #supportThanks .tipIcons img, #supportThanks .tipIcons .qp-logo-support { width: 22px; height: 22px; }
+      #supportThanks .tipIcons img, #supportThanks .tipIcons .qp-logo-support { width: 44px; height: 44px;}
+      #supportThanks .tipIcons .qp-logo-support { width: 55px; height: 55px;}
+      .roundBtn { width: 54px; height: 54px;}
+      .roundBtn svg, .roundBtn img { width: 28px; height: 28px;}
     }
   </style>
 </head>
@@ -340,6 +373,26 @@
       <div style="margin-top:1em;color:#444;font-size:1em;">Allow camera access to scan a QR code from another device.</div>
     </div>
     <div id="chatUI">
+      <!-- Top round action buttons -->
+      <div class="topActionBtns">
+        <!-- Show QR Button -->
+        <button id="showQRActionBtn" class="roundBtn qr" title="Hold to show QR code">
+          <img src="qr-icon.png" alt="Show QR code"/>
+        </button>
+        <!-- Disconnect Button -->
+        <button id="disconnectActionBtn" class="roundBtn disconnect" title="Hold to disconnect">
+          <svg viewBox="0 0 64 64">
+            <ellipse cx="32" cy="32" rx="24" ry="24" fill="#ea1c23" stroke="#fff" stroke-width="2"/>
+            <ellipse cx="32" cy="44" rx="10" ry="6" fill="#fff" opacity="0.18"/>
+            <ellipse cx="24" cy="34" rx="3.2" ry="4.8" fill="#222"/>
+            <ellipse cx="40" cy="34" rx="3.2" ry="4.8" fill="#222"/>
+            <ellipse cx="32" cy="47" rx="2.2" ry="1.2" fill="#2c2c2c"/>
+            <ellipse cx="28" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
+            <ellipse cx="36" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
+            <path d="M22 27 Q32 22 42 27" stroke="#fff" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+      </div>
       <div id="google_translate_element"></div>
       <div id="roomInfo"></div>
       <div id="chatBox"></div>
@@ -348,8 +401,6 @@
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
         <button id="recordBtn" title="Record Voice Message" onclick="toggleRecording()">🎙️</button>
       </div>
-      <!-- Hold-to-show QR code button -->
-      <button id="showQrBtn" style="display:none;">Hold to Show QR</button>
       <!-- Support/Tip section -->
       <div id="supportThanks" class="centered-support">
         <div class="tipIcons">
@@ -477,7 +528,7 @@
     };
 
     // --- Hold-to-show QR logic ---
-    const showQrBtn = document.getElementById('showQrBtn');
+    const showQRActionBtn = document.getElementById('showQRActionBtn');
     const qrHoldOverlay = document.getElementById('qrHoldOverlay');
     let qrHoldTimeout, qrHoldActive = false;
     function renderQrInOverlay() {
@@ -493,7 +544,7 @@
         correctLevel: QRCode.CorrectLevel.H
       });
     }
-    showQrBtn.onmousedown = showQrBtn.ontouchstart = function(e) {
+    showQRActionBtn.onmousedown = showQRActionBtn.ontouchstart = function(e) {
       e.preventDefault();
       qrHoldTimeout = setTimeout(() => {
         qrHoldActive = true;
@@ -501,7 +552,7 @@
         renderQrInOverlay();
       }, 350);
     };
-    showQrBtn.onmouseup = showQrBtn.onmouseleave = showQrBtn.ontouchend = showQrBtn.ontouchcancel = function() {
+    showQRActionBtn.onmouseup = showQRActionBtn.onmouseleave = showQRActionBtn.ontouchend = showQRActionBtn.ontouchcancel = function() {
       clearTimeout(qrHoldTimeout);
       if (qrHoldActive) {
         qrHoldOverlay.style.display = 'none';
@@ -511,6 +562,29 @@
     qrHoldOverlay.onclick = function(e) {
       if (e.target === qrHoldOverlay) qrHoldOverlay.style.display = 'none';
     };
+
+    // --- Hold-to-disconnect logic ---
+    const disconnectActionBtn = document.getElementById('disconnectActionBtn');
+    let disconnectTimeout = null;
+    disconnectActionBtn.onmousedown = disconnectActionBtn.ontouchstart = function(e) {
+      e.preventDefault();
+      disconnectTimeout = setTimeout(disconnectNow, 800);
+      disconnectActionBtn.classList.add('holding');
+    };
+    disconnectActionBtn.onmouseup = disconnectActionBtn.onmouseleave = disconnectActionBtn.ontouchend = disconnectActionBtn.ontouchcancel = function() {
+      clearTimeout(disconnectTimeout);
+      disconnectActionBtn.classList.remove('holding');
+    };
+    function disconnectNow() {
+      disconnectActionBtn.classList.remove('holding');
+      if (room && userId) {
+        db.ref(`rooms/${room}/users/${userId}`).remove().then(() => {
+          showExpired();
+        });
+      } else {
+        showExpired();
+      }
+    }
 
     // --- Session logic ---
     function startCreateSession() {
@@ -544,7 +618,6 @@
       document.getElementById("chatUI").style.display = "flex";
       document.getElementById("chatUI").classList.add("visible");
       document.getElementById("expiredMsg").style.display = "none";
-      showQrBtn.style.display = "block";
       roomExpired = false;
       document.getElementById("roomInfo").innerText = `Room: ${room}`;
       userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
@@ -571,7 +644,6 @@
       roomExpired = true;
       document.getElementById("chatUI").classList.remove("visible");
       document.getElementById("chatUI").style.display = "none";
-      showQrBtn.style.display = "none";
       document.getElementById("expiredMsg").style.display = "block";
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
