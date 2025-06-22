@@ -48,9 +48,6 @@
       margin-left: auto;
       margin-right: auto;
     }
-    .lang-select, .room-options {
-      margin: 1em;
-    }
     select, button {
       font-size: 1em;
       padding: 0.5em 1em;
@@ -70,14 +67,7 @@
         <option value="zh">中文</option>
       </select>
       <br />
-      <button onclick="goToRoomOptions()">Continue</button>
-    </div>
-
-    <div id="roomOptions" class="hidden">
-      <h2>Create or Join a Room</h2>
-      <button onclick="createRoom()">Create Room</button>
-      <input id="joinCode" placeholder="Enter Room Code" />
-      <button onclick="joinRoom()">Join Room</button>
+      <button onclick="autoCreateOrJoin()">Continue</button>
     </div>
 
     <div id="chatUI" class="hidden">
@@ -102,38 +92,30 @@
 
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     let room = "";
     let qrTimeout;
 
-    function goToRoomOptions() {
-      document.getElementById("languageScreen").classList.add("hidden");
-      document.getElementById("roomOptions").classList.remove("hidden");
-    }
-
-    function createRoom() {
-      room = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
-      showChatUI(room);
-      listenToRoom();
-    }
-
-    function joinRoom() {
-      const code = document.getElementById("joinCode").value.trim();
-      if (code) {
-        room = code;
-        showChatUI(room);
-        listenToRoom();
+    function autoCreateOrJoin() {
+      const query = new URLSearchParams(window.location.search);
+      const roomParam = query.get("room");
+      if (roomParam) {
+        room = roomParam;
+        initRoom();
+      } else {
+        room = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
+        window.location.search = `?room=${room}`;
       }
     }
 
-    function showChatUI(roomCode) {
-      document.getElementById("roomOptions").classList.add("hidden");
+    function initRoom() {
+      document.getElementById("languageScreen").classList.add("hidden");
       document.getElementById("chatUI").classList.remove("hidden");
-      document.getElementById("roomInfo").innerText = `Room Code: ${roomCode}`;
+      document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
+
       const qrElement = document.getElementById("qrcode");
       qrElement.innerHTML = "";
       new QRCode(qrElement, {
-        text: `${window.location.origin}${window.location.pathname}?room=${roomCode}`,
+        text: `${window.location.origin}${window.location.pathname}?room=${room}`,
         width: 256,
         height: 256,
         correctLevel: QRCode.CorrectLevel.H
@@ -143,6 +125,8 @@
       qrTimeout = setTimeout(() => {
         qrElement.classList.remove("visible");
       }, 5 * 60 * 1000);
+
+      listenToRoom();
     }
 
     async function sendMsg(msg) {
@@ -175,12 +159,9 @@
     const query = new URLSearchParams(window.location.search);
     if (query.get("room")) {
       room = query.get("room");
-      document.getElementById("languageScreen").classList.add("hidden");
-      document.getElementById("roomOptions").classList.add("hidden");
-      document.getElementById("chatUI").classList.remove("hidden");
-      document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
-      listenToRoom();
+      initRoom();
     }
   </script>
 </body>
 </html>
+
