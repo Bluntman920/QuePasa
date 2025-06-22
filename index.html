@@ -200,69 +200,6 @@
       color: #444;
       letter-spacing: 0.08em;
     }
-    #tipSectionChat {
-      margin: 2.2em 0 1.2em 0;
-      background: #f9f9f9;
-      border-radius: 22px;
-      display: inline-block;
-      padding: 2em 2.3em 2.3em 2.3em;
-      box-shadow: 0 2px 18px #0001;
-      position: relative;
-      z-index: 2;
-    }
-    .tipIconsRow {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 1.6em;
-      margin-bottom: 0.8em;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .tipIcon {
-      width: 150px;
-      height: 150px;
-      border-radius: 20px;
-      background: #fff;
-      margin: 0 0.3em 0 0.3em;
-      box-shadow: 0 2px 16px #27c46c11;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 3px solid #27c46c33;
-      transition: box-shadow 0.15s;
-    }
-    .tipIcon img {
-      width: 135px;
-      height: 135px;
-      object-fit: contain;
-      border-radius: 16px;
-    }
-    .tipPayBtn {
-      display: inline-block;
-      margin-top: 0.4em;
-      padding: 1.1em 2.8em;
-      background: #27c46c;
-      color: #fff;
-      border-radius: 18px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.4em;
-      box-shadow: 0 2px 12px #27c46c22;
-      transition: background 0.15s;
-      margin-right: 0.8em;
-      letter-spacing: 0.03em;
-    }
-    .tipPayBtn:last-child { margin-right: 0; }
-    .tipPayBtn:hover { background: #1a9c51; }
-    #tipDesc {
-      font-size:1.25em;
-      color:#444;
-      margin-top:1.3em;
-      margin-bottom:0.1em;
-      text-align:center;
-      font-weight:bold;
-    }
     #expiredMsg {
       font-size: 1.2em;
       color: #c12;
@@ -347,19 +284,58 @@
       font-size: 1.35em; color: #555; font-weight: bold;
       margin-top: 0.9em; letter-spacing: 0.05em; margin-bottom: 0.5em;
     }
-    @media (max-width: 600px) {
-      #chatBox, #chatInputArea { width: 99vw; max-width: 99vw;}
-      #bigQrContainer { padding: 0.7em;}
-      #tipSection, #tipSectionChat { padding: 1.3em 0.2em 1.3em 0.2em;}
-      #holdDisconnectBtn, #holdFlashQRBtn { top: unset; bottom: 22px;}
-      #holdDisconnectBtn { right: 22px; }
-      #holdFlashQRBtn { left: 22px;}
-      #holdDisconnectBtn, #holdFlashQRBtn { width: 65px; height: 65px;}
-      #holdDisconnectBtnText, #holdFlashQRBtnText { width:65px; height:65px;}
-      #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring { width:75px; height:75px; top:-5px; left:-5px;}
-      .skullIcon { width:40px; height:40px; }
-      .tipIcon { width:120px; height:120px;}
-      .tipIcon img { width:105px; height:105px;}
+    /* Persistent Tip Bar */
+    #tipBar {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      background: #f7fff9ee;
+      box-shadow: 0 6px 32px #27c46c44, 0 2px 12px #0002;
+      border-radius: 60px;
+      padding: 24px 48px 24px 28px;
+      gap: 34px;
+      border: 2.5px solid #27c46c66;
+    }
+    .tipBarIcon img {
+      width: 140px;
+      height: 140px;
+      border-radius: 26px;
+      background: #fff;
+      box-shadow: 0 2px 14px #26c46c33;
+      transition: transform 0.18s;
+      border: 3.5px solid #27c46c55;
+    }
+    .tipBarIcon img:hover {
+      transform: scale(1.18);
+      box-shadow: 0 4px 32px #27c46c88;
+    }
+    #tipBar span {
+      font-size:2.2em;
+      font-weight:600;
+      color:#237a48;
+      margin-left:30px;
+      letter-spacing:0.04em;
+      line-height:1.25em;
+      text-align:left;
+      max-width: 440px;
+    }
+    @media (max-width:900px) {
+      #tipBar {
+        bottom: 8px;
+        right: 8px;
+        left: 8px;
+        padding: 10px 10px 10px 10px;
+        gap: 8px;
+        border-radius: 30px;
+      }
+      .tipBarIcon img {
+        width: 70px; height: 70px; border-radius: 11px;
+      }
+      #tipBar span { font-size:1.1em; margin-left:12px;}
     }
   </style>
 </head>
@@ -410,23 +386,6 @@
         <textarea id="msgInput" placeholder="Type and press Enter..."></textarea>
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
       </div>
-      <div id="tipSectionChat">
-        <div class="tipIconsRow">
-          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" class="tipIcon" title="Pay via PayPal">
-            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
-          </a>
-          <a href="icon.png" target="_blank" class="tipIcon" title="Pay via Cash App">
-            <img src="icon.png" alt="Cash App">
-          </a>
-        </div>
-        <div>
-          <a class="tipPayBtn" href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank">Pay with PayPal</a>
-          <a class="tipPayBtn" href="icon.png" target="_blank">Pay with Cash App</a>
-        </div>
-        <div id="tipDesc">
-          Give me money! Pay me by PayPal or Cash App.
-        </div>
-      </div>
     </div>
     <div id="flashQROverlay">
       <div id="flashQRcode"></div>
@@ -434,6 +393,24 @@
       <div style="color:#555;font-size:1.18em;margin-bottom:1em;">Have them scan this QR to join you.</div>
     </div>
     <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
+    <!-- Persistent Tip Bar for Every Page -->
+    <div id="tipBar">
+      <a href="icon.png" target="_blank" title="Pay via Cash App" class="tipBarIcon" id="tipCashApp">
+        <img src="icon.png" alt="Cash App" />
+      </a>
+      <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" title="Pay via PayPal" class="tipBarIcon" id="tipPaypal">
+        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" />
+      </a>
+      <span>
+        Thank you for being part of this journey.<br>
+        Your kindness and support help this app grow—<br>
+        every tip is a seed that helps new ideas bloom.<br>
+        With deepest gratitude for every moment and every gift.<br>
+        <span style="display:block;margin-top:0.5em;color:#237a48;font-weight:700;font-size:1em;">
+          Privacy is our first priority: no accounts, no tracking, just you and your conversation.
+        </span>
+      </span>
+    </div>
   </div>
   <!-- Google Translate Widget -->
   <script type="text/javascript">
@@ -611,7 +588,7 @@
     let holdTimeout = null;
     let holdStart = 0;
     let holdProgressFrame = null;
-    const HOLD_TIME = 3000;
+    const HOLD_TIME = 1000; // 1 second
     function setRingPercent(percent) {
       const radius = ring.r.baseVal.value;
       const circumference = 2 * Math.PI * radius;
