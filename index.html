@@ -8,897 +8,254 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
-    :root {
-      --qp-green: #e4fbe4;
-      --qp-black: #121212;
-      --qp-white: #fff;
-      --qp-main: #e4fbe4;
-      --qp-text: #222;
-    }
     body {
-      background: var(--qp-main, #e4fbe4);
-      color: var(--qp-text, #222);
+      background: #e4fbe4;
+      color: #222;
       font-family: Arial, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background 0.15s, color 0.15s;
+      margin: 0; min-height: 100vh;
     }
-    .app-container {
-      min-height: 100vh;
-      min-width: 100vw;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    .chat-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 18px #27c46c17;
+      margin-top: 2em;
+      padding: 0 0 2em 0;
       position: relative;
-      z-index: 1;
     }
-    #mainLogoScreen {
-      width: 100vw;
-      height: 100vh;
+    .top-bar {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 1em 1.2em 0.5em 1.2em;
+      position: relative;
+    }
+    .qr-flash-btn {
+      background: #2196f3;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 48px; height: 48px;
+      font-size: 1.7em;
+      display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--qp-main, #e4fbe4);
-      position: absolute;
-      top: 0; left: 0; z-index: 10;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #2196f34a;
+      transition: background 0.16s;
     }
-    #mainLogo {
-      width: min(340px, 80vw);
-      max-width: 90vw;
-      margin-bottom: 28px;
-      margin-top: 8px;
-      border-radius: 32px;
-      box-shadow: 0 2px 24px #0001;
-      transition: transform 0.1s;
+    .qr-flash-btn:active { background: #1369b1; }
+    .chat-box {
+      margin: 1.3em 1.2em;
+      min-height: 150px;
+      background: #e4fbe4;
+      border-radius: 9px;
+      padding: 1em;
+      font-size: 1.13em;
     }
-    #mainLogoScreen .tapPrompt {
-      font-size: 1.3em;
-      font-weight: 500;
-      color: #444;
-      opacity: 0.7;
-      margin-top: 0.5em;
-      letter-spacing: 0.05em;
-      animation: bounce 1.2s infinite alternate;
+    .chat-input-bar {
+      display: flex;
+      align-items: center;
+      margin: 1em 1.2em 0 1.2em;
+      gap: 0.6em;
     }
-    @keyframes bounce { 0% { transform: translateY(0);} 100% { transform: translateY(-10px);} }
-    #mainLogoScreen .sessionBtns {
-      margin-top:2.5em; display:flex; flex-direction:column; gap:19px; align-items:center;
+    .chat-input-bar textarea {
+      flex: 1;
+      font-size: 1.1em;
+      border-radius: 8px;
+      padding: 0.7em;
+      border: 1.1px solid #bbb;
+      resize: none;
     }
     .mainBtn {
-      font-size:1.4em; padding:0.9em 2.8em; border-radius:20px;
+      font-size:1.1em; padding:0.7em 2em; border-radius:12px;
       font-weight:600;
       cursor:pointer;
       border:none;
       margin-bottom:4px;
-      box-shadow:0 2px 12px #27c46c22;
-      transition: background 0.16s;
+      box-shadow:0 2px 8px #27c46c22;
+      background:#27c46c; color:#fff;
+      margin-top:16px;
     }
-    #createSessionBtn { background:#27c46c; color:#fff; }
-    #createSessionBtn:hover { background:#1a9c51; }
-    #joinSessionBtn { background:#2196f3; color:#fff; }
-    #joinSessionBtn:hover { background:#1369b1; }
-    #scanQRBtn { background:#fff; color:#222; border:2px solid #2196f3; box-shadow:0 2px 12px #2196f322;}
-    #scanQRBtn:hover { background:#e3f3ff; }
-    #chatUI, #qrScannerOverlay { display: none; }
-    .visible { display: flex !important; }
-    #chatUI {
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      min-width: 100vw;
-      padding-top: 2.5em;
-      position: relative;
-      background: transparent;
-    }
-    #google_translate_element {
-      margin: 1.2em 0 1em 0;
-      font-size: 1.15em;
-      z-index: 999;
-    }
-    #chatBox {
-      margin-top: 1.2em;
-      max-height: 38vh;
-      min-height: 80px;
-      overflow-y: auto;
-      border: 1.5px solid #ccc;
-      padding: 1.3em;
-      width: 87vw;
-      max-width: 630px;
-      margin-left: auto;
-      margin-right: auto;
-      background: var(--qp-main, #e4fbe4);
-      text-align: left;
-      border-radius: 14px;
-      font-size: 1.23em;
-      position: relative;
-      z-index: 1;
-      color: var(--qp-text, #222);
-    }
-    #chatInputArea {
-      margin-top: 1.2em;
-      width: 87vw; max-width: 630px;
-      display: flex;
-      align-items: center;
-      gap: 0.6em;
-      position: relative;
-      z-index: 2;
-      background: var(--qp-main, #e4fbe4);
-    }
-    #msgInput {
-      width: 100%;
-      font-size: 1.18em;
-      padding: 0.8em;
-      border-radius: 13px;
-      border: 1.3px solid #bbb;
-      resize: none;
-      box-sizing: border-box;
-      color: var(--qp-text, #222);
-      background: var(--qp-main, #e4fbe4);
-    }
-    #micBtn, #recordBtn {
-      background: #e3f6fd;
-      border: 1.5px solid #27a3cc;
-      color: #27a3cc;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 1.55em;
-      vertical-align: middle;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 3px;
-      margin-right: 3px;
-    }
-    #recordBtn.recording {
-      background: #ffdde2;
-      border-color: #e00;
-      color: #e00;
-      animation: recordingPulse 1s infinite;
-    }
-    @keyframes recordingPulse {
-      0% { box-shadow: 0 0 0 0 #e005; }
-      80% { box-shadow: 0 0 16px 8px #e055; }
-      100% { box-shadow: 0 0 0 0 #e005; }
-    }
-    #roomInfo {
-      font-size: 1.27em;
-      margin-bottom: 0.4em;
-      font-weight: bold;
-      color: var(--qp-text, #444);
-      letter-spacing: 0.08em;
-    }
-    #expiredMsg {
-      font-size: 1.2em;
-      color: #c12;
-      margin-top: 2em;
-      display: none;
-      z-index: 100;
-      position: absolute;
-      left: 50%;
-      top: 40vh;
-      transform: translate(-50%, 0);
-      width: 95vw;
-      max-width: 450px;
-      text-align: center;
-      background: #fff;
-      padding: 2em 1em 2.9em 1em;
-      border-radius: 24px;
-      box-shadow: 0 2px 12px #c12a;
-    }
-    #expiredMsg .mainBtn {
-      margin-top: 1.1em;
-      font-size: 1.18em;
-      padding: 0.7em 2.2em;
-    }
-    /* --- Top round action buttons --- */
-    .topActionBtns {
-      position: fixed;
-      top: 24px;
-      left: 0;
-      width: 100vw;
-      z-index: 1100;
-      display: flex;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-    .roundBtn {
-      pointer-events: all;
-      width: 82px;
-      height: 82px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 2px 16px #0002;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      position: relative;
-      margin: 0 16px;
-      cursor: pointer;
-      transition: background 0.18s;
-      font-size: 2.2em;
-    }
-    .roundBtn:active { background: #eee; }
-    .roundBtn.disconnect {
-      background: #f44336;
-      color: #fff;
-      box-shadow: 0 2px 18px #e00a;
-      margin-right: 16px;
-    }
-    .roundBtn.disconnect:active { background: #b71c1c; }
-    .roundBtn.qr {
-      background: #2196f3;
-      color: #fff;
-      margin-left: 16px;
-      box-shadow: 0 2px 18px #27a3cc55;
-    }
-    .roundBtn.qr:active { background: #136a8a; }
-    .roundBtn svg {
-      width: 48px;
-      height: 48px;
-      display: block;
-    }
-    /* --- Support section --- */
-    #supportThanks.centered-support {
-      margin: 2.3em auto 0 auto;
-      text-align: center;
-      max-width: 400px;
-      background:
-        #e4fbe4
-        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="48"><image href="icon2.png" x="0" y="0" height="32" width="32" opacity="0.07"/><text x="36" y="30" font-size="19" font-family="Arial" fill="%23237a48" opacity="0.18">Que Pasa App</text></svg>')
-        repeat;
-      border-radius: 14px;
-      box-shadow: 0 1px 7px #27c46c10;
-      padding: 1.2em 0.7em 1.3em 0.7em;
-      background-size: 140px 48px;
-      position: relative;
-    }
-    #supportThanks .tipIcons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 34px;
-      margin-bottom: 18px;
-    }
-    #supportThanks .tipIcons img,
-    #supportThanks .tipIcons .qp-logo-support {
-      width: 110px;
-      height: 110px;
-      border-radius: 22px;
-      box-shadow: 0 2px 12px #27c46c33;
-      background: #fff;
-    }
-    #supportThanks .tipIcons .qp-logo-support {
-      width: 130px;
-      height: 130px;
-      border-radius: 28px;
-      margin-right: 8px;
-    }
-    #supportThanks .thanksText { margin-top: 2px; }
-    /* --- Privacy message box --- */
-    .privacy-message {
-      background: #f7fafd;
-      color: #225c36;
-      border-radius: 14px;
-      margin: 1.7em auto 0 auto;
-      padding: 1.1em 1.2em;
-      max-width: 500px;
-      font-size: 1.13em;
-      box-shadow: 0 1px 9px #27c46c11;
-      border: 1.2px solid #b6eacc;
-      text-align: center;
-    }
-    /* --- BG Switcher --- */
-    #bgSwitchGroup {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      margin: 1em auto 0 auto;
-      width: 100%;
-    }
-    .bgBtn {
-      border: none;
-      border-radius: 7px;
-      width: 40px;
-      height: 28px;
-      cursor: pointer;
-      outline: none;
-      box-shadow: 0 0 0 1.5px #237a48;
-      transition: box-shadow 0.17s;
-      margin: 0 2px;
-    }
-    .bgBtn.active {
-      box-shadow: 0 0 0 3px #27c46c;
-    }
-    .bgBtn.bgGreen { background: #e4fbe4; }
-    .bgBtn.bgWhite { background: #fff; }
-    .bgBtn.bgBlack { background: #121212; }
-    /* --- Emoji button --- */
-    #emojiBtn {
-      font-size:1.8em;
-      line-height:1;
-      width:42px;
-      height:42px;
-      background:#f9f9f9;
-      border:1.2px solid #ccc;
-      border-radius:50%;
-      margin-right:3px;
-      cursor:pointer;
-      transition: background 0.15s, border 0.15s;
-      color: #222;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #emojiBtn:hover { background: #e4fbe4; border-color: #27c46c; }
-    /* --- QR FLASH FULLSCREEN --- */
-    #qrHoldOverlay {
+    .mainBtn:active { background:#1a9c51; }
+    /* --- QR FLASH OVERLAY --- */
+    #qrFlashOverlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
       z-index: 9000;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
+      background: rgba(230,250,230,0.96);
     }
-    #qrHoldOverlayBg {
-      position: absolute;top:0;left:0;width:100vw;height:100vh;z-index:0;
-      background: #e4fbe4 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="210" height="50"><image href="icon2.png" x="0" y="0" height="32" width="32" opacity="0.10"/><text x="36" y="30" font-size="32" font-family="Arial" fill="%23237a48" opacity="0.11">Que Pasa App</text></svg>') repeat;
-      background-size: 220px 50px;
-    }
-    #qrHoldOverlayContent {
-      z-index:2;
-      background: #e4fbe4f8;
-      padding: 2.8em 2.5em 2.2em 2.5em;
-      border-radius: 38px;
-      box-shadow: 0 8px 48px #27c46c66;
+    #qrFlashContent {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px #27c46c66;
+      padding: 2.2em 2em 1.5em 2em;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 320px; max-width: 95vw;
-      width: 97vw;
-      max-height: 95vh;
       position: relative;
-      overflow: auto;
+      min-width: 240px;
     }
-    #qrFullBrand {
-      width: 100vw;
-      margin: 0 auto 0.4em auto;
-      text-align: center;
-    }
-    #qrHoldCode > canvas, #qrHoldCode > img {
-      display: block;
-      margin: 0.5em auto 0.5em auto;
-      width: min(82vw, 410px);
-      height: auto;
-      max-width: 410px;
-      box-shadow: 0 3px 28px #237a4820;
-      border-radius: 18px;
-      background: #fff;
-      padding: 14px;
-    }
-    #closeQROverlayBtn {
+    #closeQrFlashBtn {
       position: absolute;
-      top: 16px;
-      right: 24px;
+      top: 10px;
+      right: 10px;
       background: rgba(255,255,255,0.45);
       border: none;
       color: #237a48;
-      font-size: 2.4em;
+      font-size: 2em;
       border-radius: 50%;
-      width: 54px; height: 54px;
+      width: 40px;
+      height: 40px;
       cursor: pointer;
-      z-index: 20;
-      transition: background 0.15s, color 0.15s, opacity 0.13s;
       opacity: 0.67;
+      transition: background 0.15s, color 0.15s, opacity 0.13s;
     }
-    #closeQROverlayBtn:hover {
+    #closeQrFlashBtn:hover {
       background: #f7fafb;
       color: #e53935;
       opacity: 1;
     }
+    #qrFlashCode > canvas, #qrFlashCode > img {
+      display: block;
+      margin: 0.5em auto 0.5em auto;
+      width: min(76vw, 330px);
+      height: auto;
+      max-width: 330px;
+      box-shadow: 0 3px 28px #237a4820;
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+    .qr-instructions {
+      margin-top: 1.2em;
+      color: #225c36;
+      font-size: 1.14em;
+      text-align: center;
+      margin-bottom: 0.2em;
+      font-weight: 600;
+    }
     @media (max-width:600px) {
-      #chatBox, #chatInputArea { width: 99vw; max-width: 99vw;}
-      #supportThanks.centered-support { max-width: 97vw; }
-      #supportThanks .tipIcons img, #supportThanks .tipIcons .qp-logo-support { width: 54px; height: 54px;}
-      #supportThanks .tipIcons .qp-logo-support { width: 66px; height: 66px;}
-      .roundBtn { width: 54px; height: 54px;}
-      .roundBtn svg { width: 28px; height: 28px;}
-      #qrHoldOverlayContent { padding: 1.3em 0.2em 1.2em 0.2em; min-width: 0; width: 99vw;}
-      #qrFullBrand .qp-logo-qr { width: 72px; height: 72px;}
-      .qp-brand-title { font-size:2em !important;}
-      #closeQROverlayBtn { top:8px; right:7px; width:38px; height:38px; font-size:1.6em;}
-    }
-    body[theme="black"] {
-      --qp-main: #121212;
-      --qp-text: #fff;
-    }
-    body[theme="white"] {
-      --qp-main: #fff;
-      --qp-text: #111;
-    }
-    body[theme="green"] {
-      --qp-main: #e4fbe4;
-      --qp-text: #222;
+      .chat-container { border-radius: 0; }
+      #qrFlashContent { padding: 1.2em 0.1em 1.1em 0.1em; min-width: 0; }
+      #closeQrFlashBtn { top: 5px; right: 5px; width:32px; height:32px; font-size:1.3em;}
     }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <div id="mainLogoScreen" class="visible">
-      <img id="mainLogo" src="icon2.png" alt="Que Pasa App Logo">
-      <div class="tapPrompt">Welcome to Que Pasa App!</div>
-      <div class="sessionBtns">
-        <button id="createSessionBtn" class="mainBtn">Create New Session</button>
-        <button id="joinSessionBtn" class="mainBtn">Join Session by Code</button>
-        <button id="scanQRBtn" class="mainBtn">Scan QR to Join Session</button>
-      </div>
+  <div style="text-align:center;margin-top:1.3em;">
+    <img src="icon2.png" alt="Que Pasa App Logo" style="width:64px;height:64px;border-radius:14px;box-shadow:0 2px 12px #27c46c22;background:#fff;">
+    <div style="font-size:2.1em;font-family:Arial Black,Arial,sans-serif;font-weight:900;letter-spacing:0.11em;color:#237a48;margin-top:0.22em;">QUE PASA APP</div>
+    <div style="color:#225c36;font-size:1.07em;">Private, Simple, No Phone Number Needed</div>
+  </div>
+
+  <div class="chat-container">
+    <div class="top-bar">
+      <!-- QR flash button at the top of chat box -->
+      <button class="qr-flash-btn" id="flashQrBtn" title="Show Room QR Code" aria-label="Show Room QR Code">
+        &#128273;
+      </button>
     </div>
-    <div id="qrScannerOverlay">
-      <div id="qr-reader"></div>
-      <button id="closeQrScannerBtn">Close Scanner</button>
-      <div style="margin-top:1em;color:#444;font-size:1em;">Allow camera access to scan a QR code from another device.</div>
+    <div class="chat-box" id="chatBox">
+      <!-- Chat messages would go here -->
+      <div><b>You:</b> Welcome to this Que Pasa chat room!</div>
+      <div><b>Friend:</b> Hi! Flash me the QR so I can join from my phone.</div>
     </div>
-    <div id="chatUI">
-      <!-- Top round action buttons -->
-      <div class="topActionBtns">
-        <!-- Show QR Button (left, blue, stylized SVG QR icon) -->
-        <button id="showQRActionBtn" class="roundBtn qr" title="Show QR code">
-          <svg viewBox="0 0 38 38" width="38" height="38">
-            <rect x="4" y="4" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-            <rect x="24" y="4" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-            <rect x="4" y="24" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-            <rect x="19" y="19" width="6" height="6" rx="1" fill="currentColor"/>
-            <rect x="30" y="19" width="2.5" height="2.5" rx="0.5" fill="currentColor"/>
-            <rect x="26" y="28" width="4.5" height="4.5" rx="0.8" fill="currentColor"/>
-          </svg>
-        </button>
-        <!-- Disconnect Button (right, red, with skull icon) -->
-        <button id="disconnectActionBtn" class="roundBtn disconnect" title="Hold to disconnect">
-          <svg viewBox="0 0 64 64">
-            <ellipse cx="32" cy="32" rx="24" ry="24" fill="#ea1c23" stroke="#fff" stroke-width="2"/>
-            <ellipse cx="32" cy="44" rx="10" ry="6" fill="#fff" opacity="0.18"/>
-            <ellipse cx="24" cy="34" rx="3.2" ry="4.8" fill="#222"/>
-            <ellipse cx="40" cy="34" rx="3.2" ry="4.8" fill="#222"/>
-            <ellipse cx="32" cy="47" rx="2.2" ry="1.2" fill="#2c2c2c"/>
-            <ellipse cx="28" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
-            <ellipse cx="36" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
-            <path d="M22 27 Q32 22 42 27" stroke="#fff" stroke-width="2" fill="none"/>
-          </svg>
-        </button>
-      </div>
-      <div id="google_translate_element"></div>
-      <div id="roomInfo"></div>
-      <div id="chatBox"></div>
-      <div id="chatInputArea">
-        <textarea id="msgInput" placeholder="Type and press Enter..."></textarea>
-        <button id="emojiBtn" title="Insert Emoji" type="button">😊</button>
-        <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
-        <button id="recordBtn" title="Record Voice Message" onclick="toggleRecording()">🎙️</button>
-      </div>
-      <!-- Support/Tip section -->
-      <div id="supportThanks" class="centered-support">
-        <div class="tipIcons">
-          <img src="icon2.png" alt="Que Pasa App Logo" class="qp-logo-support">
-          <a href="icon.png" target="_blank" title="Cash App">
-            <img src="icon.png" alt="Cash App">
-          </a>
-          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" title="PayPal">
-            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
-          </a>
-        </div>
-        <div class="thanksText">
-          <span style="font-size:1em;font-weight:500;color:#237a48;">
-            Thank you for your support.
-          </span>
-          <span style="display:block;font-size:0.92em;color:#225c36;font-weight:400;margin-top:1px;">
-            Every tip helps keep this app free &amp; private.
-          </span>
-        </div>
-      </div>
-      <!-- BG Switcher -->
-      <div id="bgSwitchGroup">
-        <button class="bgBtn bgGreen active" title="Green background" onclick="setBg('green')" aria-label="Green background"></button>
-        <button class="bgBtn bgWhite" title="White background" onclick="setBg('white')" aria-label="White background"></button>
-        <button class="bgBtn bgBlack" title="Black background" onclick="setBg('black')" aria-label="Black background"></button>
-      </div>
-      <!-- Privacy message -->
-      <div id="privacyBox" class="privacy-message">
-        <strong>Privacy matters.</strong><br>
-        You should never have to give your real name, phone number, or identity just to communicate.<br>
-        <span style="color:#27a3cc;">Que Pasa App</span> is designed so you can chat without revealing who you are. We believe everyone deserves privacy and simple, safe communication.<br>
-        <em>Let’s work together and keep it that way.</em>
-      </div>
+    <div class="chat-input-bar">
+      <textarea placeholder="Type a message..."></textarea>
+      <button style="background:#27c46c;color:#fff;border:0;border-radius:8px;padding:0.7em 1.5em;font-weight:700;cursor:pointer;">Send</button>
     </div>
-    <div id="qrHoldOverlay">
-      <div id="qrHoldOverlayBg"></div>
-      <div id="qrHoldOverlayContent">
-        <button id="closeQROverlayBtn" title="Close QR" aria-label="Close QR">&times;</button>
-        <div id="qrFullBrand">
-          <img src="icon2.png" alt="Que Pasa App Logo" class="qp-logo-qr" style="width:120px;height:120px;display:block;margin:0 auto 0.7em auto;">
-          <div class="qp-brand-title" style="color:#237a48;font-size:3.4em;font-family:Arial Black,Arial,sans-serif;font-weight:900;letter-spacing:0.10em;margin-bottom:0.4em;text-align:center;text-shadow:0 2px 14px #fff8,0 1px 0 #237a4811;">
-            QUE PASA APP
-          </div>
-        </div>
-        <div id="qrHoldCode"></div>
-        <div class="qr-instructions" style="margin-top:1.2em;font-size:1.48em;color:#225c36;text-align:center;font-weight:700;">
-          Scan to connect & chat instantly<br>
-          <span style="font-size:0.88em;font-weight:400;color:#399c54;">No phone number. No name. Just tap.</span>
-        </div>
+    <button class="mainBtn" onclick="location.reload()">New Room</button>
+  </div>
+
+  <!-- QR FLASH OVERLAY -->
+  <div id="qrFlashOverlay">
+    <div id="qrFlashContent">
+      <button id="closeQrFlashBtn" title="Close QR" aria-label="Close QR">&times;</button>
+      <div id="qrFlashCode"></div>
+      <div class="qr-instructions">
+        Scan this code to join this room.<br>
+        <span style="font-size:0.98em;color:#399c54;">Room expires after 2 hours.<br>No phone number, no name needed.</span>
       </div>
-    </div>
-    <div id="expiredMsg">
-      Room expired, deleted, or too many people joined.<br />
-      <br />
-      <button id="expiredCreateBtn" class="mainBtn">Create New Room</button>
-      <button id="expiredJoinBtn" class="mainBtn" style="background:#2196f3;color:#fff;margin-left:1em;">Join New Room</button>
     </div>
   </div>
-  <!-- Google Translate Widget -->
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,es',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    }
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDNz_qKPg7LfhVcXtKKTcTU-ynfBLkOSC4",
-      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
-      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
-      projectId: "quepasaapp-2e0f7",
-      storageBucket: "quepasaapp-2e0f7.appspot.com",
-      messagingSenderId: "508026556029",
-      appId: "1:508026556029:web:e8ff783647a23ecc571d314",
-      measurementId: "G-BTF5SX93LW"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let room = "";
-    let userNickname = "";
-    let userId = "";
-    let roomExpired = false;
-    let usersListener = null;
-    let roomListener = null;
 
-    // Color theme switcher with text contrast
-    function setBg(color) {
-      let colorValue = "#e4fbe4";
-      let textColor = "#222";
-      let theme = "green";
-      if (color === "white") { colorValue = "#fff"; textColor = "#111"; theme = "white"; }
-      if (color === "black") { colorValue = "#121212"; textColor = "#fff"; theme = "black"; }
-      document.body.setAttribute('theme', theme);
-      document.body.style.setProperty('--qp-main', colorValue);
-      document.body.style.setProperty('--qp-text', textColor);
-      document.body.style.background = colorValue;
-      document.body.style.color = textColor;
-      document.querySelectorAll('.bgBtn').forEach(btn => btn.classList.remove('active'));
-      if (color === "green") {
-        document.querySelector('.bgBtn.bgGreen').classList.add('active');
-      } else if (color === "white") {
-        document.querySelector('.bgBtn.bgWhite').classList.add('active');
-      } else if (color === "black") {
-        document.querySelector('.bgBtn.bgBlack').classList.add('active');
-      }
-      localStorage.setItem('qp_bg', color);
-    }
-    (function() {
-      let bg = localStorage.getItem('qp_bg');
-      if (bg) setBg(bg);
-    })();
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDNz_qKPg7LfhVcXtKKTcTU-ynfBLkOSC4",
+    authDomain: "quepasaapp-2e0f7.firebaseapp.com",
+    databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
+    projectId: "quepasaapp-2e0f7",
+    storageBucket: "quepasaapp-2e0f7.appspot.com",
+    messagingSenderId: "508026556029",
+    appId: "1:508026556029:web:e8ff783647a23ecc571d314",
+    measurementId: "G-BTF5SX93LW"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    // Landing buttons
-    document.getElementById('createSessionBtn').onclick = startCreateSession;
-    document.getElementById('joinSessionBtn').onclick = function() {
-      let code = prompt("Enter session code:");
-      if (code && code.trim().length > 0) {
-        window.location.search = "?room=" + encodeURIComponent(code.trim());
-      }
-    };
-    document.getElementById('scanQRBtn').onclick = function() {
-      document.getElementById('qrScannerOverlay').style.display = 'flex';
-      if (!window.html5QrCode) {
-        window.html5QrCode = new Html5Qrcode("qr-reader");
-      }
-      window.html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        qrCodeMessage => {
-          window.html5QrCode.stop();
-          document.getElementById('qrScannerOverlay').style.display = 'none';
-          if (qrCodeMessage && qrCodeMessage.includes("?room=")) {
-            let code = qrCodeMessage.split("?room=")[1].split("&")[0].replace(/[^a-zA-Z0-9]/g,"");
-            window.location.search = "?room=" + code;
-          } else {
-            alert("QR code does not contain a room code.");
-          }
-        },
-        errorMessage => { /* ignore scan errors */ }
-      );
-    };
-    document.getElementById('closeQrScannerBtn').onclick = function() {
-      document.getElementById('qrScannerOverlay').style.display = 'none';
-      if (window.html5QrCode) window.html5QrCode.stop();
-    };
+  // Assign room code
+  let room;
+  (function() {
+    // Use ?room=... if present, else create new random room
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("room")) {
+      room = params.get("room");
+    } else {
+      // Generate a random room code, 10 chars
+      room = Math.random().toString(36).substring(2, 12);
+      window.history.replaceState({}, '', window.location.pathname + '?room=' + room);
+    }
+    // Set room expiration to 2 hours (enforced in backend/app logic)
+    db.ref(`rooms/${room}/createdAt`).set(Date.now());
+    db.ref(`rooms/${room}/expiresAt`).set(Date.now() + 2 * 60 * 60 * 1000); // 2 hours in ms
+  })();
 
-    // --- Tap-to-show QR logic (auto closes after 30s, or click X) ---
-    const showQRActionBtn = document.getElementById('showQRActionBtn');
-    const qrHoldOverlay = document.getElementById('qrHoldOverlay');
-    const closeQROverlayBtn = document.getElementById('closeQROverlayBtn');
-    let qrAutoCloseTimeout = null;
+  // QR Flash overlay logic
+  const flashQrBtn = document.getElementById('flashQrBtn');
+  const qrFlashOverlay = document.getElementById('qrFlashOverlay');
+  const closeQrFlashBtn = document.getElementById('closeQrFlashBtn');
+  let qrFlashTimeout = null;
 
-    function renderQrInOverlay() {
-      const qrDiv = document.getElementById('qrHoldCode');
-      qrDiv.innerHTML = "";
-      if (!window.room) return;
-      const joinUrl = `${window.location.origin}${window.location.pathname}?room=${window.room}`;
-      new QRCode(qrDiv, {
-        text: joinUrl,
-        width: 370,
-        height: 370,
-        colorDark: "#222",
-        colorLight: getComputedStyle(document.body).getPropertyValue('--qp-main') || "#e4fbe4",
-        correctLevel: QRCode.CorrectLevel.H
-      });
-    }
-
-    function openQrOverlay() {
-      qrHoldOverlay.style.display = 'flex';
-      renderQrInOverlay();
-      clearTimeout(qrAutoCloseTimeout);
-      qrAutoCloseTimeout = setTimeout(() => {
-        qrHoldOverlay.style.display = 'none';
-      }, 30000); // 30 seconds
-    }
-    function closeQrOverlay() {
-      qrHoldOverlay.style.display = 'none';
-      clearTimeout(qrAutoCloseTimeout);
-    }
-
-    showQRActionBtn.onclick = openQrOverlay;
-    closeQROverlayBtn.onclick = closeQrOverlay;
-    qrHoldOverlay.onclick = function(e) {
-      if (e.target === qrHoldOverlay) closeQrOverlay();
-    };
-
-    // --- Hold-to-disconnect logic ---
-    const disconnectActionBtn = document.getElementById('disconnectActionBtn');
-    let disconnectTimeout = null;
-    disconnectActionBtn.onmousedown = disconnectActionBtn.ontouchstart = function(e) {
-      e.preventDefault();
-      disconnectTimeout = setTimeout(disconnectNow, 800);
-      disconnectActionBtn.classList.add('holding');
-    };
-    disconnectActionBtn.onmouseup = disconnectActionBtn.onmouseleave = disconnectActionBtn.ontouchend = disconnectActionBtn.ontouchcancel = function() {
-      clearTimeout(disconnectTimeout);
-      disconnectActionBtn.classList.remove('holding');
-    };
-    function disconnectNow() {
-      disconnectActionBtn.classList.remove('holding');
-      if (room && userId) {
-        db.ref(`rooms/${room}/users/${userId}`).remove().then(() => {
-          showExpired();
-        });
-      } else {
-        showExpired();
-      }
-    }
-
-    // --- Session logic ---
-    function startCreateSession() {
-      document.getElementById('mainLogoScreen').classList.remove('visible');
-      document.getElementById('mainLogoScreen').style.display = 'none';
-      room = generateRandomRoomCode(12);
-      userNickname = localStorage.getItem('qp_nick') || prompt("Enter a nickname (optional):") || "User";
-      localStorage.setItem('qp_nick', userNickname);
-      window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
-      initRoom();
-    }
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("room")) {
-      room = query.get("room");
-      document.getElementById('mainLogoScreen').classList.remove('visible');
-      document.getElementById('mainLogoScreen').style.display = 'none';
-      userNickname = localStorage.getItem('qp_nick') || prompt("Enter a nickname (optional):") || "User";
-      localStorage.setItem('qp_nick', userNickname);
-      initRoom();
-    }
-    function generateRandomRoomCode(length = 12) {
-      const array = new Uint8Array(length);
-      window.crypto.getRandomValues(array);
-      return Array.from(array, b => b.toString(36).padStart(2, '0')).join('');
-    }
-    function removeListeners() {
-      if (usersListener) usersListener.off();
-      if (roomListener) roomListener.off();
-    }
-    function initRoom() {
-      document.getElementById("chatUI").style.display = "flex";
-      document.getElementById("chatUI").classList.add("visible");
-      document.getElementById("expiredMsg").style.display = "none";
-      roomExpired = false;
-      document.getElementById("roomInfo").innerText = `Room: ${room}`;
-      userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-      const userRef = db.ref(`rooms/${room}/users/${userId}`);
-      userRef.set({ nickname: userNickname, connected: true });
-      userRef.onDisconnect().remove();
-      usersListener = db.ref(`rooms/${room}/users`);
-      usersListener.on('value', snapshot => {
-        const users = snapshot.val();
-        const userCount = users ? Object.keys(users).length : 0;
-        if (userCount > 2) {
-          setTimeout(() => db.ref(`rooms/${room}`).remove(), 120);
-        }
-      });
-      roomListener = db.ref(`rooms/${room}`);
-      roomListener.on('value', snapshot => {
-        if (!snapshot.exists()) {
-          showExpired();
-        }
-      });
-      listenToRoom();
-    }
-    function showExpired() {
-      roomExpired = true;
-      document.getElementById("chatUI").classList.remove("visible");
-      document.getElementById("chatUI").style.display = "none";
-      document.getElementById("expiredMsg").style.display = "block";
-      if (window.history && window.history.replaceState) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      } else {
-        window.location.search = '';
-      }
-    }
-    async function sendMsg(msg, audioUrl) {
-      if ((!msg && !audioUrl) || !room) return;
-      db.ref(`rooms/${room}/messages`).push({
-        user: userNickname,
-        text: msg || "",
-        audio: audioUrl || "",
-        ts: Date.now()
-      });
-    }
-    function listenToRoom() {
-      if (!room) return;
-      db.ref(`rooms/${room}/messages`).off();
-      document.getElementById("chatBox").innerHTML = "";
-      db.ref(`rooms/${room}/messages`).on("child_added", snapshot => {
-        const data = snapshot.val();
-        const box = document.getElementById("chatBox");
-        let html = `<div><b>${data.user}:</b> `;
-        if (data.text) html += `${data.text}`;
-        if (data.audio) {
-          html += `<br><audio controls style="margin-top:7px;max-width:95%;"><source src="${data.audio}" type="audio/webm"></audio>`;
-        }
-        html += `</div>`;
-        box.innerHTML += html;
-        box.scrollTop = box.scrollHeight;
-      });
-    }
-    document.getElementById("msgInput").addEventListener("keydown", function(event) {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        const msg = this.value.trim();
-        if (msg) {
-          sendMsg(msg);
-          this.value = "";
-        }
-      }
+  function renderQrFlash() {
+    const qrDiv = document.getElementById('qrFlashCode');
+    qrDiv.innerHTML = "";
+    const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
+    new QRCode(qrDiv, {
+      text: joinUrl,
+      width: 240,
+      height: 240,
+      colorDark: "#222",
+      colorLight: "#fff",
+      correctLevel: QRCode.CorrectLevel.H
     });
-    let isSpeechActive = false;
-    function startSpeechToText() {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert('Speech recognition not supported in this browser.');
-        return;
-      }
-      if (isSpeechActive) return;
-      isSpeechActive = true;
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById("msgInput").value = transcript;
-        sendMsg(transcript);
-        isSpeechActive = false;
-      };
-      recognition.onerror = () => { isSpeechActive = false; };
-      recognition.onend = () => { isSpeechActive = false; };
-      recognition.start();
-    }
-    // Voice recording feature
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let isRecording = false;
-    function toggleRecording() {
-      if (isRecording) {
-        stopRecording();
-      } else {
-        startRecording();
-      }
-    }
-    function startRecording() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('Voice recording not supported in this browser.');
-        return;
-      }
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-          mediaRecorder = new MediaRecorder(stream);
-          audioChunks = [];
-          mediaRecorder.ondataavailable = function(e) {
-            if (e.data.size > 0) {
-              audioChunks.push(e.data);
-            }
-          };
-          mediaRecorder.onstop = function() {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const reader = new FileReader();
-            reader.onloadend = function() {
-              sendMsg("", reader.result);
-            };
-            reader.readAsDataURL(audioBlob);
-          };
-          mediaRecorder.start();
-          isRecording = true;
-          document.getElementById("recordBtn").classList.add("recording");
-          document.getElementById("recordBtn").innerText = "⏹️";
-        })
-        .catch(err => {
-          alert('Unable to access microphone.');
-        });
-    }
-    function stopRecording() {
-      if (mediaRecorder && isRecording) {
-        mediaRecorder.stop();
-        isRecording = false;
-        document.getElementById("recordBtn").classList.remove("recording");
-        document.getElementById("recordBtn").innerText = "🎙️";
-      }
-    }
+  }
 
-    // Emoji button logic (desktop tip, mobile users use system keyboard)
-    document.getElementById("emojiBtn").onclick = function() {
-      const textarea = document.getElementById("msgInput");
-      // Try to open native emoji picker (some desktop browsers support this with keyboard shortcut)
-      if (navigator.userAgent.includes("Mac")) {
-        alert("Tip: On Mac, press Control + Command + Space to open the emoji picker!");
-        textarea.focus();
-      } else if (navigator.userAgent.includes("Windows")) {
-        alert("Tip: On Windows, press Windows Key + . (period) to open the emoji picker!");
-        textarea.focus();
-      } else {
-        textarea.value += "😊";
-        textarea.focus();
-      }
-    };
+  function openQrFlash() {
+    qrFlashOverlay.style.display = 'flex';
+    renderQrFlash();
+    clearTimeout(qrFlashTimeout);
+    qrFlashTimeout = setTimeout(() => {
+      qrFlashOverlay.style.display = 'none';
+    }, 10000); // QR flashes for 10 seconds
+  }
 
-    // Expired room: allow new create/join from overlay (no reload)
-    document.getElementById("expiredCreateBtn").onclick = function() {
-      document.getElementById("expiredMsg").style.display = "none";
-      document.getElementById("mainLogoScreen").style.display = "flex";
-    };
-    document.getElementById("expiredJoinBtn").onclick = function() {
-      document.getElementById("expiredMsg").style.display = "none";
-      document.getElementById("mainLogoScreen").style.display = "flex";
-    };
-  </script>
+  function closeQrFlash() {
+    qrFlashOverlay.style.display = 'none';
+    clearTimeout(qrFlashTimeout);
+  }
+
+  flashQrBtn.onclick = openQrFlash;
+  closeQrFlashBtn.onclick = closeQrFlash;
+  qrFlashOverlay.onclick = function(e) {
+    if (e.target === qrFlashOverlay) closeQrFlash();
+  };
+</script>
 </body>
 </html>
