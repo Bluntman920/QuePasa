@@ -323,10 +323,100 @@
       pointer-events: none;
       font-family: Arial, sans-serif;
     }
+    /* --- Hold Flash QR Button --- */
+    #holdFlashQRBtn {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 101;
+      background: #27a3cc;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 54px;
+      height: 54px;
+      font-size: 1.5em;
+      font-weight: bold;
+      box-shadow: 0 2px 12px #0003;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+      transition: background 0.2s;
+    }
+    #holdFlashQRBtn.holding {
+      background: #136a8a;
+    }
+    #holdFlashQRBtn .progress-ring {
+      position: absolute;
+      top: -5px; left: -5px;
+      width: 64px; height: 64px;
+      z-index: 101;
+      pointer-events: none;
+    }
+    #holdFlashQRBtn .progress-ring__circle {
+      stroke: #fff;
+      stroke-width: 5;
+      fill: transparent;
+      transition: stroke 0.2s;
+    }
+    #holdFlashQRBtnText {
+      z-index: 102;
+      position: absolute;
+      left: 0; top: 0;
+      width: 54px; height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.97em;
+      pointer-events: none;
+      font-family: Arial, sans-serif;
+    }
+    /* --- Flash QR Overlay --- */
+    #flashQROverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.96);
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      flex-direction: column;
+      transition: opacity 0.2s;
+    }
+    #flashQROverlay.visible {
+      display: flex;
+    }
+    #flashQROverlay #flashQRcode {
+      background: #fff;
+      border-radius: 32px;
+      box-shadow: 0 2px 16px #0003;
+      padding: 1.7em;
+      margin-bottom: 1.2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 240px;
+      max-width: 90vw;
+    }
+    #flashQROverlay #flashQRroom {
+      font-size: 1.1em;
+      color: #555;
+      font-weight: bold;
+      margin-top: 0.7em;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5em;
+    }
     @media (max-width: 600px) {
-      #holdDisconnectBtn { 
-        top: unset; bottom: 18px; right: 18px;
-      }
+      #chatBox, #chatInputArea { width: 98vw; max-width: 99vw;}
+      #bigQrContainer { padding: 0.5em;}
+      #tipSection, #tipSectionChat { padding: 1em 0.2em 1.1em 0.2em;}
+      #holdDisconnectBtn, #holdFlashQRBtn { top: unset; bottom: 18px;}
+      #holdDisconnectBtn { right: 18px; }
+      #holdFlashQRBtn { left: 18px;}
     }
   </style>
 </head>
@@ -359,6 +449,14 @@
     <!-- CHAT UI -->
     <div id="chatUI">
       <img id="chatBgLogo" src="icon2.png" alt="">
+      <!-- Hold-to-flash-QR button -->
+      <button id="holdFlashQRBtn" title="Hold to Flash QR" style="display:none;">
+        <svg class="progress-ring" width="64" height="64">
+          <circle class="progress-ring__circle" stroke="#fff" stroke-width="5" fill="transparent" r="26" cx="32" cy="32"/>
+        </svg>
+        <span id="holdFlashQRBtnText">QR</span>
+      </button>
+      <!-- Hold-to-disconnect button -->
       <button id="holdDisconnectBtn" title="Hold to Disconnect" style="display:none;">
         <svg class="progress-ring" width="64" height="64">
           <circle class="progress-ring__circle" stroke="#fff" stroke-width="5" fill="transparent" r="26" cx="32" cy="32"/>
@@ -378,6 +476,12 @@
         <a id="tipLinkChat" href="https://pay.google.com/your-link-here" target="_blank" rel="noopener">Tip via Google Pay</a>
         <div style="font-size:0.97em;color:#666;margin-top:0.3em;">Tip your host!</div>
       </div>
+    </div>
+    <!-- Flash QR Overlay -->
+    <div id="flashQROverlay">
+      <div id="flashQRcode"></div>
+      <div id="flashQRroom"></div>
+      <div style="color:#555;font-size:1em;margin-bottom:1em;">Have them scan this QR to join you.</div>
     </div>
     <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
   </div>
@@ -400,16 +504,15 @@
     let userNickname = "";
     let userId = "";
     let roomExpired = false;
-    let qrTimeout;
     let usersListener = null;
     let roomListener = null;
 
+    // --- UI Show/hide ---
     function showLanguageScreen() {
       document.getElementById('mainLogoScreen').classList.remove('visible');
       document.getElementById('mainLogoScreen').style.display = 'none';
       document.getElementById('languageScreen').style.display = 'flex';
       document.getElementById('languageScreen').classList.add('visible');
-      // Try to pre-fill nickname from localStorage
       if (localStorage.getItem('qp_nick')) {
         document.getElementById('nickname').value = localStorage.getItem('qp_nick');
       }
@@ -418,7 +521,6 @@
       userLang = document.getElementById("languageSelect").value;
       userNickname = document.getElementById("nickname").value.trim() || "User";
       localStorage.setItem('qp_nick', userNickname);
-      // Generate a new room code and store in memory (not URL)
       room = generateRandomRoomCode(12);
       window.history.replaceState({}, '', window.location.pathname); // Clear ?room=... if any
       document.getElementById('languageScreen').classList.remove('visible');
@@ -428,7 +530,6 @@
     function showQrScreen() {
       document.getElementById('qrScreen').style.display = 'flex';
       document.getElementById('qrScreen').classList.add('visible');
-      // Generate QR code for join link
       const qrDiv = document.getElementById('bigQrCode');
       qrDiv.innerHTML = "";
       const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
@@ -451,8 +552,27 @@
       room = query.get("room");
       document.getElementById('mainLogoScreen').classList.remove('visible');
       document.getElementById('mainLogoScreen').style.display = 'none';
-      document.getElementById('languageScreen').style.display = 'flex';
-      document.getElementById('languageScreen').classList.add('visible');
+      // Instead of language screen, go straight to chat with language selection
+      // But we need user's language/nickname, so show language screen if not in sessionStorage
+      if (!sessionStorage.getItem('qp_lang') || !sessionStorage.getItem('qp_nick')) {
+        document.getElementById('languageScreen').style.display = 'flex';
+        document.getElementById('languageScreen').classList.add('visible');
+        // On language screen "Next", overwrite goToQrScreen to go straight to chat:
+        document.querySelector("#languageScreen button").onclick = function() {
+          userLang = document.getElementById("languageSelect").value;
+          userNickname = document.getElementById("nickname").value.trim() || "User";
+          sessionStorage.setItem('qp_lang', userLang);
+          sessionStorage.setItem('qp_nick', userNickname);
+          window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
+          document.getElementById('languageScreen').classList.remove('visible');
+          document.getElementById('languageScreen').style.display = 'none';
+          initRoom();
+        }
+      } else {
+        userLang = sessionStorage.getItem('qp_lang');
+        userNickname = sessionStorage.getItem('qp_nick');
+        initRoom();
+      }
     }
     // --- Core Chat/Room Logic ---
     function generateRandomRoomCode(length = 12) {
@@ -468,18 +588,15 @@
       document.getElementById("chatUI").style.display = "flex";
       document.getElementById("chatUI").classList.add("visible");
       document.getElementById("expiredMsg").style.display = "none";
-      // Show disconnect button
+      // Show disconnect and flash QR buttons
       document.getElementById("holdDisconnectBtn").style.display = "flex";
+      document.getElementById("holdFlashQRBtn").style.display = "flex";
       roomExpired = false;
-      // Show code for reference
       document.getElementById("roomInfo").innerText = `Room: ${room}`;
-      // Unique user ID
       userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-      // Add this user to users list in room
       const userRef = db.ref(`rooms/${room}/users/${userId}`);
       userRef.set({ nickname: userNickname, connected: true, lang: userLang });
       userRef.onDisconnect().remove();
-      // Listen for user count
       usersListener = db.ref(`rooms/${room}/users`);
       usersListener.on('value', snapshot => {
         const users = snapshot.val();
@@ -488,7 +605,6 @@
           setTimeout(() => db.ref(`rooms/${room}`).remove(), 120);
         }
       });
-      // Listen for room deletion
       roomListener = db.ref(`rooms/${room}`);
       roomListener.on('value', snapshot => {
         if (!snapshot.exists()) {
@@ -502,6 +618,8 @@
       document.getElementById("chatUI").classList.remove("visible");
       document.getElementById("chatUI").style.display = "none";
       document.getElementById("holdDisconnectBtn").style.display = "none";
+      document.getElementById("holdFlashQRBtn").style.display = "none";
+      document.getElementById("flashQROverlay").classList.remove("visible");
       document.getElementById("languageScreen").classList.remove("visible");
       document.getElementById("languageScreen").style.display = "none";
       document.getElementById("qrScreen").classList.remove("visible");
@@ -552,7 +670,6 @@
         const data = snapshot.val();
         const box = document.getElementById("chatBox");
         if (data.lang && data.lang !== userLang) {
-          // Real-time translation!
           box.innerHTML += `<div><b>${data.user}:</b> <span title="translated">(translating...)</span></div>`;
           const thisDiv = box.lastChild;
           const translated = await realTranslate(data.text, data.lang, userLang);
@@ -604,8 +721,7 @@
     let holdTimeout = null;
     let holdStart = 0;
     let holdProgressFrame = null;
-    const HOLD_TIME = 3000; // ms
-
+    const HOLD_TIME = 3000;
     function setRingPercent(percent) {
       const radius = ring.r.baseVal.value;
       const circumference = 2 * Math.PI * radius;
@@ -613,14 +729,12 @@
       ring.style.strokeDashoffset = `${circumference - percent/100 * circumference}`;
     }
     setRingPercent(0);
-
     holdBtn.addEventListener('mousedown', startHold);
     holdBtn.addEventListener('touchstart', startHold);
     holdBtn.addEventListener('mouseup', cancelHold);
     holdBtn.addEventListener('mouseleave', cancelHold);
     holdBtn.addEventListener('touchend', cancelHold);
     holdBtn.addEventListener('touchcancel', cancelHold);
-
     function startHold(e) {
       e.preventDefault();
       if (holdTimeout) return;
@@ -652,7 +766,6 @@
       cancelHold();
       holdBtn.classList.remove('holding');
       setRingPercent(100);
-      // Remove self from room and reset UI
       if (room && userId) {
         db.ref(`rooms/${room}/users/${userId}`).remove().then(() => {
           showExpired();
@@ -661,6 +774,81 @@
         showExpired();
       }
     }
+
+    // --- Hold-to-flash-QR logic ---
+    const flashBtn = document.getElementById('holdFlashQRBtn');
+    const flashText = document.getElementById('holdFlashQRBtnText');
+    const flashRing = flashBtn.querySelector('.progress-ring__circle');
+    let flashTimeout = null;
+    let flashStart = 0;
+    let flashProgressFrame = null;
+    const FLASH_HOLD = 500; // ms to prevent accidental tap
+    function setFlashRingPercent(percent) {
+      const radius = flashRing.r.baseVal.value;
+      const circumference = 2 * Math.PI * radius;
+      flashRing.style.strokeDasharray = `${circumference} ${circumference}`;
+      flashRing.style.strokeDashoffset = `${circumference - percent/100 * circumference}`;
+    }
+    setFlashRingPercent(0);
+    flashBtn.addEventListener('mousedown', startFlashHold);
+    flashBtn.addEventListener('touchstart', startFlashHold);
+    flashBtn.addEventListener('mouseup', cancelFlashHold);
+    flashBtn.addEventListener('mouseleave', cancelFlashHold);
+    flashBtn.addEventListener('touchend', cancelFlashHold);
+    flashBtn.addEventListener('touchcancel', cancelFlashHold);
+    function startFlashHold(e) {
+      e.preventDefault();
+      if (flashTimeout) return;
+      flashBtn.classList.add('holding');
+      flashStart = Date.now();
+      setFlashRingPercent(0);
+      function updateProgress() {
+        const elapsed = Date.now() - flashStart;
+        const percent = Math.min(100, elapsed / FLASH_HOLD * 100);
+        setFlashRingPercent(percent);
+        if (elapsed >= FLASH_HOLD) {
+          showFlashQRCode();
+        } else {
+          flashProgressFrame = requestAnimationFrame(updateProgress);
+        }
+      }
+      flashProgressFrame = requestAnimationFrame(updateProgress);
+      flashTimeout = setTimeout(showFlashQRCode, FLASH_HOLD);
+    }
+    function cancelFlashHold(e) {
+      if (!flashTimeout) return;
+      clearTimeout(flashTimeout);
+      flashTimeout = null;
+      if (flashProgressFrame) cancelAnimationFrame(flashProgressFrame);
+      setFlashRingPercent(0);
+      flashBtn.classList.remove('holding');
+      hideFlashQRCode();
+    }
+    // --- Flash QR full overlay ---
+    function showFlashQRCode() {
+      cancelFlashHold();
+      const overlay = document.getElementById('flashQROverlay');
+      overlay.classList.add('visible');
+      const qrDiv = document.getElementById('flashQRcode');
+      qrDiv.innerHTML = '';
+      const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
+      new QRCode(qrDiv, {
+        text: joinUrl,
+        width: Math.min(window.innerWidth * 0.8, 340),
+        height: Math.min(window.innerWidth * 0.8, 340),
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      document.getElementById('flashQRroom').innerText = `Room: ${room}`;
+    }
+    function hideFlashQRCode() {
+      document.getElementById('flashQROverlay').classList.remove('visible');
+    }
+    // Hide QR overlay if user taps background or presses Escape
+    document.getElementById('flashQROverlay').addEventListener('mousedown', hideFlashQRCode);
+    document.getElementById('flashQROverlay').addEventListener('touchstart', hideFlashQRCode);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') hideFlashQRCode();
+    });
   </script>
 </body>
 </html>
