@@ -253,4 +253,34 @@
     function onDrag(e) {
       if (!dragging) return;
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      offsetX = Math.max(0, Math.min(clientX - startX, bar.clientWidth - knob.clientWidth
+      offsetX = Math.max(0, Math.min(clientX - startX, bar.clientWidth - knob.clientWidth));
+      knob.style.left = offsetX + 'px';
+      document.getElementById('selfDestructText').style.opacity = 0.75 - 0.7 * (offsetX / (bar.clientWidth - knob.clientWidth));
+    }
+    function stopDrag() {
+      if (!dragging) return;
+      dragging = false;
+      knob.classList.remove('dragging');
+      // If knob is at the end, trigger self-destruct
+      if (offsetX > (bar.clientWidth - knob.clientWidth - 6)) {
+        // Self-destruct: wipe chat and return to home
+        chatbox.innerHTML = '';
+        chatSection.style.display = 'none';
+        createBtn.style.display = 'block';
+        cashappLanding.style.display = 'block';
+        knob.style.left = '0px';
+        document.getElementById('selfDestructText').style.opacity = 0.75;
+        alert('💥 Chat self-destructed!');
+        return;
+      }
+      // Reset slider
+      knob.style.left = '0px';
+      document.getElementById('selfDestructText').style.opacity = 0.75;
+      document.removeEventListener('mousemove', onDrag);
+      document.removeEventListener('touchmove', onDrag);
+      document.removeEventListener('mouseup', stopDrag);
+      document.removeEventListener('touchend', stopDrag);
+    }
+  </script>
+</body>
+</html>
