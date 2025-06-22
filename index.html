@@ -90,13 +90,14 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID",
-      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com"
+      apiKey: "AIzaSyDNz_qKPg7LfhVcXtKKTcTU-ynfBLkOSC4",
+      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
+      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
+      projectId: "quepasaapp-2e0f7",
+      storageBucket: "quepasaapp-2e0f7.appspot.com",
+      messagingSenderId: "508026556029",
+      appId: "1:508026556029:web:e8ff783647a23ecc571d314",
+      measurementId: "G-BTF5SX93LW"
     };
 
     const app = firebase.initializeApp(firebaseConfig);
@@ -113,6 +114,7 @@
     function createRoom() {
       room = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
       showChatUI(room);
+      listenToRoom();
     }
 
     function joinRoom() {
@@ -131,7 +133,7 @@
       const qrElement = document.getElementById("qrcode");
       qrElement.innerHTML = "";
       new QRCode(qrElement, {
-        text: `${window.location.href}?room=${roomCode}`,
+        text: `${window.location.origin}${window.location.pathname}?room=${roomCode}`,
         width: 256,
         height: 256,
         correctLevel: QRCode.CorrectLevel.H
