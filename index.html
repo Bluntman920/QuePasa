@@ -20,9 +20,9 @@
       padding: 2em;
     }
     #quePasaLogo {
-      width: 160px;
+      width: 180px;
       max-width: 90vw;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       margin-top: 8px;
       display: block;
       border-radius: 24px;
@@ -37,8 +37,8 @@
       box-shadow: 0 2px 12px #0001;
     }
     #tipQr {
-      width: 180px;
-      height: 180px;
+      width: 200px;
+      height: 200px;
       border-radius: 12px;
       margin-bottom: 0.5em;
       box-shadow: 0 1px 8px #0001;
@@ -79,10 +79,13 @@
       padding: 0.5em;
       border-radius: 8px;
       border: 1px solid #ddd;
+      box-sizing: border-box;
+      resize: none;
     }
     #chatBox {
       margin-top: 1em;
       max-height: 300px;
+      min-height: 80px;
       overflow-y: auto;
       border: 1px solid #ccc;
       padding: 1em;
@@ -90,6 +93,9 @@
       margin-left: auto;
       margin-right: auto;
       background: #fafafa;
+      text-align: left;
+      border-radius: 10px;
+      font-size: 1em;
     }
     select, button {
       font-size: 1em;
@@ -115,6 +121,17 @@
       margin: 1em 0 0.2em 0;
       font-weight: bold;
     }
+    #expiredMsg {
+      font-size: 1.2em;
+      color: #c12;
+      margin-top: 2em;
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .app-container { padding: 0.5em; }
+      #chatBox, textarea, input[type="text"] { width: 95%; }
+      #tipSection { padding: 1.25em 0.5em 1.5em 0.5em; }
+    }
   </style>
 </head>
 <body>
@@ -122,7 +139,7 @@
     <!-- Que Pasa Logo -->
     <img id="quePasaLogo" src="icon2.png" alt="Que Pasa App Logo">
 
-    <h1>Que Pasa App</h1>
+    <h1 style="margin-top: 0;">Que Pasa App</h1>
 
     <!-- Tip/Payment QR Section -->
     <div id="tipSection">
@@ -156,6 +173,8 @@
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
       </div>
     </div>
+
+    <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
   </div>
 
   <script>
@@ -178,6 +197,14 @@
     let userLang = "en";
     let userNickname = "";
     let isSpeechActive = false;
+    let userId = "";
+
+    // Generate a secure random room code
+    function generateRandomRoomCode(length = 12) {
+      const array = new Uint8Array(length);
+      window.crypto.getRandomValues(array);
+      return Array.from(array, b => b.toString(36).padStart(2, '0')).join('');
+    }
 
     // --- Room Creation/Join ---
     function autoCreateOrJoin() {
@@ -189,7 +216,7 @@
         room = roomParam;
         initRoom();
       } else {
-        room = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
+        room = generateRandomRoomCode(12);
         window.location.search = `?room=${room}`;
       }
     }
@@ -198,6 +225,7 @@
       document.getElementById("languageScreen").classList.add("hidden");
       document.getElementById("chatUI").classList.remove("hidden");
       document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
+      document.getElementById("expiredMsg").style.display = "none";
 
       // Show QR code for 5 minutes
       const qrElement = document.getElementById("qrcode");
@@ -211,83 +239,4 @@
       qrElement.classList.add("visible");
       if (qrTimeout) clearTimeout(qrTimeout);
       qrTimeout = setTimeout(() => {
-        qrElement.classList.remove("visible");
-      }, 5 * 60 * 1000);
-
-      listenToRoom();
-    }
-
-    async function sendMsg(msg) {
-      if (!msg || !room) return;
-      db.ref(`rooms/${room}`).push({
-        user: userNickname,
-        lang: userLang,
-        text: msg,
-        ts: Date.now()
-      });
-    }
-
-    function listenToRoom() {
-      if (!room) return;
-      db.ref(`rooms/${room}`).on("child_added", snapshot => {
-        const data = snapshot.val();
-        const box = document.getElementById("chatBox");
-        if (data.lang !== userLang) {
-          box.innerHTML += `<div><b>${data.user}:</b> <span title="translated">(translated) </span>${fakeTranslate(data.text, data.lang, userLang)}</div>`;
-        } else {
-          box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
-        }
-        box.scrollTop = box.scrollHeight;
-      });
-    }
-
-    document.getElementById("msgInput").addEventListener("keydown", function(event) {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        const msg = this.value.trim();
-        if (msg) {
-          sendMsg(msg);
-          this.value = "";
-        }
-      }
-    });
-
-    // --- Speech-to-text ---
-    function startSpeechToText() {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert('Speech recognition not supported in this browser.');
-        return;
-      }
-      if (isSpeechActive) return;
-      isSpeechActive = true;
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = userLang === "es" ? "es-ES" : "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById("msgInput").value = transcript;
-        sendMsg(transcript);
-        isSpeechActive = false;
-      };
-      recognition.onerror = () => { isSpeechActive = false; };
-      recognition.onend = () => { isSpeechActive = false; };
-      recognition.start();
-    }
-
-    function fakeTranslate(text, from, to) {
-      if (from === "en" && to === "es") return `[EN→ES] ${text}`;
-      if (from === "es" && to === "en") return `[ES→EN] ${text}`;
-      return text;
-    }
-
-    // --- On page load: join room if link has ?room=xxx ---
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("room")) {
-      room = query.get("room");
-      document.getElementById("languageScreen").classList.remove("hidden");
-      document.getElementById("chatUI").classList.add("hidden");
-    }
-  </script>
-</body>
-</html>
+        qrElement.classList
