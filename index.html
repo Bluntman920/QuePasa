@@ -10,9 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0; height: 100%;
     }
     body {
       min-height: 100vh;
@@ -34,15 +32,13 @@
       z-index: 1;
     }
     #mainLogoScreen {
-      width: 100vw;
-      height: 100vh;
+      width: 100vw; height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       background: #fff;
       position: absolute;
-      top: 0; left: 0;
-      z-index: 10;
+      top: 0; left: 0; z-index: 10;
       cursor: pointer;
       flex-direction: column;
     }
@@ -61,7 +57,6 @@
       font-weight: 500;
       color: #444;
       opacity: 0.7;
-      margin: 0;
       margin-top: 0.5em;
       letter-spacing: 0.05em;
       animation: bounce 1.2s infinite alternate;
@@ -70,13 +65,9 @@
       0% { transform: translateY(0);}
       100% { transform: translateY(-10px);}
     }
-    #languageScreen, #qrScreen, #chatUI {
-      display: none;
-    }
-    .visible {
-      display: flex !important;
-    }
-    #languageScreen, #qrScreen, #chatUI {
+    #qrScreen, #chatUI { display: none; }
+    .visible { display: flex !important; }
+    #qrScreen, #chatUI {
       min-height: 100vh;
       min-width: 100vw;
       flex-direction: column;
@@ -87,56 +78,41 @@
       z-index: 5;
       background: #fff;
     }
-    #languageScreen select, #languageScreen input, #languageScreen button {
-      font-size: 1.1em;
-      margin: 1em 0.3em;
-      padding: 0.5em;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-    #languageScreen label {
-      font-size: 1.2em;
-      margin-top: 1em;
-    }
-    #qrScreen {
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
     #bigQrContainer {
       background: #fff;
-      border-radius: 32px;
-      box-shadow: 0 2px 16px #0003;
-      padding: 1.5em;
-      margin-bottom: 1.2em;
+      border-radius: 40px;
+      box-shadow: 0 2px 20px #0003;
+      padding: 2.3em;
+      margin-bottom: 1.7em;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     #bigQrCode {
-      width: min(340px, 90vw);
-      height: min(340px, 90vw);
+      width: min(410px, 90vw);
+      height: min(410px, 90vw);
       display: block;
       margin-bottom: 1em;
     }
     #qrInstructions {
-      margin: 0.5em 0 0 0;
+      margin: 0.7em 0 0 0;
       color: #333;
-      font-size: 1.1em;
-      font-weight: 500;
+      font-size: 1.35em;
+      font-weight: 600;
     }
     #continueToChatBtn {
-      margin-top: 1.5em;
-      font-size: 1.2em;
+      margin-top: 2em;
+      font-size: 1.45em;
       background: #27c46c;
       color: #fff;
       border: none;
-      padding: 0.7em 2em;
-      border-radius: 14px;
+      padding: 1em 3.5em;
+      border-radius: 18px;
       font-weight: bold;
       box-shadow: 0 2px 10px #27c46c22;
       cursor: pointer;
       transition: background 0.15s;
+      letter-spacing: 0.03em;
     }
     #continueToChatBtn:hover { background: #1a9c51; }
     #chatUI {
@@ -148,6 +124,11 @@
       min-width: 100vw;
       padding-top: 2.5em;
       position: relative;
+    }
+    #google_translate_element {
+      margin: 1.7em 0 1em 0;
+      font-size: 1.3em;
+      z-index: 999;
     }
     #chatBgLogo {
       position: fixed;
@@ -163,49 +144,49 @@
       user-select: none;
     }
     #chatBox {
-      margin-top: 1em;
+      margin-top: 1.2em;
       max-height: 38vh;
       min-height: 80px;
       overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 1em;
-      width: 82vw;
-      max-width: 540px;
+      border: 1.5px solid #ccc;
+      padding: 1.3em;
+      width: 87vw;
+      max-width: 630px;
       margin-left: auto;
       margin-right: auto;
       background: #fafafa;
       text-align: left;
-      border-radius: 10px;
-      font-size: 1.1em;
+      border-radius: 14px;
+      font-size: 1.23em;
       position: relative;
       z-index: 1;
     }
     #chatInputArea {
-      margin-top: 1em;
-      width: 82vw; max-width: 540px;
+      margin-top: 1.2em;
+      width: 87vw; max-width: 630px;
       display: flex;
       align-items: center;
-      gap: 0.5em;
+      gap: 0.6em;
       position: relative;
       z-index: 2;
     }
     #msgInput {
       width: 100%;
-      font-size: 1.1em;
-      padding: 0.7em;
-      border-radius: 10px;
-      border: 1px solid #bbb;
+      font-size: 1.18em;
+      padding: 0.8em;
+      border-radius: 13px;
+      border: 1.3px solid #bbb;
       resize: none;
       box-sizing: border-box;
     }
     #micBtn {
       background: #e3f6fd;
-      border: 1px solid #27a3cc;
+      border: 1.5px solid #27a3cc;
       color: #27a3cc;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 1.3em;
+      width: 50px;
+      height: 50px;
+      font-size: 1.55em;
       vertical-align: middle;
       cursor: pointer;
       display: flex;
@@ -213,47 +194,75 @@
       justify-content: center;
     }
     #roomInfo {
-      font-size: 1.1em;
-      margin-bottom: 0.3em;
+      font-size: 1.27em;
+      margin-bottom: 0.4em;
       font-weight: bold;
       color: #444;
       letter-spacing: 0.08em;
     }
     #tipSectionChat {
-      margin: 2em 0 0.7em 0;
+      margin: 2.2em 0 1.2em 0;
       background: #f9f9f9;
-      border-radius: 16px;
+      border-radius: 22px;
       display: inline-block;
-      padding: 1em 1.5em 1.1em 1.5em;
-      box-shadow: 0 2px 12px #0001;
+      padding: 2em 2.3em 2.3em 2.3em;
+      box-shadow: 0 2px 18px #0001;
       position: relative;
       z-index: 2;
     }
-    #tipQrChat {
+    .tipIconsRow {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 1.6em;
+      margin-bottom: 0.8em;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .tipIcon {
       width: 110px;
       height: 110px;
-      border-radius: 9px;
-      margin-bottom: 0.3em;
-      box-shadow: 0 1px 8px #0001;
+      border-radius: 16px;
       background: #fff;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 0.3em 0 0.3em;
+      box-shadow: 0 2px 16px #27c46c11;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid #27c46c33;
+      transition: box-shadow 0.15s;
     }
-    #tipLinkChat {
+    .tipIcon img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .tipPayBtn {
       display: inline-block;
-      margin-top: 0.2em;
-      padding: 0.3em 0.7em;
+      margin-top: 0.4em;
+      padding: 0.8em 2.2em;
       background: #27c46c;
       color: #fff;
-      border-radius: 8px;
+      border-radius: 14px;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1em;
+      font-size: 1.21em;
       box-shadow: 0 2px 12px #27c46c22;
       transition: background 0.15s;
+      margin-right: 0.7em;
+      letter-spacing: 0.03em;
     }
-    #tipLinkChat:hover { background: #1a9c51; }
+    .tipPayBtn:last-child { margin-right: 0; }
+    .tipPayBtn:hover { background: #1a9c51; }
+    #tipDesc {
+      font-size:1.13em;
+      color:#444;
+      margin-top:0.7em;
+      margin-bottom:0.1em;
+      text-align:center;
+      font-weight:500;
+    }
     #expiredMsg {
       font-size: 1.2em;
       color: #c12;
@@ -272,173 +281,94 @@
       border-radius: 24px;
       box-shadow: 0 2px 12px #c12a;
     }
-    /* --- Hold Disconnect Button --- */
-    #holdDisconnectBtn {
+    #holdDisconnectBtn, #holdFlashQRBtn {
       position: fixed;
-      top: 18px;
-      right: 18px;
+      width: 80px; height: 80px;
       z-index: 100;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+      font-size: 2em;
+    }
+    #holdDisconnectBtn {
+      top: 28px; right: 28px;
       background: #f44336;
       color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 54px;
-      height: 54px;
-      font-size: 1.7em;
-      font-weight: bold;
-      box-shadow: 0 2px 12px #0003;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      outline: none;
-      transition: background 0.2s;
+      font-size: 2.5em;
+      box-shadow: 0 2px 18px #0003;
     }
-    #holdDisconnectBtn.holding {
-      background: #c62828;
-    }
-    #holdDisconnectBtn .progress-ring {
-      position: absolute;
-      top: -5px; left: -5px;
-      width: 64px; height: 64px;
-      z-index: 101;
+    #holdDisconnectBtn.holding { background: #c62828; }
+    #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring {
+      position: absolute; top: -7px; left: -7px;
+      width: 94px; height: 94px; z-index: 101;
       pointer-events: none;
     }
-    #holdDisconnectBtn .progress-ring__circle {
-      stroke: #fff;
-      stroke-width: 5;
-      fill: transparent;
-      transition: stroke 0.2s;
+    #holdDisconnectBtn .progress-ring__circle, #holdFlashQRBtn .progress-ring__circle {
+      stroke: #fff; stroke-width: 7; fill: transparent; transition: stroke 0.2s;
     }
-    #holdDisconnectBtnText {
+    #holdDisconnectBtnText, #holdFlashQRBtnText {
       z-index: 102;
       position: absolute;
       left: 0; top: 0;
-      width: 54px; height: 54px;
+      width: 80px; height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1em;
-      pointer-events: none;
       font-family: Arial, sans-serif;
+      text-shadow: 0 3px 11px #0006;
     }
-    /* --- Hold Flash QR Button --- */
+    .skullIcon { width: 52px; height: 52px; display: inline-block; vertical-align: middle; }
     #holdFlashQRBtn {
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      z-index: 101;
-      background: #27a3cc;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 54px;
-      height: 54px;
-      font-size: 1.5em;
-      font-weight: bold;
-      box-shadow: 0 2px 12px #0003;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      outline: none;
-      transition: background 0.2s;
+      top: 28px; left: 28px;
+      background: #27a3cc; color: #fff;
+      font-size: 2.2em; box-shadow: 0 2px 12px #0003;
     }
-    #holdFlashQRBtn.holding {
-      background: #136a8a;
-    }
-    #holdFlashQRBtn .progress-ring {
-      position: absolute;
-      top: -5px; left: -5px;
-      width: 64px; height: 64px;
-      z-index: 101;
-      pointer-events: none;
-    }
-    #holdFlashQRBtn .progress-ring__circle {
-      stroke: #fff;
-      stroke-width: 5;
-      fill: transparent;
-      transition: stroke 0.2s;
-    }
-    #holdFlashQRBtnText {
-      z-index: 102;
-      position: absolute;
-      left: 0; top: 0;
-      width: 54px; height: 54px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.97em;
-      pointer-events: none;
-      font-family: Arial, sans-serif;
-    }
-    /* --- Flash QR Overlay --- */
+    #holdFlashQRBtn.holding { background: #136a8a; }
     #flashQROverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
+      display: none; position: fixed; top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: rgba(255,255,255,0.96);
-      align-items: center;
-      justify-content: center;
-      z-index: 500;
-      flex-direction: column;
-      transition: opacity 0.2s;
+      background: rgba(255,255,255,0.97);
+      align-items: center; justify-content: center;
+      z-index: 500; flex-direction: column; transition: opacity 0.2s;
     }
-    #flashQROverlay.visible {
-      display: flex;
-    }
+    #flashQROverlay.visible { display: flex; }
     #flashQROverlay #flashQRcode {
-      background: #fff;
-      border-radius: 32px;
-      box-shadow: 0 2px 16px #0003;
-      padding: 1.7em;
-      margin-bottom: 1.2em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 240px;
-      max-width: 90vw;
+      background: #fff; border-radius: 40px;
+      box-shadow: 0 2px 20px #0003;
+      padding: 2.2em; margin-bottom: 1.5em;
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 260px; max-width: 97vw;
     }
     #flashQROverlay #flashQRroom {
-      font-size: 1.1em;
-      color: #555;
-      font-weight: bold;
-      margin-top: 0.7em;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5em;
+      font-size: 1.35em; color: #555; font-weight: bold;
+      margin-top: 0.9em; letter-spacing: 0.05em; margin-bottom: 0.5em;
     }
     @media (max-width: 600px) {
-      #chatBox, #chatInputArea { width: 98vw; max-width: 99vw;}
-      #bigQrContainer { padding: 0.5em;}
-      #tipSection, #tipSectionChat { padding: 1em 0.2em 1.1em 0.2em;}
-      #holdDisconnectBtn, #holdFlashQRBtn { top: unset; bottom: 18px;}
-      #holdDisconnectBtn { right: 18px; }
-      #holdFlashQRBtn { left: 18px;}
+      #chatBox, #chatInputArea { width: 99vw; max-width: 99vw;}
+      #bigQrContainer { padding: 0.7em;}
+      #tipSection, #tipSectionChat { padding: 1.3em 0.2em 1.3em 0.2em;}
+      #holdDisconnectBtn, #holdFlashQRBtn { top: unset; bottom: 22px;}
+      #holdDisconnectBtn { right: 22px; }
+      #holdFlashQRBtn { left: 22px;}
+      #holdDisconnectBtn, #holdFlashQRBtn { width: 65px; height: 65px;}
+      #holdDisconnectBtnText, #holdFlashQRBtnText { width:65px; height:65px;}
+      #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring { width:75px; height:75px; top:-5px; left:-5px;}
+      .skullIcon { width:40px; height:40px; }
+      .tipIcon { width:88px; height:88px;}
+      .tipIcon img { width:80px; height:80px;}
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- START SCREEN: Big Que Pasa logo, tap to start -->
-    <div id="mainLogoScreen" class="visible" onclick="showLanguageScreen()">
+    <div id="mainLogoScreen" class="visible" onclick="showQrScreen()">
       <img id="mainLogo" src="icon2.png" alt="Que Pasa App Logo">
       <div class="tapPrompt">Tap logo to start</div>
     </div>
-    <!-- Language/Nickname selection -->
-    <div id="languageScreen">
-      <img src="icon2.png" alt="Que Pasa App Logo" style="width:120px;margin-bottom:0.5em;">
-      <label for="languageSelect">Select your language:</label>
-      <select id="languageSelect">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-      </select>
-      <input type="text" id="nickname" maxlength="16" placeholder="Your nickname (optional)">
-      <button onclick="goToQrScreen()">Next</button>
-    </div>
-    <!-- Large QR code screen -->
     <div id="qrScreen">
       <div id="bigQrContainer">
         <div id="bigQrCode"></div>
@@ -446,22 +376,33 @@
       </div>
       <button id="continueToChatBtn" onclick="goToChat()">Continue to Chat</button>
     </div>
-    <!-- CHAT UI -->
     <div id="chatUI">
+      <div id="google_translate_element"></div>
       <img id="chatBgLogo" src="icon2.png" alt="">
-      <!-- Hold-to-flash-QR button -->
       <button id="holdFlashQRBtn" title="Hold to Flash QR" style="display:none;">
-        <svg class="progress-ring" width="64" height="64">
-          <circle class="progress-ring__circle" stroke="#fff" stroke-width="5" fill="transparent" r="26" cx="32" cy="32"/>
+        <svg class="progress-ring" width="94" height="94">
+          <circle class="progress-ring__circle" stroke="#fff" stroke-width="7" fill="transparent" r="36" cx="47" cy="47"/>
         </svg>
         <span id="holdFlashQRBtnText">QR</span>
       </button>
-      <!-- Hold-to-disconnect button -->
       <button id="holdDisconnectBtn" title="Hold to Disconnect" style="display:none;">
-        <svg class="progress-ring" width="64" height="64">
-          <circle class="progress-ring__circle" stroke="#fff" stroke-width="5" fill="transparent" r="26" cx="32" cy="32"/>
+        <svg class="progress-ring" width="94" height="94">
+          <circle class="progress-ring__circle" stroke="#fff" stroke-width="7" fill="transparent" r="36" cx="47" cy="47"/>
         </svg>
-        <span id="holdDisconnectBtnText">⏻</span>
+        <span id="holdDisconnectBtnText">
+          <svg class="skullIcon" viewBox="0 0 64 64">
+            <g>
+              <ellipse cx="32" cy="32" rx="24" ry="24" fill="#ea1c23" stroke="#fff" stroke-width="2"/>
+              <ellipse cx="32" cy="44" rx="10" ry="6" fill="#fff" opacity="0.18"/>
+              <ellipse cx="24" cy="34" rx="3.2" ry="4.8" fill="#222"/>
+              <ellipse cx="40" cy="34" rx="3.2" ry="4.8" fill="#222"/>
+              <ellipse cx="32" cy="47" rx="2.2" ry="1.2" fill="#2c2c2c"/>
+              <ellipse cx="28" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
+              <ellipse cx="36" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
+              <path d="M22 27 Q32 22 42 27" stroke="#fff" stroke-width="2" fill="none"/>
+            </g>
+          </svg>
+        </span>
       </button>
       <div id="roomInfo"></div>
       <div id="chatBox"></div>
@@ -469,22 +410,38 @@
         <textarea id="msgInput" placeholder="Type and press Enter..."></textarea>
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
       </div>
-      <!-- TIP SECTION in chat -->
       <div id="tipSectionChat">
-        <img id="tipQrChat" src="icon.png" alt="Tip QR">
-        <br>
-        <a id="tipLinkChat" href="https://pay.google.com/your-link-here" target="_blank" rel="noopener">Tip via Google Pay</a>
-        <div style="font-size:0.97em;color:#666;margin-top:0.3em;">Tip your host!</div>
+        <div class="tipIconsRow">
+          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" class="tipIcon" title="Tip with PayPal">
+            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
+          </a>
+          <a href="icon.png" target="_blank" class="tipIcon" title="Tip with Cash App">
+            <img src="icon.png" alt="Cash App">
+          </a>
+        </div>
+        <a class="tipPayBtn" href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank">Tip with PayPal</a>
+        <a class="tipPayBtn" href="icon.png" target="_blank">Tip with Cash App</a>
+        <div id="tipDesc">Thank you for supporting Que Pasa!</div>
       </div>
     </div>
-    <!-- Flash QR Overlay -->
     <div id="flashQROverlay">
       <div id="flashQRcode"></div>
       <div id="flashQRroom"></div>
-      <div style="color:#555;font-size:1em;margin-bottom:1em;">Have them scan this QR to join you.</div>
+      <div style="color:#555;font-size:1.18em;margin-bottom:1em;">Have them scan this QR to join you.</div>
     </div>
     <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
   </div>
+  <!-- Google Translate Widget -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,es',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
     // ==== Firebase Config ====
     const firebaseConfig = {
@@ -500,34 +457,16 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let room = "";
-    let userLang = "en";
     let userNickname = "";
     let userId = "";
     let roomExpired = false;
     let usersListener = null;
     let roomListener = null;
 
-    // --- UI Show/hide ---
-    function showLanguageScreen() {
+    function showQrScreen() {
       document.getElementById('mainLogoScreen').classList.remove('visible');
       document.getElementById('mainLogoScreen').style.display = 'none';
-      document.getElementById('languageScreen').style.display = 'flex';
-      document.getElementById('languageScreen').classList.add('visible');
-      if (localStorage.getItem('qp_nick')) {
-        document.getElementById('nickname').value = localStorage.getItem('qp_nick');
-      }
-    }
-    function goToQrScreen() {
-      userLang = document.getElementById("languageSelect").value;
-      userNickname = document.getElementById("nickname").value.trim() || "User";
-      localStorage.setItem('qp_nick', userNickname);
       room = generateRandomRoomCode(12);
-      window.history.replaceState({}, '', window.location.pathname); // Clear ?room=... if any
-      document.getElementById('languageScreen').classList.remove('visible');
-      document.getElementById('languageScreen').style.display = 'none';
-      showQrScreen();
-    }
-    function showQrScreen() {
       document.getElementById('qrScreen').style.display = 'flex';
       document.getElementById('qrScreen').classList.add('visible');
       const qrDiv = document.getElementById('bigQrCode');
@@ -535,14 +474,17 @@
       const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
       new QRCode(qrDiv, {
         text: joinUrl,
-        width: Math.min(window.innerWidth * 0.8, 340),
-        height: Math.min(window.innerWidth * 0.8, 340),
+        width: Math.min(window.innerWidth * 0.8, 410),
+        height: Math.min(window.innerWidth * 0.8, 410),
         correctLevel: QRCode.CorrectLevel.H
       });
     }
     function goToChat() {
       document.getElementById('qrScreen').classList.remove('visible');
       document.getElementById('qrScreen').style.display = 'none';
+      // Ask for nickname on first use
+      userNickname = localStorage.getItem('qp_nick') || prompt("Enter a nickname (optional):") || "User";
+      localStorage.setItem('qp_nick', userNickname);
       window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
       initRoom();
     }
@@ -552,29 +494,10 @@
       room = query.get("room");
       document.getElementById('mainLogoScreen').classList.remove('visible');
       document.getElementById('mainLogoScreen').style.display = 'none';
-      // Instead of language screen, go straight to chat with language selection
-      // But we need user's language/nickname, so show language screen if not in sessionStorage
-      if (!sessionStorage.getItem('qp_lang') || !sessionStorage.getItem('qp_nick')) {
-        document.getElementById('languageScreen').style.display = 'flex';
-        document.getElementById('languageScreen').classList.add('visible');
-        // On language screen "Next", overwrite goToQrScreen to go straight to chat:
-        document.querySelector("#languageScreen button").onclick = function() {
-          userLang = document.getElementById("languageSelect").value;
-          userNickname = document.getElementById("nickname").value.trim() || "User";
-          sessionStorage.setItem('qp_lang', userLang);
-          sessionStorage.setItem('qp_nick', userNickname);
-          window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
-          document.getElementById('languageScreen').classList.remove('visible');
-          document.getElementById('languageScreen').style.display = 'none';
-          initRoom();
-        }
-      } else {
-        userLang = sessionStorage.getItem('qp_lang');
-        userNickname = sessionStorage.getItem('qp_nick');
-        initRoom();
-      }
+      userNickname = localStorage.getItem('qp_nick') || prompt("Enter a nickname (optional):") || "User";
+      localStorage.setItem('qp_nick', userNickname);
+      initRoom();
     }
-    // --- Core Chat/Room Logic ---
     function generateRandomRoomCode(length = 12) {
       const array = new Uint8Array(length);
       window.crypto.getRandomValues(array);
@@ -588,14 +511,13 @@
       document.getElementById("chatUI").style.display = "flex";
       document.getElementById("chatUI").classList.add("visible");
       document.getElementById("expiredMsg").style.display = "none";
-      // Show disconnect and flash QR buttons
       document.getElementById("holdDisconnectBtn").style.display = "flex";
       document.getElementById("holdFlashQRBtn").style.display = "flex";
       roomExpired = false;
       document.getElementById("roomInfo").innerText = `Room: ${room}`;
       userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
       const userRef = db.ref(`rooms/${room}/users/${userId}`);
-      userRef.set({ nickname: userNickname, connected: true, lang: userLang });
+      userRef.set({ nickname: userNickname, connected: true });
       userRef.onDisconnect().remove();
       usersListener = db.ref(`rooms/${room}/users`);
       usersListener.on('value', snapshot => {
@@ -620,12 +542,9 @@
       document.getElementById("holdDisconnectBtn").style.display = "none";
       document.getElementById("holdFlashQRBtn").style.display = "none";
       document.getElementById("flashQROverlay").classList.remove("visible");
-      document.getElementById("languageScreen").classList.remove("visible");
-      document.getElementById("languageScreen").style.display = "none";
       document.getElementById("qrScreen").classList.remove("visible");
       document.getElementById("qrScreen").style.display = "none";
       document.getElementById("expiredMsg").style.display = "block";
-      // Remove ?room=... from URL so starting over works
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       } else {
@@ -636,49 +555,19 @@
       if (!msg || !room) return;
       db.ref(`rooms/${room}/messages`).push({
         user: userNickname,
-        lang: userLang,
         text: msg,
         ts: Date.now()
       });
-    }
-    // --- REAL TRANSLATION via LibreTranslate ---
-    async function realTranslate(text, from, to) {
-      if (from === to) return text;
-      try {
-        const res = await fetch("https://libretranslate.de/translate", {
-          method: "POST",
-          body: JSON.stringify({
-            q: text,
-            source: from,
-            target: to,
-            format: "text"
-          }),
-          headers: { "Content-Type": "application/json" }
-        });
-        const data = await res.json();
-        if (data && data.translatedText) return data.translatedText;
-        return "[Translation error]";
-      } catch (e) {
-        return "[Translation error]";
-      }
     }
     function listenToRoom() {
       if (!room) return;
       db.ref(`rooms/${room}/messages`).off();
       document.getElementById("chatBox").innerHTML = "";
-      db.ref(`rooms/${room}/messages`).on("child_added", async snapshot => {
+      db.ref(`rooms/${room}/messages`).on("child_added", snapshot => {
         const data = snapshot.val();
         const box = document.getElementById("chatBox");
-        if (data.lang && data.lang !== userLang) {
-          box.innerHTML += `<div><b>${data.user}:</b> <span title="translated">(translating...)</span></div>`;
-          const thisDiv = box.lastChild;
-          const translated = await realTranslate(data.text, data.lang, userLang);
-          thisDiv.innerHTML = `<b>${data.user}:</b> <span title="translated">(translated)</span> ${translated}`;
-          box.scrollTop = box.scrollHeight;
-        } else {
-          box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
-          box.scrollTop = box.scrollHeight;
-        }
+        box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
+        box.scrollTop = box.scrollHeight;
       });
     }
     document.getElementById("msgInput").addEventListener("keydown", function(event) {
@@ -691,7 +580,6 @@
         }
       }
     });
-    // --- Speech-to-text ---
     let isSpeechActive = false;
     function startSpeechToText() {
       if (!('webkitSpeechRecognition' in window)) {
@@ -701,7 +589,7 @@
       if (isSpeechActive) return;
       isSpeechActive = true;
       const recognition = new webkitSpeechRecognition();
-      recognition.lang = userLang === "es" ? "es-ES" : "en-US";
+      recognition.lang = "en-US";
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
       recognition.onresult = (event) => {
@@ -716,7 +604,6 @@
     }
     // --- Hold-to-disconnect logic ---
     const holdBtn = document.getElementById('holdDisconnectBtn');
-    const holdText = document.getElementById('holdDisconnectBtnText');
     const ring = holdBtn.querySelector('.progress-ring__circle');
     let holdTimeout = null;
     let holdStart = 0;
@@ -774,15 +661,13 @@
         showExpired();
       }
     }
-
     // --- Hold-to-flash-QR logic ---
     const flashBtn = document.getElementById('holdFlashQRBtn');
-    const flashText = document.getElementById('holdFlashQRBtnText');
     const flashRing = flashBtn.querySelector('.progress-ring__circle');
     let flashTimeout = null;
     let flashStart = 0;
     let flashProgressFrame = null;
-    const FLASH_HOLD = 500; // ms to prevent accidental tap
+    const FLASH_HOLD = 500;
     function setFlashRingPercent(percent) {
       const radius = flashRing.r.baseVal.value;
       const circumference = 2 * Math.PI * radius;
@@ -824,7 +709,6 @@
       flashBtn.classList.remove('holding');
       hideFlashQRCode();
     }
-    // --- Flash QR full overlay ---
     function showFlashQRCode() {
       cancelFlashHold();
       const overlay = document.getElementById('flashQROverlay');
@@ -834,8 +718,8 @@
       const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
       new QRCode(qrDiv, {
         text: joinUrl,
-        width: Math.min(window.innerWidth * 0.8, 340),
-        height: Math.min(window.innerWidth * 0.8, 340),
+        width: Math.min(window.innerWidth * 0.8, 410),
+        height: Math.min(window.innerWidth * 0.8, 410),
         correctLevel: QRCode.CorrectLevel.H
       });
       document.getElementById('flashQRroom').innerText = `Room: ${room}`;
@@ -843,7 +727,6 @@
     function hideFlashQRCode() {
       document.getElementById('flashQROverlay').classList.remove('visible');
     }
-    // Hide QR overlay if user taps background or presses Escape
     document.getElementById('flashQROverlay').addEventListener('mousedown', hideFlashQRCode);
     document.getElementById('flashQROverlay').addEventListener('touchstart', hideFlashQRCode);
     document.addEventListener('keydown', function(e) {
