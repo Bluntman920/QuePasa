@@ -8,10 +8,10 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- html5-qrcode for camera QR scanning -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
-    }
+    html, body { margin: 0; padding: 0; height: 100%; }
     body {
       min-height: 100vh;
       font-family: Arial, sans-serif;
@@ -39,7 +39,6 @@
       background: #fff;
       position: absolute;
       top: 0; left: 0; z-index: 10;
-      cursor: pointer;
       flex-direction: column;
     }
     #mainLogo {
@@ -65,6 +64,24 @@
       0% { transform: translateY(0);}
       100% { transform: translateY(-10px);}
     }
+    #mainLogoScreen .sessionBtns {
+      margin-top:2.5em; display:flex; flex-direction:column; gap:19px; align-items:center;
+    }
+    .mainBtn {
+      font-size:1.4em; padding:0.9em 2.8em; border-radius:20px;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      margin-bottom:4px;
+      box-shadow:0 2px 12px #27c46c22;
+      transition: background 0.16s;
+    }
+    #createSessionBtn { background:#27c46c; color:#fff; }
+    #createSessionBtn:hover { background:#1a9c51; }
+    #joinSessionBtn { background:#2196f3; color:#fff; }
+    #joinSessionBtn:hover { background:#1369b1; }
+    #scanQRBtn { background:#fff; color:#222; border:2px solid #2196f3; box-shadow:0 2px 12px #2196f322;}
+    #scanQRBtn:hover { background:#e3f3ff; }
     #qrScreen, #chatUI { display: none; }
     .visible { display: flex !important; }
     #qrScreen, #chatUI {
@@ -115,6 +132,28 @@
       letter-spacing: 0.03em;
     }
     #continueToChatBtn:hover { background: #1a9c51; }
+    #qrScannerOverlay {
+      display:none; position:fixed; top:0; left:0; width:100vw; height:100vh;
+      z-index:9000; background:rgba(255,255,255,0.98);
+      flex-direction:column; align-items:center; justify-content:center;
+    }
+    #qr-reader {
+      width: min(95vw, 420px);
+      margin-top: 30px;
+    }
+    #closeQrScannerBtn {
+      margin-top:20px;
+      font-size:1.2em;
+      background: #f44336; color: #fff;
+      padding: 0.7em 2.2em;
+      border-radius: 13px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.15s;
+      box-shadow:0 2px 8px #c12a;
+    }
+    #closeQrScannerBtn:hover { background:#c62828; }
     #chatUI {
       flex-direction: column;
       align-items: center;
@@ -331,9 +370,14 @@
 </head>
 <body>
   <div class="app-container">
-    <div id="mainLogoScreen" class="visible" onclick="showQrScreen()">
+    <div id="mainLogoScreen" class="visible">
       <img id="mainLogo" src="icon2.png" alt="Que Pasa App Logo">
-      <div class="tapPrompt">Tap logo to start</div>
+      <div class="tapPrompt">Welcome to Que Pasa!</div>
+      <div class="sessionBtns">
+        <button id="createSessionBtn" class="mainBtn">Create New Session</button>
+        <button id="joinSessionBtn" class="mainBtn">Join Session by Code</button>
+        <button id="scanQRBtn" class="mainBtn">Scan QR to Join Session</button>
+      </div>
     </div>
     <div id="qrScreen">
       <div id="bigQrContainer">
@@ -341,6 +385,11 @@
         <div id="qrInstructions">Show this code to the other person.<br>When they scan, chat will begin!</div>
       </div>
       <button id="continueToChatBtn" onclick="goToChat()">Continue to Chat</button>
+    </div>
+    <div id="qrScannerOverlay">
+      <div id="qr-reader"></div>
+      <button id="closeQrScannerBtn">Close Scanner</button>
+      <div style="margin-top:1em;color:#444;font-size:1em;">Allow camera access to scan a QR code from another device.</div>
     </div>
     <div id="chatUI">
       <div id="google_translate_element"></div>
@@ -375,7 +424,7 @@
       <div id="chatInputArea">
         <textarea id="msgInput" placeholder="Type and press Enter..."></textarea>
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
-        <button id="recordBtn" title="Hold to Record Voice" onclick="toggleRecording()">🎙️</button>
+        <button id="recordBtn" title="Record Voice Message" onclick="toggleRecording()">🎙️</button>
       </div>
       <div id="supportThanks">
         <div class="tipIcons">
@@ -437,6 +486,40 @@
     let roomExpired = false;
     let usersListener = null;
     let roomListener = null;
+
+    // --- Landing buttons ---
+    document.getElementById('createSessionBtn').onclick = showQrScreen;
+    document.getElementById('joinSessionBtn').onclick = function() {
+      let code = prompt("Enter session code:");
+      if (code && code.trim().length > 0) {
+        window.location.search = "?room=" + encodeURIComponent(code.trim());
+      }
+    };
+    document.getElementById('scanQRBtn').onclick = function() {
+      document.getElementById('qrScannerOverlay').style.display = 'flex';
+      if (!window.html5QrCode) {
+        window.html5QrCode = new Html5Qrcode("qr-reader");
+      }
+      window.html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrCodeMessage => {
+          window.html5QrCode.stop();
+          document.getElementById('qrScannerOverlay').style.display = 'none';
+          if (qrCodeMessage && qrCodeMessage.includes("?room=")) {
+            let code = qrCodeMessage.split("?room=")[1].split("&")[0].replace(/[^a-zA-Z0-9]/g,"");
+            window.location.search = "?room=" + code;
+          } else {
+            alert("QR code does not contain a room code.");
+          }
+        },
+        errorMessage => { /* ignore scan errors */ }
+      );
+    };
+    document.getElementById('closeQrScannerBtn').onclick = function() {
+      document.getElementById('qrScannerOverlay').style.display = 'none';
+      if (window.html5QrCode) window.html5QrCode.stop();
+    };
 
     function showQrScreen() {
       document.getElementById('mainLogoScreen').classList.remove('visible');
