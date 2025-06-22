@@ -1,17 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Que Pasa App</title>
-  <!-- Load Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-</head>
-<body>
-  <div id="chatBox" style="border:1px solid #aaa; padding:1em; height:250px; overflow:auto; margin-bottom:1em;"></div>
-  <textarea id="chatInput" placeholder="Type a message..." style="width:70%;"></textarea>
-  <button id="sendBtn">Send</button>
-  <!-- Your app logic -->
-  <script src="app.js"></script>
-</body>
-</html>
+<!-- Add this where you want the slider (e.g., at the bottom of your chat UI) -->
+<div id="selfDestructContainer">
+  <div id="selfDestructBar">
+    <span id="selfDestructText">Slide to Self-Destruct</span>
+    <div id="sliderKnob"></div>
+  </div>
+</div>
+
+<style>
+#selfDestructContainer {
+  width: 95%;
+  margin: 24px auto 0;
+  text-align: center;
+}
+#selfDestructBar {
+  position: relative;
+  width: 320px;
+  height: 46px;
+  margin: 0 auto;
+  background: #2d3436;
+  border-radius: 23px;
+  box-shadow: 0 2px 8px #0002;
+  overflow: hidden;
+  user-select: none;
+}
+#selfDestructText {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  line-height: 46px;
+  color: #fff;
+  font-size: 1.1em;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.75;
+}
+#sliderKnob {
+  position: absolute;
+  left: 0; top: 0;
+  width: 46px; height: 46px;
+  background: #e74c3c;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #e74c3c44;
+  transition: background 0.18s;
+  cursor: pointer;
+  z-index: 2;
+  display: flex; justify-content: center; align-items: center;
+}
+#sliderKnob:after {
+  content: "💣";
+  font-size: 1.5em;
+}
+#sliderKnob.dragging { background: #c0392b; }
+</style>
+
+<script>
+// Self-destruct slider logic
+const bar = document.getElementById('selfDestructBar');
+const knob = document.getElementById('sliderKnob');
+let dragging = false, startX = 0, offsetX = 0;
+
+knob.addEventListener('mousedown', startDrag);
+knob.addEventListener('touchstart', startDrag);
+
+function startDrag(e) {
+  dragging = true;
+  startX = e.touches ? e.touches[0].clientX : e.clientX;
+  knob.classList.add('dragging');
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('touchmove', onDrag);
+  document.addEventListener('mouseup', stopDrag);
+  document.addEventListener('touchend', stopDrag);
+}
+
+function onDrag(e) {
+  if (!dragging) return;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  offsetX = Math.max(0, Math.min(clientX - startX, bar.clientWidth - knob.clientWidth));
+  knob.style.left = offsetX + 'px';
+  // Optional: Fade out text as you slide
+  document.getElementById('selfDestructText').style.opacity = 0.75 - 0.7 * (offsetX / (bar.clientWidth - knob.clientWidth));
+}
+
+function stopDrag() {
+  if (!dragging) return;
+  dragging = false;
+  knob.classList.remove('dragging');
+  // If knob is at the end, trigger self-destruct
+  if (offsetX > (bar.clientWidth - knob.clientWidth - 6)) {
+    // TODO: Replace this with your actual room/message destroy logic!
+    alert('💥 Self-Destructed! (Here, you would clear all chat data and return to home)');
+    // Example: location.reload();
+  }
+  // Reset slider
+  knob.style.left = '0px';
+  document.getElementById('selfDestructText').style.opacity = 0.75;
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('touchmove', onDrag);
+  document.removeEventListener('mouseup', stopDrag);
+  document.removeEventListener('touchend', stopDrag);
+}
+</script>
