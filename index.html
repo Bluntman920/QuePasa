@@ -15,13 +15,51 @@
       font-family: Arial, sans-serif;
       margin: 0; min-height: 100vh;
     }
+    .header {
+      text-align: center;
+      margin-top: 2.2em;
+    }
+    .qp-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 18px;
+      box-shadow: 0 2px 18px #27c46c22;
+      background: #fff;
+      margin-bottom: 0.7em;
+    }
+    .qp-title {
+      font-size: 2.65em;
+      font-family: Arial Black,Arial,sans-serif;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      color: #237a48;
+      margin-bottom: 0.13em;
+      margin-top: 0;
+    }
+    .qp-sub {
+      color: #225c36;
+      font-size: 1.15em;
+      margin-bottom: 1.6em;
+    }
+    .lang-widget {
+      position: absolute;
+      right: 2.1em;
+      top: 2.2em;
+      z-index: 10;
+      background: #fff;
+      border-radius: 7px;
+      box-shadow: 0 2px 10px #27c46c22;
+      border: 1px solid #e4fbe4;
+      padding: 0.3em 0.7em;
+      font-size: 1.1em;
+    }
     .chat-container {
       max-width: 600px;
       margin: 0 auto;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 2px 18px #27c46c17;
-      margin-top: 2em;
+      margin-top: 2.1em;
       padding: 0 0 2em 0;
       position: relative;
     }
@@ -29,7 +67,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding: 1em 1.2em 0.5em 1.2em;
+      padding: 1em 1.2em 0.2em 1.2em;
       position: relative;
     }
     .qr-flash-btn {
@@ -48,7 +86,7 @@
     }
     .qr-flash-btn:active { background: #1369b1; }
     .chat-box {
-      margin: 1.3em 1.2em;
+      margin: 1.2em 1.2em 0.5em 1.2em;
       min-height: 150px;
       background: #e4fbe4;
       border-radius: 9px;
@@ -121,6 +159,23 @@
       color: #e53935;
       opacity: 1;
     }
+    .qr-union-logo {
+      width: 100px; height: 100px;
+      border-radius: 18px;
+      box-shadow: 0 2px 18px #27c46c22;
+      background: #fff;
+      margin-bottom: 0.7em;
+    }
+    .qr-union-title {
+      font-size: 2.1em;
+      font-family: Arial Black,Arial,sans-serif;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      color: #2196f3;
+      margin-bottom: 0.13em;
+      margin-top: 0.2em;
+      text-align: center;
+    }
     #qrFlashCode > canvas, #qrFlashCode > img {
       display: block;
       margin: 0.5em auto 0.5em auto;
@@ -140,20 +195,88 @@
       margin-bottom: 0.2em;
       font-weight: 600;
     }
+    /* --- Self-destruct button --- */
+    .self-destruct-container {
+      display: flex;
+      justify-content: center;
+      margin: 1.6em 0 0.2em 0;
+    }
+    .self-destruct-btn {
+      background: #e53935;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 1em 2.4em;
+      font-size: 1.33em;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 18px #ff000033;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.16s, color 0.16s, box-shadow 0.15s;
+      position: relative;
+      user-select: none;
+    }
+    .self-destruct-btn.holding {
+      background: #b71c1c;
+      color: #fff4f4;
+      box-shadow: 0 0 0 6px #ff000033;
+    }
+    .self-destruct-btn .timer {
+      display: inline-block;
+      margin-left: 1.0em;
+      color: #fff800;
+      font-size: 1.0em;
+      font-weight: bold;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+    }
+    /* --- Tip Section --- */
+    .tip-section {
+      margin: 2.5em auto 1.6em auto;
+      text-align: center;
+      background: #fff;
+      border-radius: 17px;
+      box-shadow: 0 2px 16px #27c46c12;
+      padding: 1.3em 1em 1.1em 1em;
+      width: 320px;
+      max-width: 94vw;
+      font-size: 1.13em;
+    }
+    .tip-icon {
+      font-size: 2.3em;
+      margin-bottom: 0.18em;
+      color: #fbc02d;
+      display: block;
+      text-shadow: 0 2px 12px #ffee0055;
+    }
     @media (max-width:600px) {
-      .chat-container { border-radius: 0; }
-      #qrFlashContent { padding: 1.2em 0.1em 1.1em 0.1em; min-width: 0; }
-      #closeQrFlashBtn { top: 5px; right: 5px; width:32px; height:32px; font-size:1.3em;}
+      .header { margin-top: 1em; }
+      .qp-logo { width: 70px; height: 70px; }
+      .qp-title { font-size: 1.55em; }
+      .lang-widget { right: 0.7em; top: 1.1em; font-size: 1em; }
+      .tip-section { font-size: 1em; padding: 1em 0.2em; }
+      .qr-union-logo { width: 70px; height: 70px; }
+      .qr-union-title { font-size: 1.2em; }
     }
   </style>
 </head>
 <body>
-  <div style="text-align:center;margin-top:1.3em;">
-    <img src="icon2.png" alt="Que Pasa App Logo" style="width:64px;height:64px;border-radius:14px;box-shadow:0 2px 12px #27c46c22;background:#fff;">
-    <div style="font-size:2.1em;font-family:Arial Black,Arial,sans-serif;font-weight:900;letter-spacing:0.11em;color:#237a48;margin-top:0.22em;">QUE PASA APP</div>
-    <div style="color:#225c36;font-size:1.07em;">Private, Simple, No Phone Number Needed</div>
+  <!-- Language Widget -->
+  <select class="lang-widget" id="langSelect" title="Select Language">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <!-- Add more languages as needed -->
+  </select>
+
+  <!-- Header / Branding -->
+  <div class="header">
+    <img src="icon2.png" alt="Que Pasa App Logo" class="qp-logo" />
+    <div class="qp-title">QUE PASA APP</div>
+    <div class="qp-sub">Private, Simple, No Phone Number Needed</div>
   </div>
 
+  <!-- Chat Container -->
   <div class="chat-container">
     <div class="top-bar">
       <!-- QR flash button at the top of chat box -->
@@ -170,13 +293,27 @@
       <textarea placeholder="Type a message..."></textarea>
       <button style="background:#27c46c;color:#fff;border:0;border-radius:8px;padding:0.7em 1.5em;font-weight:700;cursor:pointer;">Send</button>
     </div>
+    <div class="self-destruct-container">
+      <button class="self-destruct-btn" id="selfDestructBtn">
+        &#128163; Disconnect / Desconectar
+        <span class="timer" id="destructTimer"></span>
+      </button>
+    </div>
     <button class="mainBtn" onclick="location.reload()">New Room</button>
+  </div>
+
+  <!-- Tip / Thank You Section -->
+  <div class="tip-section">
+    <span class="tip-icon">&#128176;</span>
+    Thank you for your support!
   </div>
 
   <!-- QR FLASH OVERLAY -->
   <div id="qrFlashOverlay">
     <div id="qrFlashContent">
       <button id="closeQrFlashBtn" title="Close QR" aria-label="Close QR">&times;</button>
+      <img src="icon2.png" alt="K Pasa App Union Logo" class="qr-union-logo" />
+      <div class="qr-union-title">K Pasa app unions</div>
       <div id="qrFlashCode"></div>
       <div class="qr-instructions">
         Scan this code to join this room.<br>
@@ -256,6 +393,55 @@
   qrFlashOverlay.onclick = function(e) {
     if (e.target === qrFlashOverlay) closeQrFlash();
   };
+
+  // Self-destruct/Disconnect button logic
+  const selfDestructBtn = document.getElementById('selfDestructBtn');
+  const destructTimer = document.getElementById('destructTimer');
+  let destructHoldTimeout = null, destructHoldInterval = null, destructHoldTime = 0, destructActivated = false;
+
+  selfDestructBtn.addEventListener('mousedown', function() {
+    if (destructActivated) return;
+    selfDestructBtn.classList.add('holding');
+    destructHoldTime = 0;
+    destructTimer.textContent = "3";
+    destructHoldInterval = setInterval(() => {
+      destructHoldTime += 0.1;
+      destructTimer.textContent = (3 - destructHoldTime).toFixed(1);
+      if (destructHoldTime >= 3) {
+        destructTimer.textContent = "";
+        clearInterval(destructHoldInterval);
+        selfDestructBtn.classList.remove('holding');
+        destructActivated = true;
+        // Disconnect logic: Remove room from Firebase and reload
+        db.ref('rooms/' + room).remove().then(() => {
+          alert('Disconnected / Desconectado');
+          window.location.href = window.location.pathname; // Go back to new room
+        });
+      }
+    }, 100);
+    destructHoldTimeout = setTimeout(() => {}, 3000);
+  });
+  selfDestructBtn.addEventListener('mouseup', function() {
+    if (destructActivated) return;
+    selfDestructBtn.classList.remove('holding');
+    destructTimer.textContent = "";
+    clearInterval(destructHoldInterval);
+    clearTimeout(destructHoldTimeout);
+  });
+  selfDestructBtn.addEventListener('mouseleave', function() {
+    if (destructActivated) return;
+    selfDestructBtn.classList.remove('holding');
+    destructTimer.textContent = "";
+    clearInterval(destructHoldInterval);
+    clearTimeout(destructHoldTimeout);
+  });
+
+  // (Optional) Language widget logic placeholder
+  document.getElementById('langSelect').addEventListener('change', function(e) {
+    // You can add logic to change chat language here
+    // For now, just an alert
+    // alert('Language switched to: ' + e.target.options[e.target.selectedIndex].text);
+  });
 </script>
 </body>
 </html>
