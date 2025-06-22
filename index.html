@@ -4,49 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Que Pasa App</title>
-  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="icon" type="image/png" href="icon2.png" />
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- html5-qrcode for camera QR scanning -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; }
+    :root {
+      --qp-green: #e4fbe4;
+      --qp-dark: #171717;
+      --qp-white: #fff;
+      --qp-main: #e4fbe4;
+    }
     body {
-      min-height: 100vh;
+      background: var(--qp-main, #e4fbe4);
       font-family: Arial, sans-serif;
-      background: #fff;
       color: #222;
-      overflow: hidden;
-      position: relative;
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.15s;
     }
     .app-container {
       min-height: 100vh;
       min-width: 100vw;
-      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      text-align: center;
       position: relative;
       z-index: 1;
     }
     #mainLogoScreen {
-      width: 100vw; height: 100vh;
+      width: 100vw;
+      height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #fff;
+      background: var(--qp-main, #e4fbe4);
       position: absolute;
       top: 0; left: 0; z-index: 10;
-      flex-direction: column;
     }
     #mainLogo {
       width: min(340px, 80vw);
       max-width: 90vw;
       margin-bottom: 28px;
       margin-top: 8px;
-      display: block;
       border-radius: 32px;
       box-shadow: 0 2px 24px #0001;
       transition: transform 0.1s;
@@ -60,10 +65,7 @@
       letter-spacing: 0.05em;
       animation: bounce 1.2s infinite alternate;
     }
-    @keyframes bounce {
-      0% { transform: translateY(0);}
-      100% { transform: translateY(-10px);}
-    }
+    @keyframes bounce { 0% { transform: translateY(0);} 100% { transform: translateY(-10px);} }
     #mainLogoScreen .sessionBtns {
       margin-top:2.5em; display:flex; flex-direction:column; gap:19px; align-items:center;
     }
@@ -82,105 +84,22 @@
     #joinSessionBtn:hover { background:#1369b1; }
     #scanQRBtn { background:#fff; color:#222; border:2px solid #2196f3; box-shadow:0 2px 12px #2196f322;}
     #scanQRBtn:hover { background:#e3f3ff; }
-    #qrScreen, #chatUI { display: none; }
+    #chatUI, #qrScannerOverlay { display: none; }
     .visible { display: flex !important; }
-    #qrScreen, #chatUI {
-      min-height: 100vh;
-      min-width: 100vw;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      top: 0; left: 0;
-      z-index: 5;
-      background: #fff;
-    }
-    #bigQrContainer {
-      background: #fff;
-      border-radius: 40px;
-      box-shadow: 0 2px 20px #0003;
-      padding: 2.3em;
-      margin-bottom: 1.7em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #bigQrCode {
-      width: min(410px, 90vw);
-      height: min(410px, 90vw);
-      display: block;
-      margin-bottom: 1em;
-    }
-    #qrInstructions {
-      margin: 0.7em 0 0 0;
-      color: #333;
-      font-size: 1.35em;
-      font-weight: 600;
-    }
-    #continueToChatBtn {
-      margin-top: 2em;
-      font-size: 1.45em;
-      background: #27c46c;
-      color: #fff;
-      border: none;
-      padding: 1em 3.5em;
-      border-radius: 18px;
-      font-weight: bold;
-      box-shadow: 0 2px 10px #27c46c22;
-      cursor: pointer;
-      transition: background 0.15s;
-      letter-spacing: 0.03em;
-    }
-    #continueToChatBtn:hover { background: #1a9c51; }
-    #qrScannerOverlay {
-      display:none; position:fixed; top:0; left:0; width:100vw; height:100vh;
-      z-index:9000; background:rgba(255,255,255,0.98);
-      flex-direction:column; align-items:center; justify-content:center;
-    }
-    #qr-reader {
-      width: min(95vw, 420px);
-      margin-top: 30px;
-    }
-    #closeQrScannerBtn {
-      margin-top:20px;
-      font-size:1.2em;
-      background: #f44336; color: #fff;
-      padding: 0.7em 2.2em;
-      border-radius: 13px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.15s;
-      box-shadow:0 2px 8px #c12a;
-    }
-    #closeQrScannerBtn:hover { background:#c62828; }
     #chatUI {
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      background: #fff;
       min-height: 100vh;
       min-width: 100vw;
       padding-top: 2.5em;
       position: relative;
+      background: transparent;
     }
     #google_translate_element {
-      margin: 1.7em 0 1em 0;
-      font-size: 1.3em;
+      margin: 1.2em 0 1em 0;
+      font-size: 1.15em;
       z-index: 999;
-    }
-    #chatBgLogo {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 70vw;
-      max-width: 500px;
-      min-width: 260px;
-      opacity: 0.08;
-      transform: translate(-50%, -50%);
-      z-index: 0;
-      pointer-events: none;
-      user-select: none;
     }
     #chatBox {
       margin-top: 1.2em;
@@ -270,101 +189,137 @@
       border-radius: 24px;
       box-shadow: 0 2px 12px #c12a;
     }
-    #holdDisconnectBtn, #holdFlashQRBtn {
+    /* --- Hold QR overlay --- */
+    #qrHoldOverlay {
+      display: none;
       position: fixed;
-      width: 80px; height: 80px;
-      z-index: 100;
-      border-radius: 50%;
-      display: flex;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 9000;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      outline: none;
-      font-size: 2em;
+      flex-direction: column;
     }
-    #holdDisconnectBtn {
-      top: 28px; right: 28px;
-      background: #f44336;
-      color: #fff;
-      font-size: 2.5em;
-      box-shadow: 0 2px 18px #0003;
+    #qrHoldOverlayBg {
+      position: absolute;top:0;left:0;width:100vw;height:100vh;z-index:0;
+      background: #e4fbe4 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="210" height="50"><image href="icon2.png" x="0" y="0" height="32" width="32" opacity="0.10"/><text x="36" y="30" font-size="32" font-family="Arial" fill="%23237a48" opacity="0.11">Que Pasa App</text></svg>') repeat;
+      background-size: 220px 50px;
     }
-    #holdDisconnectBtn.holding { background: #c62828; }
-    #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring {
-      position: absolute; top: -7px; left: -7px;
-      width: 94px; height: 94px; z-index: 101;
-      pointer-events: none;
+    #qrHoldOverlayContent {
+      z-index:2;
+      background:#e4fbe4;
+      padding:2em 2em 1.2em 2em;
+      border-radius:38px;
+      box-shadow:0 8px 48px #27c46c66;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      min-width: 270px;
     }
-    #holdDisconnectBtn .progress-ring__circle, #holdFlashQRBtn .progress-ring__circle {
-      stroke: #fff; stroke-width: 7; fill: transparent; transition: stroke 0.2s;
+    #qrHoldCode {
+      margin-bottom: 1em;
     }
-    #holdDisconnectBtnText, #holdFlashQRBtnText {
-      z-index: 102;
-      position: absolute;
-      left: 0; top: 0;
-      width: 80px; height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-      text-shadow: 0 3px 11px #0006;
+    #qrHoldOverlayContent img.qp-logo-qr {
+      width:70px;height:70px;margin-bottom:0.3em;display:block;margin-left:auto;margin-right:auto;
     }
-    .skullIcon { width: 52px; height: 52px; display: inline-block; vertical-align: middle; }
-    #holdFlashQRBtn {
-      top: 28px; left: 28px;
-      background: #27a3cc; color: #fff;
-      font-size: 2.2em; box-shadow: 0 2px 12px #0003;
+    #qrHoldOverlayContent .qp-brand-title {
+      color:#237a48;
+      font-size:1.5em;
+      font-family:Arial Black,Arial,sans-serif;
+      font-weight:900;
+      letter-spacing:0.06em;
+      margin-bottom:2px;
     }
-    #holdFlashQRBtn.holding { background: #136a8a; }
-    #flashQROverlay {
-      display: none; position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(255,255,255,0.97);
-      align-items: center; justify-content: center;
-      z-index: 500; flex-direction: column; transition: opacity 0.2s;
+    #qrHoldOverlayContent .qr-instructions {
+      margin-top:0.6em;
+      font-size:1.08em;
+      color:#225c36;
+      text-align:center;
+      font-weight:600;
     }
-    #flashQROverlay.visible { display: flex; }
-    #flashQROverlay #flashQRcode {
-      background: #fff; border-radius: 40px;
-      box-shadow: 0 2px 20px #0003;
-      padding: 2.2em; margin-bottom: 1.5em;
-      display: flex; flex-direction: column; align-items: center;
-      min-width: 260px; max-width: 97vw;
+    #showQrBtn {
+      margin:1.5em auto 1.1em auto;
+      display:block;
+      font-size:1.1em;
+      padding:0.7em 2em;
+      border-radius:14px;
+      background:#27c46c;
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      box-shadow:0 2px 12px #27c46c22;
+      transition: background 0.16s;
+      letter-spacing:0.04em;
     }
-    #flashQROverlay #flashQRroom {
-      font-size: 1.35em; color: #555; font-weight: bold;
-      margin-top: 0.9em; letter-spacing: 0.05em; margin-bottom: 0.5em;
-    }
-    #supportThanks {
-      margin-top:1.5em; text-align:center; max-width:520px; margin-left:auto; margin-right:auto;
-      background:#f6fff9; border-radius:18px; box-shadow:0 2px 10px #27c46c18; padding:1.2em 1em 1.5em 1em;
+    #showQrBtn:active { background:#1a9c51; }
+    /* --- Support section --- */
+    #supportThanks.centered-support {
+      margin: 1.3em auto 0 auto;
+      text-align: center;
+      max-width: 350px;
+      background:
+        #e4fbe4
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="48"><image href="icon2.png" x="0" y="0" height="32" width="32" opacity="0.07"/><text x="36" y="30" font-size="19" font-family="Arial" fill="%23237a48" opacity="0.18">Que Pasa App</text></svg>')
+        repeat;
+      border-radius: 14px;
+      box-shadow: 0 1px 7px #27c46c10;
+      padding: 0.6em 0.7em 0.7em 0.7em;
+      background-size: 140px 48px;
+      position: relative;
     }
     #supportThanks .tipIcons {
-      display:flex;justify-content:center;align-items:center;gap:30px;margin-bottom:1em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 4px;
     }
     #supportThanks .tipIcons img {
-      width:62px;height:62px;border-radius:15px;box-shadow:0 2px 10px #27c46c44;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      box-shadow: 0 1px 4px #27c46c22;
+      background: #fff;
     }
-    #supportThanks .thanksTitle {
-      font-size:1.15em;color:#237a48;font-weight:bold;line-height:1.5;margin-bottom:0.3em;
+    #supportThanks .tipIcons .qp-logo-support {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      box-shadow: 0 1px 7px #27c46c33;
+      background: #fff;
+      margin-right: 3px;
     }
-    #supportThanks .thanksText {
-      color:#225c36;font-size:1em;line-height:1.5;
+    #supportThanks .thanksText { margin-top: 2px; }
+    /* --- BG Switcher --- */
+    #bgSwitchGroup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin: 1em auto 0 auto;
+      width: 100%;
     }
-    #supportThanks .privacy {
-      display:block;margin-top:0.6em;color:#237a48;font-weight:500;font-size:0.97em;
+    .bgBtn {
+      border: none;
+      border-radius: 7px;
+      width: 40px;
+      height: 28px;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 0 0 1.5px #237a48;
+      transition: box-shadow 0.17s;
+      margin: 0 2px;
     }
+    .bgBtn.active {
+      box-shadow: 0 0 0 3px #27c46c;
+    }
+    .bgBtn.bgGreen { background: #e4fbe4; }
+    .bgBtn.bgWhite { background: #fff; }
+    .bgBtn.bgBlack { background: #171717; }
     @media (max-width:600px) {
       #chatBox, #chatInputArea { width: 99vw; max-width: 99vw;}
-      #bigQrContainer { padding: 0.7em;}
-      #holdDisconnectBtn, #holdFlashQRBtn { top: unset; bottom: 22px;}
-      #holdDisconnectBtn { right: 22px; }
-      #holdFlashQRBtn { left: 22px;}
-      #holdDisconnectBtn, #holdFlashQRBtn { width: 65px; height: 65px;}
-      #holdDisconnectBtnText, #holdFlashQRBtnText { width:65px; height:65px;}
-      #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring { width:75px; height:75px; top:-5px; left:-5px;}
-      .skullIcon { width:40px; height:40px; }
+      #supportThanks.centered-support { max-width: 97vw; }
+      #supportThanks .tipIcons img, #supportThanks .tipIcons .qp-logo-support { width: 22px; height: 22px; }
     }
   </style>
 </head>
@@ -372,19 +327,12 @@
   <div class="app-container">
     <div id="mainLogoScreen" class="visible">
       <img id="mainLogo" src="icon2.png" alt="Que Pasa App Logo">
-      <div class="tapPrompt">Welcome to Que Pasa!</div>
+      <div class="tapPrompt">Welcome to Que Pasa App!</div>
       <div class="sessionBtns">
         <button id="createSessionBtn" class="mainBtn">Create New Session</button>
         <button id="joinSessionBtn" class="mainBtn">Join Session by Code</button>
         <button id="scanQRBtn" class="mainBtn">Scan QR to Join Session</button>
       </div>
-    </div>
-    <div id="qrScreen">
-      <div id="bigQrContainer">
-        <div id="bigQrCode"></div>
-        <div id="qrInstructions">Show this code to the other person.<br>When they scan, chat will begin!</div>
-      </div>
-      <button id="continueToChatBtn" onclick="goToChat()">Continue to Chat</button>
     </div>
     <div id="qrScannerOverlay">
       <div id="qr-reader"></div>
@@ -393,32 +341,6 @@
     </div>
     <div id="chatUI">
       <div id="google_translate_element"></div>
-      <img id="chatBgLogo" src="icon2.png" alt="">
-      <button id="holdFlashQRBtn" title="Hold to Flash QR" style="display:none;">
-        <svg class="progress-ring" width="94" height="94">
-          <circle class="progress-ring__circle" stroke="#fff" stroke-width="7" fill="transparent" r="36" cx="47" cy="47"/>
-        </svg>
-        <span id="holdFlashQRBtnText">QR</span>
-      </button>
-      <button id="holdDisconnectBtn" title="Hold to Disconnect" style="display:none;">
-        <svg class="progress-ring" width="94" height="94">
-          <circle class="progress-ring__circle" stroke="#fff" stroke-width="7" fill="transparent" r="36" cx="47" cy="47"/>
-        </svg>
-        <span id="holdDisconnectBtnText">
-          <svg class="skullIcon" viewBox="0 0 64 64">
-            <g>
-              <ellipse cx="32" cy="32" rx="24" ry="24" fill="#ea1c23" stroke="#fff" stroke-width="2"/>
-              <ellipse cx="32" cy="44" rx="10" ry="6" fill="#fff" opacity="0.18"/>
-              <ellipse cx="24" cy="34" rx="3.2" ry="4.8" fill="#222"/>
-              <ellipse cx="40" cy="34" rx="3.2" ry="4.8" fill="#222"/>
-              <ellipse cx="32" cy="47" rx="2.2" ry="1.2" fill="#2c2c2c"/>
-              <ellipse cx="28" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
-              <ellipse cx="36" cy="41" rx="1" ry="1.5" fill="#2c2c2c"/>
-              <path d="M22 27 Q32 22 42 27" stroke="#fff" stroke-width="2" fill="none"/>
-            </g>
-          </svg>
-        </span>
-      </button>
       <div id="roomInfo"></div>
       <div id="chatBox"></div>
       <div id="chatInputArea">
@@ -426,32 +348,43 @@
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
         <button id="recordBtn" title="Record Voice Message" onclick="toggleRecording()">🎙️</button>
       </div>
-      <div id="supportThanks">
+      <!-- Hold-to-show QR code button -->
+      <button id="showQrBtn" style="display:none;">Hold to Show QR</button>
+      <!-- Support/Tip section -->
+      <div id="supportThanks" class="centered-support">
         <div class="tipIcons">
-          <a href="icon.png" target="_blank" title="Pay via Cash App">
+          <img src="icon2.png" alt="Que Pasa App Logo" class="qp-logo-support">
+          <a href="icon.png" target="_blank" title="Cash App">
             <img src="icon.png" alt="Cash App">
           </a>
-          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" title="Pay via PayPal">
+          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" title="PayPal">
             <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
           </a>
         </div>
-        <div class="thanksTitle">
-          Thank you for being part of this journey.
-        </div>
         <div class="thanksText">
-          Your kindness and support help this app grow—<br>
-          every tip is a seed that helps new ideas bloom.<br>
-          With deepest gratitude for every moment and every gift.<br>
-          <span class="privacy">
-            Privacy is our first priority: no accounts, no tracking, just you and your conversation.
+          <span style="font-size:1em;font-weight:500;color:#237a48;">
+            Thank you for your support.
+          </span>
+          <span style="display:block;font-size:0.92em;color:#225c36;font-weight:400;margin-top:1px;">
+            Every tip helps keep this app free &amp; private.
           </span>
         </div>
       </div>
+      <!-- BG Switcher -->
+      <div id="bgSwitchGroup">
+        <button class="bgBtn bgGreen active" title="Green background" onclick="setBg('green')" aria-label="Green background"></button>
+        <button class="bgBtn bgWhite" title="White background" onclick="setBg('white')" aria-label="White background"></button>
+        <button class="bgBtn bgBlack" title="Black background" onclick="setBg('black')" aria-label="Black background"></button>
+      </div>
     </div>
-    <div id="flashQROverlay">
-      <div id="flashQRcode"></div>
-      <div id="flashQRroom"></div>
-      <div style="color:#555;font-size:1.18em;margin-bottom:1em;">Have them scan this QR to join you.</div>
+    <div id="qrHoldOverlay">
+      <div id="qrHoldOverlayBg"></div>
+      <div id="qrHoldOverlayContent">
+        <div id="qrHoldCode"></div>
+        <img src="icon2.png" alt="Que Pasa App Logo" class="qp-logo-qr">
+        <div class="qp-brand-title">Que Pasa App</div>
+        <div class="qr-instructions">Show this code to your friend to join you</div>
+      </div>
     </div>
     <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
   </div>
@@ -467,7 +400,7 @@
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
-    // ==== Firebase Config ====
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDNz_qKPg7LfhVcXtKKTcTU-ynfBLkOSC4",
       authDomain: "quepasaapp-2e0f7.firebaseapp.com",
@@ -487,8 +420,30 @@
     let usersListener = null;
     let roomListener = null;
 
-    // --- Landing buttons ---
-    document.getElementById('createSessionBtn').onclick = showQrScreen;
+    // Color theme switcher
+    function setBg(color) {
+      let colorValue = "#e4fbe4";
+      if (color === "white") colorValue = "#fff";
+      if (color === "black") colorValue = "#171717";
+      document.body.style.setProperty('--qp-main', colorValue);
+      document.body.style.background = colorValue;
+      document.querySelectorAll('.bgBtn').forEach(btn => btn.classList.remove('active'));
+      if (color === "green") {
+        document.querySelector('.bgBtn.bgGreen').classList.add('active');
+      } else if (color === "white") {
+        document.querySelector('.bgBtn.bgWhite').classList.add('active');
+      } else if (color === "black") {
+        document.querySelector('.bgBtn.bgBlack').classList.add('active');
+      }
+      localStorage.setItem('qp_bg', color);
+    }
+    (function() {
+      let bg = localStorage.getItem('qp_bg');
+      if (bg) setBg(bg);
+    })();
+
+    // Landing buttons
+    document.getElementById('createSessionBtn').onclick = startCreateSession;
     document.getElementById('joinSessionBtn').onclick = function() {
       let code = prompt("Enter session code:");
       if (code && code.trim().length > 0) {
@@ -521,31 +476,52 @@
       if (window.html5QrCode) window.html5QrCode.stop();
     };
 
-    function showQrScreen() {
-      document.getElementById('mainLogoScreen').classList.remove('visible');
-      document.getElementById('mainLogoScreen').style.display = 'none';
-      room = generateRandomRoomCode(12);
-      document.getElementById('qrScreen').style.display = 'flex';
-      document.getElementById('qrScreen').classList.add('visible');
-      const qrDiv = document.getElementById('bigQrCode');
+    // --- Hold-to-show QR logic ---
+    const showQrBtn = document.getElementById('showQrBtn');
+    const qrHoldOverlay = document.getElementById('qrHoldOverlay');
+    let qrHoldTimeout, qrHoldActive = false;
+    function renderQrInOverlay() {
+      const qrDiv = document.getElementById('qrHoldCode');
       qrDiv.innerHTML = "";
       const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
       new QRCode(qrDiv, {
         text: joinUrl,
-        width: Math.min(window.innerWidth * 0.8, 410),
-        height: Math.min(window.innerWidth * 0.8, 410),
+        width: 230,
+        height: 230,
+        colorDark: "#222",
+        colorLight: "#e4fbe4",
         correctLevel: QRCode.CorrectLevel.H
       });
     }
-    function goToChat() {
-      document.getElementById('qrScreen').classList.remove('visible');
-      document.getElementById('qrScreen').style.display = 'none';
+    showQrBtn.onmousedown = showQrBtn.ontouchstart = function(e) {
+      e.preventDefault();
+      qrHoldTimeout = setTimeout(() => {
+        qrHoldActive = true;
+        qrHoldOverlay.style.display = 'flex';
+        renderQrInOverlay();
+      }, 350);
+    };
+    showQrBtn.onmouseup = showQrBtn.onmouseleave = showQrBtn.ontouchend = showQrBtn.ontouchcancel = function() {
+      clearTimeout(qrHoldTimeout);
+      if (qrHoldActive) {
+        qrHoldOverlay.style.display = 'none';
+        qrHoldActive = false;
+      }
+    };
+    qrHoldOverlay.onclick = function(e) {
+      if (e.target === qrHoldOverlay) qrHoldOverlay.style.display = 'none';
+    };
+
+    // --- Session logic ---
+    function startCreateSession() {
+      document.getElementById('mainLogoScreen').classList.remove('visible');
+      document.getElementById('mainLogoScreen').style.display = 'none';
+      room = generateRandomRoomCode(12);
       userNickname = localStorage.getItem('qp_nick') || prompt("Enter a nickname (optional):") || "User";
       localStorage.setItem('qp_nick', userNickname);
       window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
       initRoom();
     }
-    // --- On page load, check if joining a room via QR ---
     const query = new URLSearchParams(window.location.search);
     if (query.get("room")) {
       room = query.get("room");
@@ -568,8 +544,7 @@
       document.getElementById("chatUI").style.display = "flex";
       document.getElementById("chatUI").classList.add("visible");
       document.getElementById("expiredMsg").style.display = "none";
-      document.getElementById("holdDisconnectBtn").style.display = "flex";
-      document.getElementById("holdFlashQRBtn").style.display = "flex";
+      showQrBtn.style.display = "block";
       roomExpired = false;
       document.getElementById("roomInfo").innerText = `Room: ${room}`;
       userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
@@ -596,11 +571,7 @@
       roomExpired = true;
       document.getElementById("chatUI").classList.remove("visible");
       document.getElementById("chatUI").style.display = "none";
-      document.getElementById("holdDisconnectBtn").style.display = "none";
-      document.getElementById("holdFlashQRBtn").style.display = "none";
-      document.getElementById("flashQROverlay").classList.remove("visible");
-      document.getElementById("qrScreen").classList.remove("visible");
-      document.getElementById("qrScreen").style.display = "none";
+      showQrBtn.style.display = "none";
       document.getElementById("expiredMsg").style.display = "block";
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -666,7 +637,6 @@
       recognition.onend = () => { isSpeechActive = false; };
       recognition.start();
     }
-
     // Voice recording feature
     let mediaRecorder = null;
     let audioChunks = [];
@@ -717,137 +687,6 @@
         document.getElementById("recordBtn").innerText = "🎙️";
       }
     }
-
-    // --- Hold-to-disconnect logic ---
-    const holdBtn = document.getElementById('holdDisconnectBtn');
-    const ring = holdBtn.querySelector('.progress-ring__circle');
-    let holdTimeout = null;
-    let holdStart = 0;
-    let holdProgressFrame = null;
-    const HOLD_TIME = 1000; // 1 second
-    function setRingPercent(percent) {
-      const radius = ring.r.baseVal.value;
-      const circumference = 2 * Math.PI * radius;
-      ring.style.strokeDasharray = `${circumference} ${circumference}`;
-      ring.style.strokeDashoffset = `${circumference - percent/100 * circumference}`;
-    }
-    setRingPercent(0);
-    holdBtn.addEventListener('mousedown', startHold);
-    holdBtn.addEventListener('touchstart', startHold);
-    holdBtn.addEventListener('mouseup', cancelHold);
-    holdBtn.addEventListener('mouseleave', cancelHold);
-    holdBtn.addEventListener('touchend', cancelHold);
-    holdBtn.addEventListener('touchcancel', cancelHold);
-    function startHold(e) {
-      e.preventDefault();
-      if (holdTimeout) return;
-      holdBtn.classList.add('holding');
-      holdStart = Date.now();
-      setRingPercent(0);
-      function updateProgress() {
-        const elapsed = Date.now() - holdStart;
-        const percent = Math.min(100, elapsed / HOLD_TIME * 100);
-        setRingPercent(percent);
-        if (elapsed >= HOLD_TIME) {
-          disconnectNow();
-        } else {
-          holdProgressFrame = requestAnimationFrame(updateProgress);
-        }
-      }
-      holdProgressFrame = requestAnimationFrame(updateProgress);
-      holdTimeout = setTimeout(disconnectNow, HOLD_TIME);
-    }
-    function cancelHold(e) {
-      if (!holdTimeout) return;
-      clearTimeout(holdTimeout);
-      holdTimeout = null;
-      if (holdProgressFrame) cancelAnimationFrame(holdProgressFrame);
-      setRingPercent(0);
-      holdBtn.classList.remove('holding');
-    }
-    function disconnectNow() {
-      cancelHold();
-      holdBtn.classList.remove('holding');
-      setRingPercent(100);
-      if (room && userId) {
-        db.ref(`rooms/${room}/users/${userId}`).remove().then(() => {
-          showExpired();
-        });
-      } else {
-        showExpired();
-      }
-    }
-    // --- Hold-to-flash-QR logic ---
-    const flashBtn = document.getElementById('holdFlashQRBtn');
-    const flashRing = flashBtn.querySelector('.progress-ring__circle');
-    let flashTimeout = null;
-    let flashStart = 0;
-    let flashProgressFrame = null;
-    const FLASH_HOLD = 500;
-    function setFlashRingPercent(percent) {
-      const radius = flashRing.r.baseVal.value;
-      const circumference = 2 * Math.PI * radius;
-      flashRing.style.strokeDasharray = `${circumference} ${circumference}`;
-      flashRing.style.strokeDashoffset = `${circumference - percent/100 * circumference}`;
-    }
-    setFlashRingPercent(0);
-    flashBtn.addEventListener('mousedown', startFlashHold);
-    flashBtn.addEventListener('touchstart', startFlashHold);
-    flashBtn.addEventListener('mouseup', cancelFlashHold);
-    flashBtn.addEventListener('mouseleave', cancelFlashHold);
-    flashBtn.addEventListener('touchend', cancelFlashHold);
-    flashBtn.addEventListener('touchcancel', cancelFlashHold);
-    function startFlashHold(e) {
-      e.preventDefault();
-      if (flashTimeout) return;
-      flashBtn.classList.add('holding');
-      flashStart = Date.now();
-      setFlashRingPercent(0);
-      function updateProgress() {
-        const elapsed = Date.now() - flashStart;
-        const percent = Math.min(100, elapsed / FLASH_HOLD * 100);
-        setFlashRingPercent(percent);
-        if (elapsed >= FLASH_HOLD) {
-          showFlashQRCode();
-        } else {
-          flashProgressFrame = requestAnimationFrame(updateProgress);
-        }
-      }
-      flashProgressFrame = requestAnimationFrame(updateProgress);
-      flashTimeout = setTimeout(showFlashQRCode, FLASH_HOLD);
-    }
-    function cancelFlashHold(e) {
-      if (!flashTimeout) return;
-      clearTimeout(flashTimeout);
-      flashTimeout = null;
-      if (flashProgressFrame) cancelAnimationFrame(flashProgressFrame);
-      setFlashRingPercent(0);
-      flashBtn.classList.remove('holding');
-      hideFlashQRCode();
-    }
-    function showFlashQRCode() {
-      cancelFlashHold();
-      const overlay = document.getElementById('flashQROverlay');
-      overlay.classList.add('visible');
-      const qrDiv = document.getElementById('flashQRcode');
-      qrDiv.innerHTML = '';
-      const joinUrl = `${window.location.origin}${window.location.pathname}?room=${room}`;
-      new QRCode(qrDiv, {
-        text: joinUrl,
-        width: Math.min(window.innerWidth * 0.8, 410),
-        height: Math.min(window.innerWidth * 0.8, 410),
-        correctLevel: QRCode.CorrectLevel.H
-      });
-      document.getElementById('flashQRroom').innerText = `Room: ${room}`;
-    }
-    function hideFlashQRCode() {
-      document.getElementById('flashQROverlay').classList.remove('visible');
-    }
-    document.getElementById('flashQROverlay').addEventListener('mousedown', hideFlashQRCode);
-    document.getElementById('flashQROverlay').addEventListener('touchstart', hideFlashQRCode);
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') hideFlashQRCode();
-    });
   </script>
 </body>
 </html>
