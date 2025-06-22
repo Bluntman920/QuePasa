@@ -70,7 +70,6 @@
       0% { transform: translateY(0);}
       100% { transform: translateY(-10px);}
     }
-
     #languageScreen, #qrScreen, #chatUI {
       display: none;
     }
@@ -273,10 +272,61 @@
       border-radius: 24px;
       box-shadow: 0 2px 12px #c12a;
     }
+    /* --- Hold Disconnect Button --- */
+    #holdDisconnectBtn {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 100;
+      background: #f44336;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 54px;
+      height: 54px;
+      font-size: 1.7em;
+      font-weight: bold;
+      box-shadow: 0 2px 12px #0003;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+      transition: background 0.2s;
+    }
+    #holdDisconnectBtn.holding {
+      background: #c62828;
+    }
+    #holdDisconnectBtn .progress-ring {
+      position: absolute;
+      top: -5px; left: -5px;
+      width: 64px; height: 64px;
+      z-index: 101;
+      pointer-events: none;
+    }
+    #holdDisconnectBtn .progress-ring__circle {
+      stroke: #fff;
+      stroke-width: 5;
+      fill: transparent;
+      transition: stroke 0.2s;
+    }
+    #holdDisconnectBtnText {
+      z-index: 102;
+      position: absolute;
+      left: 0; top: 0;
+      width: 54px; height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      pointer-events: none;
+      font-family: Arial, sans-serif;
+    }
     @media (max-width: 600px) {
-      #chatBox, #chatInputArea { width: 98vw; max-width: 99vw;}
-      #bigQrContainer { padding: 0.5em;}
-      #tipSection, #tipSectionChat { padding: 1em 0.2em 1.1em 0.2em;}
+      #holdDisconnectBtn { 
+        top: unset; bottom: 18px; right: 18px;
+      }
     }
   </style>
 </head>
@@ -287,7 +337,6 @@
       <img id="mainLogo" src="icon2.png" alt="Que Pasa App Logo">
       <div class="tapPrompt">Tap logo to start</div>
     </div>
-
     <!-- Language/Nickname selection -->
     <div id="languageScreen">
       <img src="icon2.png" alt="Que Pasa App Logo" style="width:120px;margin-bottom:0.5em;">
@@ -299,7 +348,6 @@
       <input type="text" id="nickname" maxlength="16" placeholder="Your nickname (optional)">
       <button onclick="goToQrScreen()">Next</button>
     </div>
-
     <!-- Large QR code screen -->
     <div id="qrScreen">
       <div id="bigQrContainer">
@@ -308,10 +356,15 @@
       </div>
       <button id="continueToChatBtn" onclick="goToChat()">Continue to Chat</button>
     </div>
-
     <!-- CHAT UI -->
     <div id="chatUI">
       <img id="chatBgLogo" src="icon2.png" alt="">
+      <button id="holdDisconnectBtn" title="Hold to Disconnect" style="display:none;">
+        <svg class="progress-ring" width="64" height="64">
+          <circle class="progress-ring__circle" stroke="#fff" stroke-width="5" fill="transparent" r="26" cx="32" cy="32"/>
+        </svg>
+        <span id="holdDisconnectBtnText">⏻</span>
+      </button>
       <div id="roomInfo"></div>
       <div id="chatBox"></div>
       <div id="chatInputArea">
@@ -326,10 +379,8 @@
         <div style="font-size:0.97em;color:#666;margin-top:0.3em;">Tip your host!</div>
       </div>
     </div>
-
     <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
   </div>
-
   <script>
     // ==== Firebase Config ====
     const firebaseConfig = {
@@ -342,7 +393,6 @@
       appId: "1:508026556029:web:e8ff783647a23ecc571d314",
       measurementId: "G-BTF5SX93LW"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let room = "";
@@ -364,7 +414,6 @@
         document.getElementById('nickname').value = localStorage.getItem('qp_nick');
       }
     }
-
     function goToQrScreen() {
       userLang = document.getElementById("languageSelect").value;
       userNickname = document.getElementById("nickname").value.trim() || "User";
@@ -376,7 +425,6 @@
       document.getElementById('languageScreen').style.display = 'none';
       showQrScreen();
     }
-
     function showQrScreen() {
       document.getElementById('qrScreen').style.display = 'flex';
       document.getElementById('qrScreen').classList.add('visible');
@@ -391,14 +439,12 @@
         correctLevel: QRCode.CorrectLevel.H
       });
     }
-
     function goToChat() {
       document.getElementById('qrScreen').classList.remove('visible');
       document.getElementById('qrScreen').style.display = 'none';
       window.history.replaceState({}, '', window.location.pathname + `?room=${room}`);
       initRoom();
     }
-
     // --- On page load, check if joining a room via QR ---
     const query = new URLSearchParams(window.location.search);
     if (query.get("room")) {
@@ -408,23 +454,22 @@
       document.getElementById('languageScreen').style.display = 'flex';
       document.getElementById('languageScreen').classList.add('visible');
     }
-
     // --- Core Chat/Room Logic ---
     function generateRandomRoomCode(length = 12) {
       const array = new Uint8Array(length);
       window.crypto.getRandomValues(array);
       return Array.from(array, b => b.toString(36).padStart(2, '0')).join('');
     }
-
     function removeListeners() {
       if (usersListener) usersListener.off();
       if (roomListener) roomListener.off();
     }
-
     function initRoom() {
       document.getElementById("chatUI").style.display = "flex";
       document.getElementById("chatUI").classList.add("visible");
       document.getElementById("expiredMsg").style.display = "none";
+      // Show disconnect button
+      document.getElementById("holdDisconnectBtn").style.display = "flex";
       roomExpired = false;
       // Show code for reference
       document.getElementById("roomInfo").innerText = `Room: ${room}`;
@@ -434,7 +479,6 @@
       const userRef = db.ref(`rooms/${room}/users/${userId}`);
       userRef.set({ nickname: userNickname, connected: true, lang: userLang });
       userRef.onDisconnect().remove();
-
       // Listen for user count
       usersListener = db.ref(`rooms/${room}/users`);
       usersListener.on('value', snapshot => {
@@ -444,7 +488,6 @@
           setTimeout(() => db.ref(`rooms/${room}`).remove(), 120);
         }
       });
-
       // Listen for room deletion
       roomListener = db.ref(`rooms/${room}`);
       roomListener.on('value', snapshot => {
@@ -452,14 +495,13 @@
           showExpired();
         }
       });
-
       listenToRoom();
     }
-
     function showExpired() {
       roomExpired = true;
       document.getElementById("chatUI").classList.remove("visible");
       document.getElementById("chatUI").style.display = "none";
+      document.getElementById("holdDisconnectBtn").style.display = "none";
       document.getElementById("languageScreen").classList.remove("visible");
       document.getElementById("languageScreen").style.display = "none";
       document.getElementById("qrScreen").classList.remove("visible");
@@ -472,7 +514,6 @@
         window.location.search = '';
       }
     }
-
     async function sendMsg(msg) {
       if (!msg || !room) return;
       db.ref(`rooms/${room}/messages`).push({
@@ -482,23 +523,47 @@
         ts: Date.now()
       });
     }
-
+    // --- REAL TRANSLATION via LibreTranslate ---
+    async function realTranslate(text, from, to) {
+      if (from === to) return text;
+      try {
+        const res = await fetch("https://libretranslate.de/translate", {
+          method: "POST",
+          body: JSON.stringify({
+            q: text,
+            source: from,
+            target: to,
+            format: "text"
+          }),
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+        if (data && data.translatedText) return data.translatedText;
+        return "[Translation error]";
+      } catch (e) {
+        return "[Translation error]";
+      }
+    }
     function listenToRoom() {
       if (!room) return;
       db.ref(`rooms/${room}/messages`).off();
       document.getElementById("chatBox").innerHTML = "";
-      db.ref(`rooms/${room}/messages`).on("child_added", snapshot => {
+      db.ref(`rooms/${room}/messages`).on("child_added", async snapshot => {
         const data = snapshot.val();
         const box = document.getElementById("chatBox");
         if (data.lang && data.lang !== userLang) {
-          box.innerHTML += `<div><b>${data.user}:</b> <span title="translated">(translated) </span>${fakeTranslate(data.text, data.lang, userLang)}</div>`;
+          // Real-time translation!
+          box.innerHTML += `<div><b>${data.user}:</b> <span title="translated">(translating...)</span></div>`;
+          const thisDiv = box.lastChild;
+          const translated = await realTranslate(data.text, data.lang, userLang);
+          thisDiv.innerHTML = `<b>${data.user}:</b> <span title="translated">(translated)</span> ${translated}`;
+          box.scrollTop = box.scrollHeight;
         } else {
           box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
+          box.scrollTop = box.scrollHeight;
         }
-        box.scrollTop = box.scrollHeight;
       });
     }
-
     document.getElementById("msgInput").addEventListener("keydown", function(event) {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
@@ -509,7 +574,6 @@
         }
       }
     });
-
     // --- Speech-to-text ---
     let isSpeechActive = false;
     function startSpeechToText() {
@@ -533,12 +597,69 @@
       recognition.onend = () => { isSpeechActive = false; };
       recognition.start();
     }
+    // --- Hold-to-disconnect logic ---
+    const holdBtn = document.getElementById('holdDisconnectBtn');
+    const holdText = document.getElementById('holdDisconnectBtnText');
+    const ring = holdBtn.querySelector('.progress-ring__circle');
+    let holdTimeout = null;
+    let holdStart = 0;
+    let holdProgressFrame = null;
+    const HOLD_TIME = 3000; // ms
 
-    function fakeTranslate(text, from, to) {
-      // No real translation, only a stub for demonstration.
-      if (from === "en" && to === "es") return `[EN→ES] ${text}`;
-      if (from === "es" && to === "en") return `[ES→EN] ${text}`;
-      return text;
+    function setRingPercent(percent) {
+      const radius = ring.r.baseVal.value;
+      const circumference = 2 * Math.PI * radius;
+      ring.style.strokeDasharray = `${circumference} ${circumference}`;
+      ring.style.strokeDashoffset = `${circumference - percent/100 * circumference}`;
+    }
+    setRingPercent(0);
+
+    holdBtn.addEventListener('mousedown', startHold);
+    holdBtn.addEventListener('touchstart', startHold);
+    holdBtn.addEventListener('mouseup', cancelHold);
+    holdBtn.addEventListener('mouseleave', cancelHold);
+    holdBtn.addEventListener('touchend', cancelHold);
+    holdBtn.addEventListener('touchcancel', cancelHold);
+
+    function startHold(e) {
+      e.preventDefault();
+      if (holdTimeout) return;
+      holdBtn.classList.add('holding');
+      holdStart = Date.now();
+      setRingPercent(0);
+      function updateProgress() {
+        const elapsed = Date.now() - holdStart;
+        const percent = Math.min(100, elapsed / HOLD_TIME * 100);
+        setRingPercent(percent);
+        if (elapsed >= HOLD_TIME) {
+          disconnectNow();
+        } else {
+          holdProgressFrame = requestAnimationFrame(updateProgress);
+        }
+      }
+      holdProgressFrame = requestAnimationFrame(updateProgress);
+      holdTimeout = setTimeout(disconnectNow, HOLD_TIME);
+    }
+    function cancelHold(e) {
+      if (!holdTimeout) return;
+      clearTimeout(holdTimeout);
+      holdTimeout = null;
+      if (holdProgressFrame) cancelAnimationFrame(holdProgressFrame);
+      setRingPercent(0);
+      holdBtn.classList.remove('holding');
+    }
+    function disconnectNow() {
+      cancelHold();
+      holdBtn.classList.remove('holding');
+      setRingPercent(100);
+      // Remove self from room and reset UI
+      if (room && userId) {
+        db.ref(`rooms/${room}/users/${userId}`).remove().then(() => {
+          showExpired();
+        });
+      } else {
+        showExpired();
+      }
     }
   </script>
 </body>
