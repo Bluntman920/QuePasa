@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Que Pasa</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; transition: background 0.3s, color 0.3s; text-align: center; font-size: 22px; }
+    .chat { border: 1px solid #ccc; padding: 10px; margin: 20px auto; height: 200px; overflow-y: scroll; max-width: 600px; text-align: left; font-size: 20px; }
+    input, select, button { margin-top: 10px; padding: 14px; width: 90%; max-width: 600px; font-size: 20px; }
+    #qrcode { margin: 20px auto; width: fit-content; }
+    #roomCodeDisplay { font-weight: bold; font-size: 24px; margin-top: 10px; }
+    .language-select { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+    .lang-option { border: 1px solid #ccc; padding: 12px; border-radius: 8px; cursor: pointer; text-align: center; width: 120px; font-size: 20px; }
+    .hidden { display: none; }
+    .mode-toggle { margin-top: 20px; text-align: center; }
+    body.dark-mode { background: #121212; color: #f0f0f0; }
+    body.dark-mode .chat { border-color: #f0f0f0; }
+    body.matrix-mode { background: #000000; color: #00FF00; font-family: monospace; }
+    body.matrix-mode .chat { border-color: #00FF00; }
+    button { cursor: pointer; }
+    .tip-section { margin-top: 30px; text-align: center; }
+    .tip-image { max-width: 200px; margin: 10px auto; display: block; border: 1px solid #ccc; border-radius: 10px; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="startScreen">
+    <h1>Que Pasa</h1>
+    <div class="mode-toggle">
+      <button onclick="setMode('light')">☀️ Light</button>
+      <button onclick="setMode('dark')">🌙 Dark</button>
+      <button onclick="setMode('matrix')">💻 Matrix</button>
+    </div>
+    <p id="selectLanguageText">Select your language</p>
+    <p style="max-width: 600px; margin: 0 auto 20px;">
+      Que Pasa is a simple, anonymous, and instant translation chat tool for two people to communicate when they don't speak the same language. No app install, no account, no phone passing. Just scan, chat, and go.
+    </p>
+    <div class="language-select">
+      <div class="lang-option" onclick="selectLanguage('en')">
+        🇺🇸<br>English
+      </div>
+      <div class="lang-option" onclick="selectLanguage('es')">
+        🇪🇸<br>Español
+      </div>
+      <div class="lang-option" onclick="selectLanguage('fr')">
+        🇫🇷<br>Français
+      </div>
+    </div>
+  </div>
+
+  <div id="chatScreen" class="hidden">
+    <h1>Que Pasa</h1>
+    <div class="mode-toggle">
+      <button onclick="setMode('light')">☀️ Light</button>
+      <button onclick="setMode('dark')">🌙 Dark</button>
+      <button onclick="setMode('matrix')">💻 Matrix</button>
+    </div>
+    <p id="chatSubText">Temporary anonymous translator chat</p>
+
+    <label for="toLang" id="theirLangLabel">Their Language:</label><br>
+    <select id="toLang">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select><br>
+
+    <button onclick="startNewChat()" id="startBtn">Start New Chat / Generate QR</button>
+    <button onclick="disconnectChat()" id="disconnectBtn">Disconnect</button>
+    <div id="qrcode"></div>
+    <div id="roomCodeDisplay"></div>
+
+    <label for="manualRoom" id="manualRoomLabel">Join with Room Code:</label><br>
+    <input type="text" id="manualRoom" placeholder="Enter room code">
+    <button onclick="joinManualRoom()" id="joinRoomBtn">Join Room</button>
+
+    <div class="chat" id="chat"></div>
+
+    <input type="text" id="message" placeholder="Type your message...">
+    <button onclick="sendMessage()" id="sendBtn">Send</button>
+    <button onclick="startMic()" id="speakBtn">🎤 Speak</button>
+  </div>
+
+  <div class="tip-section">
+    <p>If Que Pasa helped you communicate easier, feel free to leave a tip 🙏</p>
+    <img src="WhatsApp Image 2025-06-21 at 21.32.05_fd906c92.jpg" alt="Cash App QR - $QuePasaAPP" class="tip-image">
+    <strong>Que Pasa App</strong><br>
+    <span>$QuePasaAPP</span>
+  </div>
+
+  <script>
+    let currentRoom = "";
+    let fromLang = "";
+    let qrInterval = null;
+
+    function setMode(mode) {
+      document.body.classList.remove("dark-mode", "matrix-mode");
+      if (mode === "dark") document.body.classList.add("dark-mode");
+      if (mode === "matrix") document.body.classList.add("matrix-mode");
+    }
+
+    function selectLanguage(lang) {
+      fromLang = lang;
+      document.getElementById("fromLang").value = lang;
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("chatScreen").classList.remove("hidden");
+    }
+
+    function generateUniqueRoomId() {
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).substring(2, 8);
+      return `${timestamp}-${random}`;
+    }
+
+    function startNewChat() {
+      if (qrInterval) clearInterval(qrInterval);
+      generateNewQR();
+      qrInterval = setInterval(generateNewQR, 30000);
+    }
+
+    function generateNewQR() {
+      currentRoom = generateUniqueRoomId();
+      const roomUrl = `${window.location.origin}${window.location.pathname}?room=${currentRoom}`;
+      const qrContainer = document.getElementById("qrcode");
+      qrContainer.innerHTML = "";
+      new QRCode(qrContainer, roomUrl);
+      document.getElementById("roomCodeDisplay").innerText = `Room Code: ${currentRoom}\nThanks for your support 🙏`;
+      setTimeout(() => {
+        qrContainer.innerHTML = "<em>QR expired. Tap 'Start New Chat' to generate a new one.</em>";
+        document.getElementById("roomCodeDisplay").innerText = "";
+      }, 30000);
+    }
+
+    function disconnectChat() {
+      if (qrInterval) clearInterval(qrInterval);
+      currentRoom = "";
+      document.getElementById("chat").innerHTML = "<em>Chat disconnected. Start a new chat to continue.</em>";
+      document.getElementById("qrcode").innerHTML = "";
+      document.getElementById("roomCodeDisplay").innerText = "";
+      document.getElementById("manualRoom").value = "";
+    }
+
+    function joinManualRoom() {
+      const room = document.getElementById("manualRoom").value.trim();
+      if (room) {
+        window.location.href = `${window.location.pathname}?room=${room}`;
+      }
+    }
+
+    async function translate(text, from, to) {
+      const response = await fetch("https://libretranslate.de/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: text, source: from, target: to, format: "text" })
+      });
+      const data = await response.json();
+      return data.translatedText;
+    }
+
+    async function sendMessage() {
+      const chat = document.getElementById("chat");
+      const input = document.getElementById("message");
+      const toLang = document.getElementById("toLang").value;
+      const original = input.value;
+
+      if (!original.trim()) return;
+
+      const translated = await translate(original, fromLang, toLang);
+
+      chat.innerHTML += `<div><strong>You:</strong> ${original}</div>`;
+      chat.innerHTML += `<div><strong>Them:</strong> ${translated}</div>`;
+      input.value = "";
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function startMic() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = fromLang;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = function(event) {
+        document.getElementById("message").value = event.results[0][0].transcript;
+        sendMessage();
+      };
+
+      recognition.onerror = function(event) {
+        alert("Mic error: " + event.error);
+      };
+
+      recognition.start();
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const joinedRoom = params.get("room");
+    if (joinedRoom) {
+      currentRoom = joinedRoom;
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("chatScreen").classList.remove("hidden");
+      document.getElementById("qrcode").innerHTML = `<p>You joined room: <strong>${joinedRoom}</strong></p>`;
+      document.getElementById("roomCodeDisplay").innerText = `Room Code: ${joinedRoom}`;
+    }
+  </script>
+  <input type="hidden" id="fromLang" value="">
+</body>
+</html>
