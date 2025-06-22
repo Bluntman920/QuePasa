@@ -4,223 +4,126 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Que Pasa</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
       margin: 0;
-      padding: 0;
       font-family: Arial, sans-serif;
-    }
-    .app-container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      margin-bottom: 0;
-    }
-    select, button, input {
-      padding: 12px;
-      margin: 10px 0;
-      width: 100%;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    .chat-box {
-      height: 250px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      background-color: white;
-      text-align: left;
-    }
-    .theme-light {
-      background-color: #f9f9f9;
-      color: #333;
-    }
-    .theme-dark {
-      background-color: #121212;
-      color: #eee;
-    }
-    .theme-dark .chat-box {
-      background-color: #1e1e1e;
-    }
-    .theme-matrix {
       background-color: #000;
       color: #0f0;
     }
-    .theme-matrix .chat-box {
-      background-color: #000;
+    .app-container {
+      text-align: center;
+      padding: 2em;
+    }
+    #qrcode {
+      display: none;
+      margin: 2em auto;
+      width: 256px;
+      height: 256px;
+    }
+    .visible {
+      display: block !important;
     }
     .hidden {
       display: none;
     }
-    .btn-row {
-      display: flex;
-      gap: 10px;
+    textarea {
+      width: 80%;
+      height: 60px;
+      margin-top: 1em;
+      font-size: 1.2em;
+      padding: 0.5em;
+      border-radius: 8px;
     }
-    #qrcode {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 10px 0;
-    }
-    .speak-button {
-      margin-left: 10px;
-      cursor: pointer;
-    }
-    .mute-button {
-      background-color: #ff4444;
-      color: white;
-      border: none;
-      padding: 10px;
-      margin: 10px 0;
-      width: auto;
-      cursor: pointer;
+    #chatBox {
+      margin-top: 1em;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #0f0;
+      padding: 1em;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
   <div class="app-container">
-    <h1>Que Pasa</h1>
-    <p>Instant translate chat with QR link-up</p>
-
-    <select id="themeSelector" onchange="setTheme(this.value)">
-      <option value="light">Day Mode</option>
-      <option value="dark">Night Mode</option>
-      <option value="matrix">Matrix Mode</option>
-    </select>
-
     <div id="setup">
-      <select id="fromLang">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
-      </select>
-      <div class="btn-row">
-        <button onclick="playClick(); createRoom();">Start</button>
-        <button onclick="playClick(); showJoinUI();">Join</button>
-      </div>
-      <div id="joinUI" class="hidden">
-        <input type="text" id="joinCode" placeholder="Enter room code">
-        <button onclick="playClick(); joinRoom();">Enter</button>
-      </div>
+      <button onclick="createRoom()">Create Room</button>
     </div>
-
     <div id="chatUI" class="hidden">
-      <select id="toLang">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
-      </select>
-
       <div id="roomInfo"></div>
       <div id="qrcode"></div>
-      <div class="chat-box" id="chatBox"></div>
-      <input type="text" id="msgInput" placeholder="Start typing your message">
-      <div class="btn-row">
-        <button onclick="playClick(); startMic();">🎤</button>
-        <button onclick="playClick(); leaveRoom();">Disconnect</button>
-        <button class="mute-button" onclick="toggleMute()" id="muteBtn">Mute</button>
-      </div>
-      <a href="https://sites.google.com/view/quepasadonationpage/home" target="_blank">
-        <img src="tip-qr.jpg" alt="Donate QR" style="width: 200px; margin-top: 10px; display: block; margin-left: auto; margin-right: auto;">
-      </a>
+      <textarea id="msgInput" placeholder="Type and press Enter..."></textarea>
+      <div id="chatBox"></div>
     </div>
-    <audio id="clickSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
   </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     let room = "";
-    let isMuted = false;
-
-    function playClick() {
-      if (!isMuted) document.getElementById("clickSound").play();
-    }
-
-    function toggleMute() {
-      isMuted = !isMuted;
-      document.getElementById("muteBtn").innerText = isMuted ? "Unmute" : "Mute";
-    }
-
-    function setTheme(val) {
-      document.body.className = "theme-" + val;
-    }
+    let qrTimeout;
 
     function createRoom() {
       room = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
       document.getElementById("setup").classList.add("hidden");
       document.getElementById("chatUI").classList.remove("hidden");
       document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
-      document.getElementById("qrcode").innerHTML = "";
-      new QRCode(document.getElementById("qrcode"), {
+      const qrElement = document.getElementById("qrcode");
+      qrElement.innerHTML = "";
+      new QRCode(qrElement, {
         text: `${window.location.href}?room=${room}`,
-        width: 128,
-        height: 128,
+        width: 256,
+        height: 256,
         correctLevel: QRCode.CorrectLevel.H
       });
+      qrElement.classList.add("visible");
+      if (qrTimeout) clearTimeout(qrTimeout);
+      qrTimeout = setTimeout(() => {
+        qrElement.classList.remove("visible");
+      }, 5 * 60 * 1000);
     }
 
-    function showJoinUI() {
-      document.getElementById("joinUI").classList.remove("hidden");
+    async function sendMsg(msg) {
+      if (!msg || !room) return;
+      const chatRef = db.ref(`rooms/${room}`).push();
+      chatRef.set({ user: "You", text: msg });
     }
 
-    function joinRoom() {
-      const code = document.getElementById("joinCode").value.trim();
-      if (!code) return;
-      window.location.href = `${window.location.pathname}?room=${code}`;
-    }
-
-    function leaveRoom() {
-      location.href = window.location.pathname;
-    }
-
-    async function sendMsg() {
-      const msg = document.getElementById("msgInput").value;
-      if (!msg) return;
-      const from = document.getElementById("fromLang").value;
-      const to = document.getElementById("toLang").value;
-      const translated = await translateText(msg, from, to);
-      const box = document.getElementById("chatBox");
-      box.innerHTML += `<div><b>You:</b> ${msg} <button class='speak-button' onclick="speak('${msg}', '${from}')">🔊</button></div>`;
-      box.innerHTML += `<div><b>Them:</b> ${translated} <button class='speak-button' onclick="speak('${translated}', '${to}')">🔊</button></div>`;
-      box.scrollTop = box.scrollHeight;
-      document.getElementById("msgInput").value = "";
-    }
-
-    async function translateText(text, from, to) {
-      const res = await fetch("https://libretranslate.de/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ q: text, source: from, target: to, format: "text" })
+    function listenToRoom() {
+      if (!room) return;
+      db.ref(`rooms/${room}`).on("child_added", snapshot => {
+        const data = snapshot.val();
+        const box = document.getElementById("chatBox");
+        box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
+        box.scrollTop = box.scrollHeight;
       });
-      const data = await res.json();
-      return data.translatedText;
-    }
-
-    function startMic() {
-      const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      rec.lang = document.getElementById("fromLang").value;
-      rec.onresult = e => {
-        document.getElementById("msgInput").value = e.results[0][0].transcript;
-        sendMsg();
-      };
-      rec.start();
-    }
-
-    function speak(text, lang) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
-      window.speechSynthesis.speak(utterance);
     }
 
     document.getElementById("msgInput").addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         event.preventDefault();
-        playClick();
-        sendMsg();
+        const msg = this.value.trim();
+        if (msg) {
+          sendMsg(msg);
+          this.value = "";
+        }
       }
     });
 
@@ -230,6 +133,7 @@
       document.getElementById("setup").classList.add("hidden");
       document.getElementById("chatUI").classList.remove("hidden");
       document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
+      listenToRoom();
     }
   </script>
 </body>
