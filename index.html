@@ -9,8 +9,6 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      color: #333;
     }
     .app-container {
       max-width: 600px;
@@ -62,6 +60,25 @@
       display: flex;
       gap: 10px;
     }
+    #qrcode {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .speak-button {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    .mute-button {
+      background-color: #ff4444;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin: 10px 0;
+      width: auto;
+      cursor: pointer;
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -102,13 +119,14 @@
       <div id="roomInfo"></div>
       <div id="qrcode"></div>
       <div class="chat-box" id="chatBox"></div>
-      <input type="text" id="msgInput" placeholder="Type your message">
-      <button onclick="playClick(); sendMsg();">Send</button>
-      <button onclick="playClick(); startMic();">🎤</button>
-      <button onclick="playClick(); leaveRoom();">Disconnect</button>
-      <br />
+      <input type="text" id="msgInput" placeholder="Start typing your message">
+      <div class="btn-row">
+        <button onclick="playClick(); startMic();">🎤</button>
+        <button onclick="playClick(); leaveRoom();">Disconnect</button>
+        <button class="mute-button" onclick="toggleMute()" id="muteBtn">Mute</button>
+      </div>
       <a href="https://sites.google.com/view/quepasadonationpage/home" target="_blank">
-        <img src="tip-qr.jpg" alt="Donate QR" style="width: 200px; margin-top: 10px;">
+        <img src="tip-qr.jpg" alt="Donate QR" style="width: 200px; margin-top: 10px; display: block; margin-left: auto; margin-right: auto;">
       </a>
     </div>
     <audio id="clickSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
@@ -116,9 +134,15 @@
 
   <script>
     let room = "";
+    let isMuted = false;
 
     function playClick() {
-      document.getElementById("clickSound").play();
+      if (!isMuted) document.getElementById("clickSound").play();
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById("muteBtn").innerText = isMuted ? "Unmute" : "Mute";
     }
 
     function setTheme(val) {
@@ -131,7 +155,12 @@
       document.getElementById("chatUI").classList.remove("hidden");
       document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
       document.getElementById("qrcode").innerHTML = "";
-      new QRCode(document.getElementById("qrcode"), `${window.location.href}?room=${room}`);
+      new QRCode(document.getElementById("qrcode"), {
+        text: `${window.location.href}?room=${room}`,
+        width: 128,
+        height: 128,
+        correctLevel: QRCode.CorrectLevel.H
+      });
     }
 
     function showJoinUI() {
@@ -155,8 +184,8 @@
       const to = document.getElementById("toLang").value;
       const translated = await translateText(msg, from, to);
       const box = document.getElementById("chatBox");
-      box.innerHTML += `<div><b>You:</b> ${msg}</div>`;
-      box.innerHTML += `<div><b>Them:</b> ${translated}</div>`;
+      box.innerHTML += `<div><b>You:</b> ${msg} <button class='speak-button' onclick="speak('${msg}', '${from}')">🔊</button></div>`;
+      box.innerHTML += `<div><b>Them:</b> ${translated} <button class='speak-button' onclick="speak('${translated}', '${to}')">🔊</button></div>`;
       box.scrollTop = box.scrollHeight;
       document.getElementById("msgInput").value = "";
     }
@@ -180,6 +209,20 @@
       };
       rec.start();
     }
+
+    function speak(text, lang) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    document.getElementById("msgInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        playClick();
+        sendMsg();
+      }
+    });
 
     const query = new URLSearchParams(window.location.search);
     if (query.get("room")) {
