@@ -179,7 +179,7 @@
       resize: none;
       box-sizing: border-box;
     }
-    #micBtn {
+    #micBtn, #recordBtn {
       background: #e3f6fd;
       border: 1.5px solid #27a3cc;
       color: #27a3cc;
@@ -192,6 +192,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+    #recordBtn.recording {
+      background: #ffdde2;
+      border-color: #e00;
+      color: #e00;
+      animation: recordingPulse 1s infinite;
+    }
+    @keyframes recordingPulse {
+      0% { box-shadow: 0 0 0 0 #e005; }
+      80% { box-shadow: 0 0 16px 8px #e055; }
+      100% { box-shadow: 0 0 0 0 #e005; }
     }
     #roomInfo {
       font-size: 1.27em;
@@ -284,58 +297,35 @@
       font-size: 1.35em; color: #555; font-weight: bold;
       margin-top: 0.9em; letter-spacing: 0.05em; margin-bottom: 0.5em;
     }
-    /* Persistent Tip Bar */
-    #tipBar {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 10000;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      background: #f7fff9ee;
-      box-shadow: 0 6px 32px #27c46c44, 0 2px 12px #0002;
-      border-radius: 60px;
-      padding: 24px 48px 24px 28px;
-      gap: 34px;
-      border: 2.5px solid #27c46c66;
+    #supportThanks {
+      margin-top:1.5em; text-align:center; max-width:520px; margin-left:auto; margin-right:auto;
+      background:#f6fff9; border-radius:18px; box-shadow:0 2px 10px #27c46c18; padding:1.2em 1em 1.5em 1em;
     }
-    .tipBarIcon img {
-      width: 140px;
-      height: 140px;
-      border-radius: 26px;
-      background: #fff;
-      box-shadow: 0 2px 14px #26c46c33;
-      transition: transform 0.18s;
-      border: 3.5px solid #27c46c55;
+    #supportThanks .tipIcons {
+      display:flex;justify-content:center;align-items:center;gap:30px;margin-bottom:1em;
     }
-    .tipBarIcon img:hover {
-      transform: scale(1.18);
-      box-shadow: 0 4px 32px #27c46c88;
+    #supportThanks .tipIcons img {
+      width:62px;height:62px;border-radius:15px;box-shadow:0 2px 10px #27c46c44;
     }
-    #tipBar span {
-      font-size:2.2em;
-      font-weight:600;
-      color:#237a48;
-      margin-left:30px;
-      letter-spacing:0.04em;
-      line-height:1.25em;
-      text-align:left;
-      max-width: 440px;
+    #supportThanks .thanksTitle {
+      font-size:1.15em;color:#237a48;font-weight:bold;line-height:1.5;margin-bottom:0.3em;
     }
-    @media (max-width:900px) {
-      #tipBar {
-        bottom: 8px;
-        right: 8px;
-        left: 8px;
-        padding: 10px 10px 10px 10px;
-        gap: 8px;
-        border-radius: 30px;
-      }
-      .tipBarIcon img {
-        width: 70px; height: 70px; border-radius: 11px;
-      }
-      #tipBar span { font-size:1.1em; margin-left:12px;}
+    #supportThanks .thanksText {
+      color:#225c36;font-size:1em;line-height:1.5;
+    }
+    #supportThanks .privacy {
+      display:block;margin-top:0.6em;color:#237a48;font-weight:500;font-size:0.97em;
+    }
+    @media (max-width:600px) {
+      #chatBox, #chatInputArea { width: 99vw; max-width: 99vw;}
+      #bigQrContainer { padding: 0.7em;}
+      #holdDisconnectBtn, #holdFlashQRBtn { top: unset; bottom: 22px;}
+      #holdDisconnectBtn { right: 22px; }
+      #holdFlashQRBtn { left: 22px;}
+      #holdDisconnectBtn, #holdFlashQRBtn { width: 65px; height: 65px;}
+      #holdDisconnectBtnText, #holdFlashQRBtnText { width:65px; height:65px;}
+      #holdDisconnectBtn .progress-ring, #holdFlashQRBtn .progress-ring { width:75px; height:75px; top:-5px; left:-5px;}
+      .skullIcon { width:40px; height:40px; }
     }
   </style>
 </head>
@@ -385,6 +375,28 @@
       <div id="chatInputArea">
         <textarea id="msgInput" placeholder="Type and press Enter..."></textarea>
         <button id="micBtn" title="Speak" onclick="startSpeechToText()">🎤</button>
+        <button id="recordBtn" title="Hold to Record Voice" onclick="toggleRecording()">🎙️</button>
+      </div>
+      <div id="supportThanks">
+        <div class="tipIcons">
+          <a href="icon.png" target="_blank" title="Pay via Cash App">
+            <img src="icon.png" alt="Cash App">
+          </a>
+          <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" title="Pay via PayPal">
+            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
+          </a>
+        </div>
+        <div class="thanksTitle">
+          Thank you for being part of this journey.
+        </div>
+        <div class="thanksText">
+          Your kindness and support help this app grow—<br>
+          every tip is a seed that helps new ideas bloom.<br>
+          With deepest gratitude for every moment and every gift.<br>
+          <span class="privacy">
+            Privacy is our first priority: no accounts, no tracking, just you and your conversation.
+          </span>
+        </div>
       </div>
     </div>
     <div id="flashQROverlay">
@@ -393,24 +405,6 @@
       <div style="color:#555;font-size:1.18em;margin-bottom:1em;">Have them scan this QR to join you.</div>
     </div>
     <div id="expiredMsg">Room expired, deleted, or too many people joined.<br />Please create a new room.</div>
-    <!-- Persistent Tip Bar for Every Page -->
-    <div id="tipBar">
-      <a href="icon.png" target="_blank" title="Pay via Cash App" class="tipBarIcon" id="tipCashApp">
-        <img src="icon.png" alt="Cash App" />
-      </a>
-      <a href="https://paypal.me/QuePasaApp?country.x=US&locale.x=en_US" target="_blank" title="Pay via PayPal" class="tipBarIcon" id="tipPaypal">
-        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" />
-      </a>
-      <span>
-        Thank you for being part of this journey.<br>
-        Your kindness and support help this app grow—<br>
-        every tip is a seed that helps new ideas bloom.<br>
-        With deepest gratitude for every moment and every gift.<br>
-        <span style="display:block;margin-top:0.5em;color:#237a48;font-weight:700;font-size:1em;">
-          Privacy is our first priority: no accounts, no tracking, just you and your conversation.
-        </span>
-      </span>
-    </div>
   </div>
   <!-- Google Translate Widget -->
   <script type="text/javascript">
@@ -531,11 +525,12 @@
         window.location.search = '';
       }
     }
-    async function sendMsg(msg) {
-      if (!msg || !room) return;
+    async function sendMsg(msg, audioUrl) {
+      if ((!msg && !audioUrl) || !room) return;
       db.ref(`rooms/${room}/messages`).push({
         user: userNickname,
-        text: msg,
+        text: msg || "",
+        audio: audioUrl || "",
         ts: Date.now()
       });
     }
@@ -546,7 +541,13 @@
       db.ref(`rooms/${room}/messages`).on("child_added", snapshot => {
         const data = snapshot.val();
         const box = document.getElementById("chatBox");
-        box.innerHTML += `<div><b>${data.user}:</b> ${data.text}</div>`;
+        let html = `<div><b>${data.user}:</b> `;
+        if (data.text) html += `${data.text}`;
+        if (data.audio) {
+          html += `<br><audio controls style="margin-top:7px;max-width:95%;"><source src="${data.audio}" type="audio/webm"></audio>`;
+        }
+        html += `</div>`;
+        box.innerHTML += html;
         box.scrollTop = box.scrollHeight;
       });
     }
@@ -582,6 +583,58 @@
       recognition.onend = () => { isSpeechActive = false; };
       recognition.start();
     }
+
+    // Voice recording feature
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    function toggleRecording() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+    function startRecording() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Voice recording not supported in this browser.');
+        return;
+      }
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = function(e) {
+            if (e.data.size > 0) {
+              audioChunks.push(e.data);
+            }
+          };
+          mediaRecorder.onstop = function() {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onloadend = function() {
+              sendMsg("", reader.result);
+            };
+            reader.readAsDataURL(audioBlob);
+          };
+          mediaRecorder.start();
+          isRecording = true;
+          document.getElementById("recordBtn").classList.add("recording");
+          document.getElementById("recordBtn").innerText = "⏹️";
+        })
+        .catch(err => {
+          alert('Unable to access microphone.');
+        });
+    }
+    function stopRecording() {
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        isRecording = false;
+        document.getElementById("recordBtn").classList.remove("recording");
+        document.getElementById("recordBtn").innerText = "🎙️";
+      }
+    }
+
     // --- Hold-to-disconnect logic ---
     const holdBtn = document.getElementById('holdDisconnectBtn');
     const ring = holdBtn.querySelector('.progress-ring__circle');
