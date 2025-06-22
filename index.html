@@ -48,13 +48,38 @@
       margin-left: auto;
       margin-right: auto;
     }
+    .lang-select, .room-options {
+      margin: 1em;
+    }
+    select, button {
+      font-size: 1em;
+      padding: 0.5em 1em;
+      margin: 0.5em;
+    }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <div id="setup">
-      <button onclick="createRoom()">Create Room</button>
+    <div id="languageScreen">
+      <h2>Select Your Language</h2>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="zh">中文</option>
+      </select>
+      <br />
+      <button onclick="goToRoomOptions()">Continue</button>
     </div>
+
+    <div id="roomOptions" class="hidden">
+      <h2>Create or Join a Room</h2>
+      <button onclick="createRoom()">Create Room</button>
+      <input id="joinCode" placeholder="Enter Room Code" />
+      <button onclick="joinRoom()">Join Room</button>
+    </div>
+
     <div id="chatUI" class="hidden">
       <div id="roomInfo"></div>
       <div id="qrcode"></div>
@@ -80,15 +105,33 @@
     let room = "";
     let qrTimeout;
 
+    function goToRoomOptions() {
+      document.getElementById("languageScreen").classList.add("hidden");
+      document.getElementById("roomOptions").classList.remove("hidden");
+    }
+
     function createRoom() {
       room = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
-      document.getElementById("setup").classList.add("hidden");
+      showChatUI(room);
+    }
+
+    function joinRoom() {
+      const code = document.getElementById("joinCode").value.trim();
+      if (code) {
+        room = code;
+        showChatUI(room);
+        listenToRoom();
+      }
+    }
+
+    function showChatUI(roomCode) {
+      document.getElementById("roomOptions").classList.add("hidden");
       document.getElementById("chatUI").classList.remove("hidden");
-      document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
+      document.getElementById("roomInfo").innerText = `Room Code: ${roomCode}`;
       const qrElement = document.getElementById("qrcode");
       qrElement.innerHTML = "";
       new QRCode(qrElement, {
-        text: `${window.location.href}?room=${room}`,
+        text: `${window.location.href}?room=${roomCode}`,
         width: 256,
         height: 256,
         correctLevel: QRCode.CorrectLevel.H
@@ -130,7 +173,8 @@
     const query = new URLSearchParams(window.location.search);
     if (query.get("room")) {
       room = query.get("room");
-      document.getElementById("setup").classList.add("hidden");
+      document.getElementById("languageScreen").classList.add("hidden");
+      document.getElementById("roomOptions").classList.add("hidden");
       document.getElementById("chatUI").classList.remove("hidden");
       document.getElementById("roomInfo").innerText = `Room Code: ${room}`;
       listenToRoom();
