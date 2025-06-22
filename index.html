@@ -1,101 +1,256 @@
-<!-- Add this where you want the slider (e.g., at the bottom of your chat UI) -->
-<div id="selfDestructContainer">
-  <div id="selfDestructBar">
-    <span id="selfDestructText">Slide to Self-Destruct</span>
-    <div id="sliderKnob"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Que Pasa – Demo Chat</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; color: #222; text-align:center; margin:0; }
+    .container { max-width: 370px; margin: 38px auto; background: #fff; border-radius: 9px; padding: 36px 24px 28px; box-shadow: 0 4px 24px #0002; }
+    #logo { width: 120px; margin-bottom: 22px; }
+    #createBtn { font-size:1.2em; padding: 12px 32px; background:#1da365; color:#fff; border:none; border-radius:6px; cursor:pointer; margin-bottom: 20px;}
+    #roomSection { display:none; }
+    #flashBubble { width: 70px; height: 70px; border-radius:50%; display:inline-block; font-size:2em; line-height:70px; color:#fff; margin: 12px 0 16px;}
+    #qr { margin: 22px auto 16px; }
+    .comboGrid { display:grid; grid-template-columns:1fr 1fr 1fr; gap: 10px; margin: 18px auto 0; max-width: 260px;}
+    .comboCell { border-radius: 18px; font-size:1.05em; font-weight:bold; padding: 10px 0; color:#fff; text-shadow:0 2px 6px #0005; }
+    .cashapp-link {
+      display: inline-flex;
+      align-items: center;
+      background: #00d632;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin: 18px 0 0 0;
+      box-shadow: 0 2px 12px #00d63233;
+      transition: background 0.2s;
+    }
+    .cashapp-link:hover { background: #00b828; }
+    .cashapp-logo {
+      width: 28px;
+      height: 28px;
+      margin-right: 10px;
+      vertical-align: middle;
+      border-radius: 6px;
+      background: #fff;
+      padding: 2px;
+    }
+    /* Chat styles */
+    #chatSection { display:none; }
+    .chatbox { background: #f7f7f7; border-radius: 12px; min-height: 240px; max-height: 320px; overflow-y: auto; padding: 14px 8px; margin-bottom: 12px; border:1px solid #e0e0e0;}
+    .bubble { padding: 9px 13px; border-radius: 16px; margin: 7px 0; width: fit-content; max-width: 82%; font-size:1em; }
+    .me { background: #d1f8d1; margin-left: auto; }
+    .other { background: #f1f0f0; margin-right: auto; }
+    .chat-input-row { display: flex; align-items: center; gap:8px;}
+    #chatMsg { flex:1; padding:9px 12px; border-radius: 8px; border:1px solid #bbb; font-size:1em;}
+    #sendBtn { background:#3498db; color:#fff; border:none; border-radius:6px; padding: 8px 18px; font-size:1em; cursor:pointer;}
+    /* Self-destruct slider */
+    #selfDestructContainer {
+      width: 99%;
+      margin: 24px auto 0;
+      text-align: center;
+    }
+    #selfDestructBar {
+      position: relative;
+      width: 320px;
+      height: 46px;
+      margin: 0 auto;
+      background: #2d3436;
+      border-radius: 23px;
+      box-shadow: 0 2px 8px #0002;
+      overflow: hidden;
+      user-select: none;
+    }
+    #selfDestructText {
+      position: absolute;
+      left: 0; right: 0; top: 0; bottom: 0;
+      line-height: 46px;
+      color: #fff;
+      font-size: 1.1em;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+    #sliderKnob {
+      position: absolute;
+      left: 0; top: 0;
+      width: 46px; height: 46px;
+      background: #e74c3c;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px #e74c3c44;
+      transition: background 0.18s;
+      cursor: pointer;
+      z-index: 2;
+      display: flex; justify-content: center; align-items: center;
+    }
+    #sliderKnob:after {
+      content: "💣";
+      font-size: 1.5em;
+    }
+    #sliderKnob.dragging { background: #c0392b; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img id="logo" src="QuePasaLogo.png" alt="Que Pasa Logo" />
+    <h2>Que Pasa Private Room</h2>
+    <button id="createBtn">Create Room</button>
+    <!-- Cash App link on landing page -->
+    <div id="cashapp-landing">
+      <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+        <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
+        Support via Cash App
+      </a>
+    </div>
+    <!-- Room onboarding -->
+    <div id="roomSection">
+      <div>
+        <div id="flashBubble"></div>
+        <div style="margin-bottom:8px;">Your entry code</div>
+      </div>
+      <div id="qr"></div>
+      <div style="margin: 8px 0 6px;">Sample entry options:</div>
+      <div class="comboGrid" id="comboGrid"></div>
+      <!-- Cash App link on room screen -->
+      <div style="margin-top:24px;">
+        <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+          <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
+          Support via Cash App
+        </a>
+      </div>
+      <!-- Start Chat button -->
+      <div style="margin-top:20px;">
+        <button id="startChatBtn" style="padding:10px 30px;font-size:1.1em;background:#3498db;color:#fff;border:none;border-radius:7px;cursor:pointer;">Enter Chat Room</button>
+      </div>
+    </div>
+    <!-- Chat section -->
+    <div id="chatSection">
+      <div class="chatbox" id="chatbox"></div>
+      <div class="chat-input-row">
+        <input id="chatMsg" type="text" placeholder="Type your message..." autocomplete="off" />
+        <button id="sendBtn">Send</button>
+      </div>
+      <!-- Self-destruct slider -->
+      <div id="selfDestructContainer">
+        <div id="selfDestructBar">
+          <span id="selfDestructText">Slide to Self-Destruct</span>
+          <div id="sliderKnob"></div>
+        </div>
+      </div>
+      <!-- Cash App link in chat -->
+      <div style="margin-top:16px;">
+        <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+          <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
+          Support via Cash App
+        </a>
+      </div>
+    </div>
   </div>
-</div>
-
-<style>
-#selfDestructContainer {
-  width: 95%;
-  margin: 24px auto 0;
-  text-align: center;
-}
-#selfDestructBar {
-  position: relative;
-  width: 320px;
-  height: 46px;
-  margin: 0 auto;
-  background: #2d3436;
-  border-radius: 23px;
-  box-shadow: 0 2px 8px #0002;
-  overflow: hidden;
-  user-select: none;
-}
-#selfDestructText {
-  position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
-  line-height: 46px;
-  color: #fff;
-  font-size: 1.1em;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.75;
-}
-#sliderKnob {
-  position: absolute;
-  left: 0; top: 0;
-  width: 46px; height: 46px;
-  background: #e74c3c;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px #e74c3c44;
-  transition: background 0.18s;
-  cursor: pointer;
-  z-index: 2;
-  display: flex; justify-content: center; align-items: center;
-}
-#sliderKnob:after {
-  content: "💣";
-  font-size: 1.5em;
-}
-#sliderKnob.dragging { background: #c0392b; }
-</style>
-
-<script>
-// Self-destruct slider logic
-const bar = document.getElementById('selfDestructBar');
-const knob = document.getElementById('sliderKnob');
-let dragging = false, startX = 0, offsetX = 0;
-
-knob.addEventListener('mousedown', startDrag);
-knob.addEventListener('touchstart', startDrag);
-
-function startDrag(e) {
-  dragging = true;
-  startX = e.touches ? e.touches[0].clientX : e.clientX;
-  knob.classList.add('dragging');
-  document.addEventListener('mousemove', onDrag);
-  document.addEventListener('touchmove', onDrag);
-  document.addEventListener('mouseup', stopDrag);
-  document.addEventListener('touchend', stopDrag);
-}
-
-function onDrag(e) {
-  if (!dragging) return;
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  offsetX = Math.max(0, Math.min(clientX - startX, bar.clientWidth - knob.clientWidth));
-  knob.style.left = offsetX + 'px';
-  // Optional: Fade out text as you slide
-  document.getElementById('selfDestructText').style.opacity = 0.75 - 0.7 * (offsetX / (bar.clientWidth - knob.clientWidth));
-}
-
-function stopDrag() {
-  if (!dragging) return;
-  dragging = false;
-  knob.classList.remove('dragging');
-  // If knob is at the end, trigger self-destruct
-  if (offsetX > (bar.clientWidth - knob.clientWidth - 6)) {
-    // TODO: Replace this with your actual room/message destroy logic!
-    alert('💥 Self-Destructed! (Here, you would clear all chat data and return to home)');
-    // Example: location.reload();
-  }
-  // Reset slider
-  knob.style.left = '0px';
-  document.getElementById('selfDestructText').style.opacity = 0.75;
-  document.removeEventListener('mousemove', onDrag);
-  document.removeEventListener('touchmove', onDrag);
-  document.removeEventListener('mouseup', stopDrag);
-  document.removeEventListener('touchend', stopDrag);
-}
-</script>
+  <script>
+    // Color palette for aliases
+    const COLORS = [
+      {name: "Red", hex:"#e74c3c"}, {name:"Blue",hex:"#3498db"}, {name:"Green",hex:"#27ae60"},
+      {name:"Yellow",hex:"#f1c40f"}, {name:"Purple",hex:"#8e44ad"}, {name:"Orange",hex:"#e67e22"},
+      {name:"Pink",hex:"#fd79a8"}, {name:"Teal",hex:"#00b894"}, {name:"Gray",hex:"#636e72"}
+    ];
+    const createBtn = document.getElementById('createBtn');
+    const roomSection = document.getElementById('roomSection');
+    const flashBubble = document.getElementById('flashBubble');
+    const qrDiv = document.getElementById('qr');
+    const comboGrid = document.getElementById('comboGrid');
+    const cashappLanding = document.getElementById('cashapp-landing');
+    const startChatBtn = document.getElementById('startChatBtn');
+    const chatSection = document.getElementById('chatSection');
+    const chatbox = document.getElementById('chatbox');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatMsg = document.getElementById('chatMsg');
+    // Step 1: Room creation/onboarding
+    createBtn.onclick = function() {
+      // 1. Generate room ID and flash combo
+      const roomId = Math.random().toString(36).substr(2,8);
+      const flash = randomCombo();
+      // 2. Show the flash bubble (big color+number)
+      flashBubble.textContent = flash.num;
+      flashBubble.style.background = flash.color.hex;
+      flashBubble.title = `${flash.color.name} ${flash.num}`;
+      // 3. Generate a QR code with room info and entry combo
+      qrDiv.innerHTML = '';
+      const qrPayload = JSON.stringify({
+        room: roomId,
+        code: `${flash.color.name} ${flash.num}`
+      });
+      new QRCode(qrDiv, { text: qrPayload, width: 140, height: 140 });
+      // 4. Show a grid of random combos (including the right one)
+      let combos = [flash];
+      while (combos.length < 6) {
+        const c = randomCombo();
+        if (!combos.some(x=>x.color.name===c.color.name && x.num===c.num)) combos.push(c);
+      }
+      combos = combos.sort(()=>Math.random()-0.5); // Shuffle
+      comboGrid.innerHTML = '';
+      combos.forEach(c => {
+        const cell = document.createElement('div');
+        cell.className = "comboCell";
+        cell.style.background = c.color.hex;
+        cell.textContent = `${c.color.name} ${c.num}`;
+        comboGrid.appendChild(cell);
+      });
+      roomSection.style.display = 'block';
+      createBtn.style.display = 'none';
+      cashappLanding.style.display = 'none';
+    };
+    function randomCombo() {
+      const color = COLORS[Math.floor(Math.random()*COLORS.length)];
+      const num = Math.floor(Math.random()*9)+1; // 1-9
+      return {color, num};
+    }
+    // Step 2: Enter chat room
+    startChatBtn.onclick = function() {
+      roomSection.style.display = 'none';
+      chatSection.style.display = 'block';
+      chatbox.innerHTML = '';
+      // Optionally, set up your alias here
+      addBubble("Welcome to Que Pasa! Chat is private and ephemeral.", "other");
+    };
+    // Step 3: Local chat logic (demo only, not networked)
+    sendBtn.onclick = sendMsg;
+    chatMsg.addEventListener('keypress', function(e){
+      if(e.key==='Enter') sendMsg();
+    });
+    function sendMsg(){
+      const txt = chatMsg.value.trim();
+      if(!txt) return;
+      addBubble(txt, "me");
+      chatMsg.value = '';
+      // Demo: auto-reply after 1 sec
+      setTimeout(()=>addBubble("👍", "other"), 1000);
+    }
+    function addBubble(msg, who){
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + who;
+      bubble.textContent = msg;
+      chatbox.appendChild(bubble);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+    // Self-destruct slider logic
+    const bar = document.getElementById('selfDestructBar');
+    const knob = document.getElementById('sliderKnob');
+    let dragging = false, startX = 0, offsetX = 0;
+    knob.addEventListener('mousedown', startDrag);
+    knob.addEventListener('touchstart', startDrag);
+    function startDrag(e) {
+      dragging = true;
+      startX = e.touches ? e.touches[0].clientX : e.clientX;
+      knob.classList.add('dragging');
+      document.addEventListener('mousemove', onDrag);
+      document.addEventListener('touchmove', onDrag);
+      document.addEventListener('mouseup', stopDrag);
+      document.addEventListener('touchend', stopDrag);
+    }
+    function onDrag(e) {
+      if (!dragging) return;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      offsetX = Math.max(0, Math.min(clientX - startX, bar.clientWidth - knob.clientWidth
