@@ -2,20 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Que Pasa / ¿Qué Pasa?</title>
+  <title>Que Pasa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="icon" href="QuePasaLogo.png" type="image/png">
   <style>
-    body {
+    html, body {
       background: #23272a;
       color: #fff;
       font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
       min-height: 100vh;
-      overflow-x: hidden;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+    body {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+    }
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 32px 0 10px 0;
+      width: 100vw;
+      z-index: 1;
+    }
+    .logo {
+      width: 94px;
+      margin-right: 15px;
+      vertical-align: middle;
+    }
+    .title {
+      font-size: 2.3em;
+      color: #1da365;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 16px #0008;
     }
     .main-content {
       flex: 1 1 auto;
@@ -23,119 +48,101 @@
       flex-direction: row;
       justify-content: center;
       align-items: flex-start;
-      margin-top: 24px;
-      gap: 36px;
+      width: 100vw;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
     }
-    .left-panel {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 320px;
-      max-width: 340px;
-    }
-    .logo {
-      width: 120px;
-      margin: 0 auto 10px auto;
-      display: block;
-      filter: drop-shadow(0 2px 28px #1da36555);
-    }
-    .title {
-      font-size: 2.2em;
-      color: #1da365;
-      font-weight: bold;
-      margin-bottom: 6px;
-      letter-spacing: 0.06em;
-      text-shadow: 0 2px 16px #0008;
-    }
-    .subtitle {
-      font-size: 1.13em;
-      color: #fff8;
-      margin-bottom: 18px;
-      line-height: 1.45em;
-      text-align: center;
-    }
-    .room-qr {
-      background: #fff;
-      border-radius: 14px;
-      padding: 14px;
-      margin: 16px 0 10px 0;
-      box-shadow: 0 2px 12px #0003;
-      display: block;
-      transition: box-shadow 0.2s;
-      cursor: pointer;
-      width: 180px;
-      height: 180px;
-    }
-    .room-code {
-      font-size: 1.3em;
-      color: #1da365;
-      background: #222b;
-      padding: 10px 22px;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      letter-spacing: 0.15em;
-      font-family: 'Courier New', monospace;
-      display: inline-block;
-      box-shadow: 0 2px 8px #0002;
-      user-select: all;
-      margin-top: 8px;
-    }
-    .scan-btn {
-      background: #00d64b;
-      color: #fff;
-      border-radius: 10px;
+    .side-btn {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #191f1c;
       border: none;
-      padding: 12px 26px;
-      font-size: 1em;
-      font-weight: bold;
-      margin: 14px 0 10px 0;
-      box-shadow: 0 2px 8px #0003;
-      cursor: pointer;
-      transition: background 0.17s, transform 0.15s;
-      display: inline-flex;
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #0006;
+      transition: background 0.16s, transform 0.11s;
+      z-index: 10;
+      margin-left: 16px;
     }
-    .scan-btn:hover { background: #009c34; transform: scale(1.04);}
-    #qr-reader {
-      margin: 12px auto 6px auto;
-      width: 250px;
-      display: none;
-      border-radius: 13px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px #0003;
+    .side-btn.info-btn {
+      left: 80px;
       background: #23272a;
     }
-    .right-panel {
-      flex: 1 1 400px;
+    .side-btn:hover, .side-btn.info-btn:hover {
+      background: #1da365;
+      transform: translateY(-50%) scale(1.05);
+    }
+    .side-btn img, .side-btn svg {
+      width: 38px;
+      height: 38px;
+    }
+    .leave-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #0006;
+      transition: background 0.16s, transform 0.11s;
+      z-index: 10;
+      margin-right: 16px;
+    }
+    .leave-btn:hover {
+      background: #c0392b;
+      transform: translateY(-50%) scale(1.05);
+    }
+    .chat-area-wrap {
+      margin: 0 auto;
+      flex: 1 0 0;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      max-width: 460px;
-      min-width: 300px;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      min-width: 290px;
+      max-width: 440px;
     }
     .chat-box {
       background: #252a2e;
-      border-radius: 14px;
+      border-radius: 18px 18px 0 0;
       box-shadow: 0 1px 8px #0003;
-      padding: 10px 0 6px 0;
+      padding: 10px 0 0 0;
       margin-bottom: 0;
       display: flex;
       flex-direction: column;
-      height: 270px;
-      min-height: 120px;
-      max-height: 350px;
+      height: 340px;
+      min-height: 130px;
+      max-height: 420px;
       overflow: hidden;
+      width: 100%;
     }
     .chat-history {
       flex: 1;
       overflow-y: auto;
-      padding: 0 16px 0 16px;
+      padding: 0 19px 0 19px;
       display: flex;
       flex-direction: column;
-      min-height: 150px;
-      max-height: 230px;
+      min-height: 120px;
+      max-height: 290px;
     }
     .chat-message {
       margin: 6px 0;
@@ -160,16 +167,16 @@
     .chat-input-row {
       display: flex;
       gap: 8px;
-      padding: 7px 10px 8px 10px;
+      padding: 8px 12px 14px 12px;
       align-items: center;
       background: #23272a;
-      border-radius: 0 0 14px 14px;
+      border-radius: 0 0 18px 18px;
     }
     .chat-input {
       flex: 1;
       font-size: 1.14em;
       padding: 11px 14px;
-      border-radius: 7px;
+      border-radius: 8px;
       border: none;
       outline: none;
       background: #31343a;
@@ -180,7 +187,7 @@
       background: #1da365;
       color: #fff;
       border: none;
-      border-radius: 7px;
+      border-radius: 9px;
       padding: 10px 21px;
       font-size: 1em;
       font-weight: bold;
@@ -191,70 +198,94 @@
     .chat-send-btn:hover {
       background: #149150;
     }
-    .leave-btn {
-      background: #e74c3c;
-      color: #fff;
-      padding: 13px 30px;
-      border-radius: 10px;
-      border: none;
-      font-size: 1.05em;
-      font-weight: bold;
-      margin: 22px 0 0 0;
-      cursor: pointer;
-      box-shadow: 0 2px 8px #0002;
-      transition: background 0.13s;
-      width: 100%;
-      max-width: 300px;
-      align-self: center;
-    }
-    .leave-btn:hover { background: #c0392b; }
-    .big-flash {
-      width: 100vw;
-      height: 100vh;
-      background: #23272a;
+    .modal-bg, .info-modal-bg {
       position: fixed;
       left: 0; top: 0;
-      z-index: 9999;
+      width: 100vw; height: 100vh;
+      background: #23272aa0;
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 7em;
-      color: #1da365;
-      user-select: none;
       transition: background 0.2s;
-      text-align: center;
-      flex-direction: column;
     }
-    .big-flash .flash-qr {
+    .modal, .info-modal {
+      background: #252a2e;
+      border-radius: 18px;
+      box-shadow: 0 2px 24px #0009;
+      padding: 34px 38px 24px 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 280px;
+      max-width: 90vw;
+    }
+    .room-qr {
       background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 12px #0007;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px #0006;
+      width: 220px;
+      height: 220px;
+      margin-bottom: 16px;
+      margin-top: 4px;
+    }
+    .room-code {
+      font-size: 1.5em;
+      color: #1da365;
+      background: #23272a;
+      padding: 9px 22px;
+      border-radius: 12px;
+      letter-spacing: 0.15em;
+      font-family: 'Courier New', monospace;
+      user-select: all;
+      box-shadow: 0 1px 8px #0002;
+      margin-bottom: 6px;
+    }
+    .modal-close {
+      margin-top: 18px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 10px 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.16s;
+    }
+    .modal-close:hover { background: #c0392b; }
+    .info-modal-content {
+      max-width: 410px;
+      font-size: 1.26em;
+      text-align: center;
+      color: #fff;
+      line-height: 1.6em;
+      margin-bottom: 10px;
     }
     .cashapp-support {
-      margin: 0 auto 0 auto;
+      margin: 45px auto 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 13px;
       background: #151a1d;
-      border-radius: 13px;
-      padding: 23px 16px 12px 16px;
-      box-shadow: 0 2px 20px #00d64b22;
-      max-width: 400px;
-      width: 100%;
+      border-radius: 18px;
+      padding: 35px 18px 22px 18px;
+      box-shadow: 0 2px 24px #00d64b33;
+      max-width: 550px;
+      width: 100vw;
     }
     .cashapp-btn {
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 30px;
       background: #00d64b;
       color: #fff;
-      font-size: 1.3em;
+      font-size: 1.5em;
       font-weight: bold;
       border: none;
-      border-radius: 10px;
-      padding: 13px 32px;
+      border-radius: 15px;
+      padding: 18px 60px;
       cursor: pointer;
       box-shadow: 0 2px 8px #0003;
       text-decoration: none;
@@ -267,104 +298,113 @@
       color: #fff;
     }
     .cashapp-logo {
-      width: 90px;
-      height: 90px;
-      border-radius: 13px;
+      width: 130px;
+      height: 130px;
+      border-radius: 16px;
       background: #fff;
-      box-shadow: 0 1px 5px #0002;
+      box-shadow: 0 1px 8px #0002;
       object-fit: cover;
       border: 2px solid #fff;
     }
     .cashapp-user {
-      font-size: 1.15em;
+      font-size: 1.25em;
       color: #00d64b;
       font-weight: bold;
-      letter-spacing: 0.02em;
-      margin-top: 2px;
-      margin-bottom: 0;
+      letter-spacing: 0.04em;
       background: #23272a;
-      padding: 10px 34px;
-      border-radius: 10px;
+      padding: 13px 42px;
+      border-radius: 12px;
       display: inline-block;
-      box-shadow: 0 1px 5px #00d64b11;
+      box-shadow: 0 1px 8px #00d64b11;
     }
     .cashapp-desc {
-      font-size: 1.12em;
+      font-size: 1.26em;
       color: #fff8;
       margin-top: 2px;
       margin-bottom: 0;
       line-height: 1.4em;
-    }
-    .footer {
-      flex: 0 0 auto;
-      width: 100%;
-      padding: 30px 0 10px 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      background: none;
+      text-align: center;
     }
     @media (max-width: 900px) {
-      .main-content { flex-direction: column; align-items: center; gap: 10px;}
-      .right-panel { max-width: none; min-width: 0; width: 95vw; }
-      .left-panel { min-width: 0; width: 100vw; }
-      .container { padding: 10px 2vw 0 2vw; }
+      .main-content { flex-direction: column; align-items: center; gap: 7px; }
+      .side-btn, .leave-btn { position: static; margin: 0 0 18px 0; transform: none; }
+      .header { flex-direction: column; padding: 18px 0 8px 0; }
+      .main-content { margin: 0; }
+      .chat-area-wrap { width: 98vw !important; }
+    }
+    @media (max-width: 600px) {
+      .logo { width: 54px; }
+      .title { font-size: 1.13em; }
       .chat-box { max-width: 99vw; }
+      .cashapp-logo { width: 80vw; height: 80vw; max-width: 120px; max-height: 120px;}
+      .cashapp-btn { font-size: 1.08em; padding: 8px 7vw;}
+      .cashapp-support { padding: 16px 4vw 9px 4vw;}
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="main-content">
-      <div class="right-panel">
-        <div class="chat-box">
-          <div class="chat-history" id="chatHistory"></div>
-          <form class="chat-input-row" id="chatForm" autocomplete="off">
-            <input class="chat-input" id="chatInput" placeholder="Type a message... / Escribe un mensaje..." autocomplete="off" />
-            <button type="submit" class="chat-send-btn">Send / Enviar</button>
-          </form>
-        </div>
-      </div>
-      <div class="left-panel">
-        <img class="logo" src="QuePasaLogo.png" alt="Que Pasa logo"/>
-        <div class="title">Que Pasa <span style="color:#fff8;">/ ¿Qué Pasa?</span></div>
-        <div class="subtitle">
-          Scan this code to join the room on another phone.<br>
-          <span style="color:#fff8;">Escanea este código para unirte a la sala en otro teléfono.</span><br>
-          or tap below to scan someone else's code.<br>
-          <span style="color:#fff8;">o toca abajo para escanear el código de otra persona.</span>
-        </div>
-        <canvas id="qrCanvas" class="room-qr" title="Click to flash QR"></canvas>
-        <div class="room-code" id="roomCodeDisplay"></div>
-        <button class="scan-btn" id="scanQrBtn">
-          <img src="camera.svg" alt="Camera" style="height:1.2em;width:1.2em;vertical-align:middle;filter:drop-shadow(0 1px 4px #0002);" />
-          Scan QR to Join Another Room / Escanea el QR para Unirte a Otra Sala
-        </button>
-        <div id="qr-reader"></div>
-        <button class="leave-btn" id="leaveBtn">Leave Room / Salir de la Sala</button>
+  <div class="header">
+    <img class="logo" src="QuePasaLogo.png" alt="Que Pasa logo"/>
+    <span class="title">Que Pasa</span>
+  </div>
+  <div class="main-content">
+    <button class="side-btn info-btn" id="infoBtn" title="About this App">
+      <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="#191f1c" stroke="#1da365" stroke-width="4"/><text x="50%" y="62%" text-anchor="middle" fill="#1da365" font-size="32" font-family="Arial" dy=".3em">?</text></svg>
+    </button>
+    <button class="side-btn" id="showQrBtn" title="Show Room QR Code">
+      <img src="camera.svg" alt="Show QR">
+    </button>
+    <div class="chat-area-wrap">
+      <div class="chat-box">
+        <div class="chat-history" id="chatHistory"></div>
+        <form class="chat-input-row" id="chatForm" autocomplete="off">
+          <input class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off" />
+          <button type="submit" class="chat-send-btn">Send</button>
+        </form>
       </div>
     </div>
-    <div class="footer">
-      <div class="cashapp-support">
-        <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-          <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
-          Support Que Pasa on Cash App / Apoya a Que Pasa en Cash App
-        </a>
-        <span class="cashapp-user">$QuePasaAPP</span>
-        <div class="cashapp-desc">
-          Thank you for supporting this free, ad-free tool!<br>
-          <span style="color:#fff;">¡Gracias por apoyar esta herramienta gratuita y sin anuncios!</span><br>
-          Every tip helps keep it running for everyone. 🙏<br>
-          <span style="color:#fff;">Cada propina ayuda a mantenerla funcionando para todos. 🙏</span>
-        </div>
+    <button class="leave-btn" id="leaveBtn" title="Leave Room">&#x2715;</button>
+  </div>
+  <div id="qrModal" style="display:none;">
+    <div class="modal-bg" id="modalBg">
+      <div class="modal">
+        <canvas id="qrCanvas" class="room-qr" width="220" height="220"></canvas>
+        <div class="room-code" id="roomCodeDisplay"></div>
+        <button class="modal-close" id="closeQrBtn">Close</button>
       </div>
     </div>
   </div>
-  <div class="big-flash" id="bigFlash" style="display:none;"></div>
+  <div id="infoModal" style="display:none;">
+    <div class="info-modal-bg" id="infoModalBg">
+      <div class="info-modal">
+        <div class="info-modal-content">
+          <b>What is Que Pasa?</b><br><br>
+          This is a super simple, private group chat—just for you and your friends.<br>
+          When you open the app, you get a unique room. Share the room QR code, and others can join instantly.<br><br>
+          <b>What’s the catch?</b><br>
+          None. No signups, no history, no tracking.<br>
+          When you leave, the party’s over and the room is gone.<br><br>
+          <b>Why?</b><br>
+          Because sometimes you just want to have a good time, talk with your people, and maybe support the next round of snacks. 🍕🍻<br>
+        </div>
+        <button class="modal-close" id="closeInfoBtn">Close</button>
+      </div>
+    </div>
+  </div>
+  <div class="cashapp-support">
+    <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+      <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
+      Support Que Pasa on Cash App
+    </a>
+    <span class="cashapp-user">$QuePasaAPP</span>
+    <div class="cashapp-desc">
+      Yo, honestly I just want to kick it with friends and have a good time.<br>
+      If you want to support the party, you’re a legend—thanks bro!
+    </div>
+  </div>
   <script>
     // Firebase config
     const firebaseConfig = {
@@ -380,7 +420,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Utility functions
     function makeRoomCode() {
       const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
       let code = "";
@@ -388,14 +427,16 @@
       return code;
     }
     function drawQR(code) {
-      const url = `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`;
-      new QRious({
-        element: document.getElementById('qrCanvas'),
-        value: url,
-        size: 180,
-        background: '#fff',
-        foreground: '#111'
-      });
+      if (!code) return;
+      setTimeout(() => {
+        new QRious({
+          element: document.getElementById('qrCanvas'),
+          value: `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`,
+          size: 220,
+          background: '#fff',
+          foreground: '#23272a'
+        });
+      }, 0);
     }
 
     // State
@@ -404,16 +445,45 @@
     let isHost = false;
     let chatRef = null;
 
+    // QR Modal logic
+    function openQrModal() {
+      document.getElementById('qrModal').style.display = 'block';
+      drawQR(myRoomCode);
+      document.getElementById('roomCodeDisplay').textContent = myRoomCode.split('').join(' ');
+    }
+    function closeQrModal() {
+      document.getElementById('qrModal').style.display = 'none';
+    }
+    document.getElementById('showQrBtn').onclick = openQrModal;
+    document.getElementById('closeQrBtn').onclick = closeQrModal;
+    document.getElementById('modalBg').onclick = function(e) {
+      if (e.target === this) closeQrModal();
+    };
+
+    // Info Modal logic
+    function openInfoModal() {
+      document.getElementById('infoModal').style.display = 'block';
+    }
+    function closeInfoModal() {
+      document.getElementById('infoModal').style.display = 'none';
+    }
+    document.getElementById('infoBtn').onclick = function() {
+      if(document.getElementById('infoModal').style.display === 'block') {
+        closeInfoModal();
+      } else {
+        openInfoModal();
+      }
+    };
+    document.getElementById('closeInfoBtn').onclick = closeInfoModal;
+    document.getElementById('infoModalBg').onclick = function(e) {
+      if (e.target === this) closeInfoModal();
+    };
+
     function joinRoomAndShow(code, setHost) {
       myRoomCode = code;
       isHost = !!setHost;
-      document.getElementById('roomCodeDisplay').textContent = code.split('').join(' ');
-      drawQR(code);
       setupChatFirebase(code);
-      if (window.html5QrCodeObj) {
-        window.html5QrCodeObj.stop();
-        document.getElementById('qr-reader').style.display = 'none';
-      }
+      if (window.html5QrCodeObj) window.html5QrCodeObj.stop();
     }
     function setupChatFirebase(room) {
       if (chatRef) chatRef.off();
@@ -452,86 +522,7 @@
     document.getElementById('leaveBtn').onclick = () => {
       if (isHost && myRoomCode) db.ref('rooms/' + myRoomCode).remove();
       myRoomCode = null; isHost = false;
-      startRoom();
-    };
-
-    // QR Camera Scan for Join Room
-    document.getElementById('scanQrBtn').onclick = () => {
-      const qrReader = document.getElementById('qr-reader');
-      qrReader.style.display = 'block';
-      if (window.html5QrCodeObj) window.html5QrCodeObj.stop();
-      window.html5QrCodeObj = new Html5Qrcode("qr-reader");
-      window.html5QrCodeObj.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 180 },
-        qrCodeMessage => {
-          try {
-            let url = new URL(qrCodeMessage, location.origin);
-            let code = (url.searchParams.get("room") || "").toUpperCase();
-            if (/^[A-Z2-9]{6}$/.test(code)) {
-              window.html5QrCodeObj.stop();
-              qrReader.style.display = 'none';
-              db.ref('rooms/' + code + '/meta').once('value').then(snap => {
-                if (!snap.exists()) {
-                  alert("Room not found. / Sala no encontrada.");
-                  startRoom();
-                  return;
-                }
-                joinRoomAndShow(code, false);
-              });
-            } else {
-              alert("Invalid QR code / Código QR inválido");
-            }
-          } catch (e) {
-            alert("Invalid QR code / Código QR inválido");
-          }
-        },
-        errorMessage => {}
-      );
-    };
-
-    // Flash QR Fullscreen
-    function flashSequence(seq) {
-      const flash = document.getElementById('bigFlash');
-      let i = 0;
-      flash.style.display = 'flex';
-      next();
-      function next() {
-        if (i >= seq.length) {
-          flash.style.display = 'none';
-          return;
-        }
-        flash.innerHTML = "";
-        const item = seq[i++];
-        if (item.type === "qr") {
-          const qrCanvas = document.createElement('canvas');
-          qrCanvas.width = qrCanvas.height = 350;
-          qrCanvas.className = "flash-qr";
-          flash.appendChild(qrCanvas);
-          new QRious({
-            element: qrCanvas,
-            value: `${location.origin}${location.pathname}?room=${encodeURIComponent(myRoomCode)}`,
-            size: 350,
-            background: '#fff',
-            foreground: '#23272a'
-          });
-        }
-        setTimeout(next, item.duration);
-      }
-    }
-    document.getElementById('qrCanvas').onclick =
-    document.getElementById('flashQrBtn').onmousedown = () => {
-      flashSequence([{type:'qr',duration:999999}]);
-    };
-    document.getElementById('flashQrBtn').onmouseup = () => {
-      document.getElementById('bigFlash').style.display = 'none';
-    };
-    document.getElementById('flashQrBtn').ontouchstart = (e) => {
-      e.preventDefault();
-      flashSequence([{type:'qr',duration:999999}]);
-    };
-    document.getElementById('flashQrBtn').ontouchend = () => {
-      document.getElementById('bigFlash').style.display = 'none';
+      location.reload();
     };
 
     // On load: If ?room=CODE join, else create new
@@ -562,6 +553,8 @@
         joinRoomAndShow(code, true);
       });
     }
+
+    // When anyone leaves, destroy the room
     window.onbeforeunload = () => {
       if (isHost && myRoomCode) db.ref('rooms/' + myRoomCode).remove();
     };
