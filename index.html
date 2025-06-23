@@ -11,15 +11,14 @@
       min-height: 100vh;
       margin: 0;
       padding: 0;
-      background: #23272a;
-    }
-    body {
-      min-height: 100vh;
-      height: 100vh;
-      width: 100vw;
       background: #23272a url('QuePasaLogo.png');
       background-repeat: repeat;
       background-size: 110px 110px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      width: 100vw;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -46,45 +45,6 @@
       box-sizing: border-box;
       gap: 10px;
     }
-    .side-btn {
-      background: #191f1c;
-      border: none;
-      border-radius: 14px;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 2px 12px #0006;
-      transition: background 0.13s, transform 0.11s;
-      font-size: 2em;
-      margin: 0;
-    }
-    .side-btn:hover {
-      background: #1da365;
-      transform: scale(1.05);
-    }
-    .disconnect-btn {
-      background: #e74c3c;
-      color: #fff;
-      font-size: 1.7em;
-      font-weight: bold;
-      border: none;
-      border-radius: 14px;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 2px 12px #c0392b33;
-      transition: background 0.14s, transform 0.13s;
-    }
-    .disconnect-btn:hover {
-      background: #c0392b;
-      transform: scale(1.06);
-    }
     .chat-box-wrap {
       flex: 1 1 auto;
       background: #252a2ecc;
@@ -97,7 +57,7 @@
       min-height: 320px;
       max-height: 58vh;
       width: 100%;
-      margin: 0 0 20px 0;
+      margin: 0 0 16px 0;
     }
     .chat-history {
       flex: 1;
@@ -163,6 +123,66 @@
     .chat-send-btn:hover {
       background: #149150;
     }
+    .qr-area {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 6px;
+      margin-bottom: 16px;
+      gap: 5px;
+    }
+    .room-label {
+      color: #fff9;
+      font-size: 1em;
+      margin-bottom: 2px;
+      font-weight: normal;
+      letter-spacing: 0.04em;
+    }
+    .room-code {
+      font-size: 1.55em;
+      color: #1da365;
+      background: #23272aee;
+      padding: 6px 24px;
+      border-radius: 14px;
+      font-family: 'Courier New', monospace;
+      user-select: all;
+      letter-spacing: 0.18em;
+      box-shadow: 0 1px 13px #0006;
+      margin-bottom: 2px;
+      margin-top: 0;
+    }
+    .qr-img {
+      display: block;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 18px #000a;
+      margin: 0 auto;
+      width: 160px;
+      height: 160px;
+      max-width: 90vw;
+    }
+    .disconnect-btn {
+      background: #e74c3c;
+      color: #fff;
+      font-size: 1.3em;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 200px;
+      min-width: 120px;
+      padding: 15px 0;
+      margin: 18px auto 0 auto;
+      box-shadow: 0 2px 12px #c0392b33;
+      cursor: pointer;
+      transition: background 0.14s, transform 0.12s;
+      display: block;
+    }
+    .disconnect-btn:hover {
+      background: #c0392b;
+      transform: scale(1.04);
+    }
     .donate-bar {
       width: 100%;
       display: flex;
@@ -209,72 +229,18 @@
       line-height: 1.3em;
       text-align: center;
     }
-    /* QR modal */
-    .qr-modal-bg {
-      position: fixed;
-      left: 0; top: 0;
-      width: 100vw; height: 100vh;
-      background: #23272add;
-      z-index: 12;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .qr-modal {
-      background: #252a2e;
-      border-radius: 18px;
-      box-shadow: 0 2px 24px #0009;
-      padding: 30px 38px 24px 38px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 240px;
-      max-width: 90vw;
-    }
-    .qr-modal-title {
-      font-size: 2.1em;
-      font-weight: bold;
-      color: #1da365;
-      text-align: center;
-      margin-bottom: 10px;
-      text-shadow: 0 2px 18px #0008;
-      letter-spacing: 0.06em;
-    }
-    .qr-modal-qr {
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 32px #000a;
-      width: 180px;
-      height: 180px;
-      margin-bottom: 16px;
-      margin-top: 4px;
-      display: block;
-    }
-    .qr-modal-code {
-      font-size: 1.6em;
-      color: #1da365;
-      background: #23272a;
-      padding: 9px 28px;
-      border-radius: 16px;
-      font-family: 'Courier New', monospace;
-      user-select: all;
-      box-shadow: 0 1px 18px #0006;
-      margin-bottom: 13px;
-    }
-    .qr-modal-close {
-      margin-top: 10px;
-      background: #e74c3c;
+    .disconnected-message {
       color: #fff;
-      border: none;
-      border-radius: 9px;
-      padding: 10px 30px;
-      font-size: 1.1em;
+      background: #c0392b;
+      padding: 18px;
+      border-radius: 16px;
+      text-align: center;
+      font-size: 1.2em;
+      margin: 48px 0 20px 0;
       font-weight: bold;
-      cursor: pointer;
-      transition: background 0.15s;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 16px #c0392b22;
     }
-    .qr-modal-close:hover { background: #c0392b; }
     @media (max-width: 700px) {
       .main-wrap { max-width: 98vw;}
       .chat-box-wrap { max-width: 99vw;}
@@ -283,7 +249,7 @@
       .chat-bar { padding: 7px 2vw 2px 2vw;}
       .chat-box-wrap { min-height: 210px;}
       .donate-bar { margin-bottom: 8px;}
-      .qr-modal { padding: 18px 3vw 14px 3vw;}
+      .qr-img { width: 110px; height: 110px;}
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
@@ -291,20 +257,21 @@
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 </head>
 <body>
-  <div class="main-wrap">
-    <!-- Chat Bar (Left: QR | Center: Chat | Right: Disconnect) -->
-    <div class="chat-bar">
-      <button class="side-btn" id="showQrBtn" title="Show QR / Code">
-        <svg viewBox="0 0 48 48" fill="none" width="36" height="36"><rect x="3" y="3" width="42" height="42" rx="7" fill="none" stroke="#1da365" stroke-width="4"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#1da365"/><rect x="27" y="13" width="8" height="8" rx="2" fill="#1da365"/><rect x="13" y="27" width="8" height="8" rx="2" fill="#1da365"/><rect x="27" y="27" width="8" height="8" rx="2" fill="#1da365"/></svg>
-      </button>
+  <div class="main-wrap" id="mainWrap">
+    <div class="chat-bar" id="chatBar">
       <div class="chat-box-wrap">
         <div class="chat-history" id="chatHistory"></div>
         <form class="chat-form-row" id="chatForm" autocomplete="off">
           <input class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off" />
           <button type="submit" class="chat-send-btn">Send</button>
         </form>
+        <div class="qr-area">
+          <div class="room-label">Room Code (Share this QR or code):</div>
+          <div class="room-code" id="roomCodeDisplay"></div>
+          <canvas id="qrCanvas" class="qr-img" width="160" height="160"></canvas>
+        </div>
+        <button class="disconnect-btn" id="leaveRoomBtn">Disconnect</button>
       </div>
-      <button class="disconnect-btn" id="leaveRoomBtn" title="Disconnect">&#128465;</button>
     </div>
     <!-- Donate bar -->
     <div class="donate-bar">
@@ -315,15 +282,6 @@
       <div class="cashapp-desc">
         Want to support the party? Every bit helps! Thanks bro!
       </div>
-    </div>
-  </div>
-  <!-- QR code modal -->
-  <div style="display:none;" class="qr-modal-bg" id="qrModalBg">
-    <div class="qr-modal">
-      <div class="qr-modal-title">Room QR Code</div>
-      <canvas id="qrModalCanvas" class="qr-modal-qr" width="180" height="180"></canvas>
-      <div class="qr-modal-code" id="qrModalCode"></div>
-      <button class="qr-modal-close" id="qrModalCloseBtn">Close</button>
     </div>
   </div>
   <script>
@@ -346,17 +304,17 @@
     let myRoomCode = null;
     let isHost = false;
     let chatListener = null;
+    let leftRoom = false;
 
     // === DOM Elements ===
     const $chatHistory = document.getElementById('chatHistory');
     const $chatForm = document.getElementById('chatForm');
     const $chatInput = document.getElementById('chatInput');
     const $leaveRoomBtn = document.getElementById('leaveRoomBtn');
-    const $showQrBtn = document.getElementById('showQrBtn');
-    const $qrModalBg = document.getElementById('qrModalBg');
-    const $qrModalCanvas = document.getElementById('qrModalCanvas');
-    const $qrModalCode = document.getElementById('qrModalCode');
-    const $qrModalCloseBtn = document.getElementById('qrModalCloseBtn');
+    const $roomCodeDisplay = document.getElementById('roomCodeDisplay');
+    const $qrCanvas = document.getElementById('qrCanvas');
+    const $mainWrap = document.getElementById('mainWrap');
+    const $chatBar = document.getElementById('chatBar');
 
     // === ROOM LOGIC ===
     async function makeRoomCode() {
@@ -374,6 +332,7 @@
     async function createRoomAndEnter() {
       myRoomCode = await makeRoomCode();
       isHost = true;
+      leftRoom = false;
       await db.ref('rooms/' + myRoomCode).set({
         size: 2,
         members: {
@@ -382,8 +341,20 @@
         hostId: myId,
         chat: {}
       });
+      displayRoomInfo();
       listenToChat(myRoomCode);
     }
+    function displayRoomInfo() {
+      $roomCodeDisplay.textContent = myRoomCode ? myRoomCode.split('').join(' ') : '';
+      new QRious({
+        element: $qrCanvas,
+        value: myRoomCode || "",
+        size: 160,
+        background: '#fff',
+        foreground: '#23272a'
+      });
+    }
+
     createRoomAndEnter();
 
     // === Chat logic ===
@@ -392,13 +363,14 @@
       chatListener = db.ref(`rooms/${code}/chat`);
       $chatHistory.innerHTML = "";
       chatListener.on('child_added', function(snapshot) {
+        if (leftRoom) return;
         const msg = snapshot.val();
         addMessage(msg.who, msg.text, msg.timestamp);
       });
     }
     $chatForm.onsubmit = function(e) {
       e.preventDefault();
-      if (!myRoomCode) return;
+      if (!myRoomCode || leftRoom) return;
       const text = $chatInput.value.trim();
       if (!text) return;
       db.ref(`rooms/${myRoomCode}/chat`).push({
@@ -418,57 +390,42 @@
       $chatHistory.scrollTop = $chatHistory.scrollHeight;
     }
 
-    // === QR Modal logic ===
-    $showQrBtn.onclick = function() {
-      $qrModalBg.style.display = 'flex';
-      // Show QR and code
-      new QRious({
-        element: $qrModalCanvas,
-        value: myRoomCode,
-        size: 180,
-        background: '#fff',
-        foreground: '#23272a'
-      });
-      $qrModalCode.textContent = myRoomCode.split('').join(' ');
-    };
-    $qrModalCloseBtn.onclick = function() {
-      $qrModalBg.style.display = 'none';
-    };
-    $qrModalBg.onclick = function(e) {
-      if (e.target === $qrModalBg) $qrModalBg.style.display = 'none';
-    };
-
     // === Disconnect logic ===
     $leaveRoomBtn.onclick = async () => {
-      if (myRoomCode) {
-        await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
-        if (isHost) {
-          const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
-          if (!snap.exists() || Object.keys(snap.val()).length === 0) {
-            await db.ref(`rooms/${myRoomCode}`).remove();
+      if (myRoomCode && !leftRoom) {
+        leftRoom = true;
+        try {
+          await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
+          if (isHost) {
+            const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
+            if (!snap.exists() || Object.keys(snap.val()).length === 0) {
+              await db.ref(`rooms/${myRoomCode}`).remove();
+            }
           }
-        }
+        } catch (e) {}
         myRoomCode = null;
         isHost = false;
         if (chatListener) {
           chatListener.off();
           chatListener = null;
         }
-        $chatHistory.innerHTML = "";
-        window.location.reload();
+        $chatBar.innerHTML = `<div class="disconnected-message">You have disconnected and the chat room is closed.<br>Refresh the page to start a new chat!</div>`;
       }
     };
 
     // === Clean up on close ===
     window.onbeforeunload = async () => {
-      if (myRoomCode) {
-        await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
-        if (isHost) {
-          const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
-          if (!snap.exists() || Object.keys(snap.val()).length === 0) {
-            await db.ref(`rooms/${myRoomCode}`).remove();
+      if (myRoomCode && !leftRoom) {
+        leftRoom = true;
+        try {
+          await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
+          if (isHost) {
+            const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
+            if (!snap.exists() || Object.keys(snap.val()).length === 0) {
+              await db.ref(`rooms/${myRoomCode}`).remove();
+            }
           }
-        }
+        } catch (e) {}
       }
     };
   </script>
