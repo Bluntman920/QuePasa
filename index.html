@@ -66,6 +66,7 @@
       flex-direction: column;
       min-height: 170px;
       max-height: 330px;
+      background: transparent;
     }
     .chat-message {
       margin: 7px 0;
@@ -162,6 +163,41 @@
       height: 220px;
       max-width: 98vw;
     }
+    .room-join-bar {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0 18px 0;
+      gap: 10px;
+    }
+    .room-join-input {
+      font-size: 1.18em;
+      padding: 10px 18px;
+      border-radius: 9px;
+      border: 1.5px solid #1da365;
+      background: #2a2e33;
+      color: #fff;
+      outline: none;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.18em;
+      width: 140px;
+      text-align: center;
+      margin-right: 0;
+    }
+    .room-join-btn {
+      background: #1da365;
+      color: #fff;
+      font-size: 1.14em;
+      font-weight: bold;
+      border: none;
+      border-radius: 9px;
+      padding: 10px 26px;
+      cursor: pointer;
+      transition: background 0.16s;
+    }
+    .room-join-btn:hover { background: #119355; }
     .disconnect-btn {
       background: #e74c3c;
       color: #fff;
@@ -267,6 +303,11 @@
           <input class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off" />
           <button type="submit" class="chat-send-btn">Send</button>
         </form>
+        <!-- JOIN ROOM BAR -->
+        <div class="room-join-bar">
+          <input id="joinCodeInput" class="room-join-input" maxlength="6" placeholder="CODE" />
+          <button class="room-join-btn" id="joinRoomBtn">Join Room</button>
+        </div>
         <div class="qr-area">
           <div class="room-label">Room QR Code & Code (Share this):</div>
           <canvas id="qrCanvas" class="qr-img" width="220" height="220"></canvas>
@@ -287,7 +328,7 @@
     </div>
   </div>
   <script>
-    // Firebase config from your screenshot
+    // Your Firebase config from your screenshot
     const firebaseConfig = {
       apiKey: "AIZaSyDNz_qKPgZlfhVcXtKKtCTU-ynfBkLOSC4",
       authDomain: "quepasaapp-2e0f7.firebaseapp.com",
@@ -318,6 +359,16 @@
     const $qrCanvas = document.getElementById('qrCanvas');
     const $mainWrap = document.getElementById('mainWrap');
     const $chatBar = document.getElementById('chatBar');
+    const $joinRoomBtn = document.getElementById('joinRoomBtn');
+    const $joinCodeInput = document.getElementById('joinCodeInput');
+
+    function showMessage(msg, isMine) {
+      const div = document.createElement('div');
+      div.className = "chat-message" + (isMine ? " me" : "");
+      div.textContent = msg;
+      $chatHistory.appendChild(div);
+      $chatHistory.scrollTop = $chatHistory.scrollHeight;
+    }
 
     // === ROOM LOGIC ===
     async function makeRoomCode() {
@@ -349,6 +400,27 @@
       listenToChat(myRoomCode);
     }
 
+    async function joinRoomByCode(code) {
+      code = code.toUpperCase().replace(/[^A-Z0-9]/g,'');
+      if (!code || code.length !== 6) {
+        alert("Please enter a valid 6-character room code.");
+        return;
+      }
+      const snap = await db.ref('rooms/' + code).once('value');
+      if (!snap.exists()) {
+        alert("That room doesn't exist.");
+        return;
+      }
+      myRoomCode = code;
+      isHost = false;
+      leftRoom = false;
+      // Add self to members
+      await db.ref(`rooms/${myRoomCode}/members/${myId}`).set({ id: myId });
+      displayRoomInfo();
+      listenToChat(myRoomCode);
+      $chatHistory.innerHTML = "";
+    }
+
     function displayRoomInfo() {
       if (!myRoomCode) return;
       $roomCodeDisplay.textContent = myRoomCode.split('').join(' ');
@@ -361,7 +433,7 @@
       });
     }
 
-    // Only call ONCE
+    // Only call ONCE at start
     (async function init() {
       await createRoomAndEnter();
     })();
@@ -400,6 +472,16 @@
       $chatHistory.appendChild(div);
       $chatHistory.scrollTop = $chatHistory.scrollHeight;
     }
+
+    // === Join Room logic ===
+    $joinRoomBtn.onclick = async () => {
+      if (leftRoom) return;
+      const code = $joinCodeInput.value.trim();
+      await joinRoomByCode(code);
+    };
+    $joinCodeInput.addEventListener('keyup', function(e) {
+      if (e.key === "Enter") $joinRoomBtn.click();
+    });
 
     // === Disconnect logic ===
     $leaveRoomBtn.onclick = async () => {
