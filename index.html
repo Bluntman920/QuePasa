@@ -1,300 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>QUE PASA Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" href="QuePasaLogo.png" type="image/png">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      width: 100%;
-      background: #23272a url('QuePasaLogo.png');
-      background-repeat: repeat;
-      background-size: 120px 120px;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-    }
-    #splash {
-      position: fixed;
-      inset: 0;
-      background: #23272a;
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    #splash img {
-      width: 60vw;
-      max-width: 400px;
-    }
-    .fullscreen-qr {
-      position: fixed;
-      inset: 0;
-      background: #fff;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 9998;
-    }
-    .fullscreen-qr canvas {
-      width: 80vw;
-      height: 80vw;
-      max-width: 400px;
-      max-height: 400px;
-    }
-    .qr-close-btn {
-      margin-top: 20px;
-      font-size: 1.3em;
-      padding: 12px 30px;
-      background: #1da365;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .button-bar {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      padding-bottom: 20px;
-    }
-    .special-btn {
-      font-size: 1.1em;
-      padding: 12px 26px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      color: #fff;
-      box-shadow: 0 2px 10px #0003;
-    }
-    .qr-btn { background: #2980b9; }
-    .qr-btn:hover { background: #1c5d87; }
-    .boom-btn { background: #c0392b; }
-    .boom-btn:hover { background: #a93226; }
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <meta charset="UTF-8">
+  <title>QUE PASA APP</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="splash">
-    <img src="QuePasaLogo.png" alt="Splash Logo">
+  <!-- Welcome Screen -->
+  <div id="logo-screen">
+    <img src="QuePasaLogo.png" alt="QUE PASA Logo" id="main-logo">
+    <button id="enter-chat">Enter Chat</button>
   </div>
 
-  <div class="fullscreen-qr" id="fullscreenQR">
-    <canvas id="fullQrCanvas"></canvas>
-    <button class="qr-close-btn" onclick="closeFullscreenQR()">Close</button>
-  </div>
-
-  <div class="main-wrap" id="mainWrap" style="display:none">
-    <div class="chat-bar" id="chatBar">
-      <div class="chat-box-wrap">
-        <div class="chat-history" id="chatHistory"></div>
-        <form class="chat-form-row" id="chatForm" autocomplete="off">
-          <input class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off" />
-          <button type="submit" class="chat-send-btn">Send</button>
-        </form>
-        <div class="room-join-bar">
-          <input id="joinCodeInput" class="room-join-input" maxlength="6" placeholder="CODE" />
-          <button class="room-join-btn" id="joinRoomBtn">Join Room</button>
-        </div>
-        <div class="qr-area">
-          <div class="room-label">Room QR Code & Code (Share this):</div>
-          <canvas id="qrCanvas" class="qr-img" width="220" height="220"></canvas>
-          <div class="room-code" id="roomCodeDisplay"></div>
-        </div>
-        <div class="button-bar">
-          <button class="special-btn qr-btn" onclick="openFullscreenQR()">Show Fullscreen QR</button>
-          <button class="special-btn boom-btn" onclick="selfDestruct()">Self Destruct</button>
-        </div>
-        <button class="disconnect-btn" id="leaveRoomBtn">Disconnect</button>
-      </div>
+  <!-- Chat Room -->
+  <div id="chat-container" style="display:none;">
+    <div class="chat-bg">
+      <img src="QuePasaLogo.png" alt="QUE PASA Logo" class="bg-logo">
     </div>
-    <div class="donate-bar">
-      <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-        <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
-        Donate / Support (Cash App)
-      </a>
-      <div class="cashapp-desc">Want to support the party? Every bit helps! Thanks bro!</div>
+    <div class="chat-header">
+      <span class="room-label">Room: <span id="room-code"></span></span>
+      <button id="show-qr" title="Show QR Code">📷 Room QR</button>
+    </div>
+    <div class="chat-window whatsapp-bubbles">
+      <div id="chat-messages"></div>
+      <input type="text" id="chat-input" placeholder="Type a message...">
+      <button id="send-btn">Send</button>
+    </div>
+    <div class="donate-section">
+      <h3>Support us!</h3>
+      <img src="CashappQR.png" alt="Cash App QR" id="cashapp-qr">
+      <div>Donate via Cash App</div>
+    </div>
+    <button id="bomb-disconnect" title="Hold to disconnect">
+      <span class="bomb-svg"></span>
+      <span id="fuse"></span>
+    </button>
+  </div>
+
+  <!-- Fullscreen QR Overlay -->
+  <div id="qr-overlay" style="display:none;">
+    <div class="qr-fullscreen">
+      <canvas id="qr-canvas"></canvas>
+      <button id="close-qr">Back to Room</button>
     </div>
   </div>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIZaSyDNz_qKPgZlfhVcXtKKtCTU-ynfBkLOSC4",
-      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
-      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
-      projectId: "quepasaapp-2e0f7",
-      storageBucket: "quepasaapp-2e0f7.appspot.com",
-      messagingSenderId: "500826556029",
-      appId: "1:500826556029:web:707b10faf864433d71d314"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    let myId = Math.random().toString(36).slice(2, 9);
-    let myName = "Anon" + myId.slice(-3);
-    let myRoomCode = null;
-    let isHost = false;
-    let chatListener = null;
-    let leftRoom = false;
-
-    const $chatHistory = document.getElementById('chatHistory');
-    const $chatForm = document.getElementById('chatForm');
-    const $chatInput = document.getElementById('chatInput');
-    const $leaveRoomBtn = document.getElementById('leaveRoomBtn');
-    const $roomCodeDisplay = document.getElementById('roomCodeDisplay');
-    const $qrCanvas = document.getElementById('qrCanvas');
-    const $joinRoomBtn = document.getElementById('joinRoomBtn');
-    const $joinCodeInput = document.getElementById('joinCodeInput');
-
-    function addMessage(who, text, ts) {
-      const d = ts ? new Date(ts) : new Date();
-      const time = d.toLocaleTimeString();
-      const div = document.createElement('div');
-      div.className = "chat-message" + (who === myName ? " me" : "");
-      div.textContent = `[${time}] ${who}: ${text}`;
-      $chatHistory.appendChild(div);
-      $chatHistory.scrollTop = $chatHistory.scrollHeight;
-    }
-
-    async function makeRoomCode() {
-      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-      let code = "";
-      let codeExists = true;
-      while (codeExists) {
-        code = "";
-        for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
-        const snap = await db.ref('rooms/' + code).once('value');
-        codeExists = snap.exists();
-      }
-      return code;
-    }
-
-    async function createRoomAndEnter() {
-      myRoomCode = await makeRoomCode();
-      isHost = true;
-      leftRoom = false;
-      await db.ref('rooms/' + myRoomCode).set({
-        members: { [myId]: { id: myId } },
-        hostId: myId,
-        chat: {}
-      });
-      displayRoomInfo();
-      listenToChat(myRoomCode);
-    }
-
-    function displayRoomInfo() {
-      if (!myRoomCode) return;
-      $roomCodeDisplay.textContent = myRoomCode.split('').join(' ');
-      new QRious({
-        element: $qrCanvas,
-        value: myRoomCode,
-        size: 220,
-        background: '#fff',
-        foreground: '#23272a'
-      });
-      $qrCanvas.style.display = "block";
-    }
-
-    function listenToChat(code) {
-      if (chatListener) chatListener.off();
-      chatListener = db.ref(`rooms/${code}/chat`);
-      $chatHistory.innerHTML = "";
-      chatListener.on('child_added', function(snapshot) {
-        if (leftRoom) return;
-        const msg = snapshot.val();
-        addMessage(msg.who, msg.text, msg.timestamp);
-      });
-    }
-
-    function openFullscreenQR() {
-      const canvas = document.getElementById('fullQrCanvas');
-      new QRious({
-        element: canvas,
-        value: myRoomCode,
-        size: 400
-      });
-      document.getElementById('fullscreenQR').style.display = 'flex';
-      setTimeout(closeFullscreenQR, 30000);
-    }
-
-    function closeFullscreenQR() {
-      document.getElementById('fullscreenQR').style.display = 'none';
-    }
-
-    function selfDestruct() {
-      window.location.href = 'https://google.com';
-    }
-
-    $chatForm.onsubmit = function(e) {
-      e.preventDefault();
-      if (!myRoomCode || leftRoom) return;
-      const text = $chatInput.value.trim();
-      if (!text) return;
-      db.ref(`rooms/${myRoomCode}/chat`).push({
-        who: myName,
-        text: text,
-        timestamp: Date.now()
-      });
-      $chatInput.value = "";
-    };
-
-    $joinRoomBtn.onclick = async () => {
-      if (leftRoom) return;
-      const code = $joinCodeInput.value.trim();
-      await joinRoomByCode(code);
-    };
-
-    async function joinRoomByCode(code) {
-      code = code.toUpperCase().replace(/[^A-Z0-9]/g,'');
-      if (!code || code.length !== 6) return alert("Enter valid 6-character code.");
-      const snap = await db.ref('rooms/' + code).once('value');
-      if (!snap.exists()) return alert("Room doesn't exist.");
-      myRoomCode = code;
-      isHost = false;
-      leftRoom = false;
-      await db.ref(`rooms/${myRoomCode}/members/${myId}`).set({ id: myId });
-      displayRoomInfo();
-      listenToChat(myRoomCode);
-    }
-
-    $joinCodeInput.addEventListener('keyup', function(e) {
-      if (e.key === "Enter") $joinRoomBtn.click();
-    });
-
-    $leaveRoomBtn.onclick = async () => {
-      if (myRoomCode && !leftRoom) {
-        leftRoom = true;
-        try {
-          await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
-          if (isHost) {
-            const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
-            if (!snap.exists() || Object.keys(snap.val()).length === 0) {
-              await db.ref(`rooms/${myRoomCode}`).remove();
-            }
-          }
-        } catch (e) {}
-        myRoomCode = null;
-        isHost = false;
-        if (chatListener) chatListener.off();
-        $chatBar.innerHTML = `<div class="disconnected-message">Chat closed.<br>Refresh to start again.</div>`;
-      }
-    };
-
-    window.onload = () => {
-      setTimeout(() => {
-        document.getElementById('splash').style.display = 'none';
-        document.getElementById('mainWrap').style.display = 'flex';
-        createRoomAndEnter();
-      }, 2000);
-    }
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="improved-script.js"></script>
 </body>
 </html>
