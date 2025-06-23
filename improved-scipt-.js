@@ -1,4 +1,4 @@
-// QUE PASA APP - Single File Main Script
+// QUE PASA APP - Main Script
 
 // --- Firebase Config ---
 const firebaseConfig = {
@@ -25,7 +25,6 @@ const $chatForm = document.getElementById('chatForm');
 const $chatInput = document.getElementById('chatInput');
 const $bombBtn = document.getElementById('bombBtn');
 const $fuseBar = document.getElementById('fuseBar');
-const $cashappQr = document.getElementById('cashappQr');
 
 // --- Global State ---
 let myId = Math.random().toString(36).slice(2, 9);
