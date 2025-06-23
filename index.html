@@ -4,27 +4,207 @@
   <meta charset="UTF-8">
   <title>QUE PASA APP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="main.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    #mainWrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    #roomCodeDisplay {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 14px 0 4px 0;
+      letter-spacing: 0.18em;
+      color: #25d366;
+    }
+    #qrCanvas {
+      margin-bottom: 8px;
+      border-radius: 16px;
+      background: #fff;
+      border: 2px solid #25d366;
+    }
+    #showQrBtn {
+      margin: 4px 0 20px 0;
+      padding: 8px 16px;
+      background: #25d366;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #chatHistory {
+      background: #fff;
+      border-radius: 16px;
+      width: 99%;
+      max-width: 440px;
+      min-height: 340px;
+      max-height: 350px;
+      box-shadow: 0 0 18px #aaa5;
+      margin: 10px 0;
+      padding: 18px 10px 10px 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      border: 2px solid #25d366;
+    }
+    .chat-bubble {
+      max-width: 75%;
+      padding: 10px 16px;
+      border-radius: 22px;
+      font-size: 1.05rem;
+      word-break: break-word;
+      display: inline-block;
+      background: #dcf8c6;
+      align-self: flex-end;
+      box-shadow: 0 0 4px #aaa3;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    .chat-bubble.other {
+      background: #fff;
+      align-self: flex-start;
+      border: 1.5px solid #eee;
+    }
+    .msg-meta {
+      font-size: 0.79em;
+      color: #888;
+      margin-left: 8px;
+      float: right;
+    }
+    #chatForm {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 8px;
+      width: 100%;
+      max-width: 440px;
+    }
+    #chatInput {
+      width: 76%;
+      padding: 9px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 1.06rem;
+    }
+    #chatForm button {
+      margin-left: 8px;
+      padding: 9px 12px;
+      background: #25d366;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    #qrOverlay {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.83);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #qrFullscreenCanvas {
+      width: 340px !important;
+      height: 340px !important;
+      margin-bottom: 22px;
+    }
+    #closeQrBtn {
+      padding: 11px 32px;
+      background: #25d366;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    #bombBtn {
+      position: fixed;
+      left: 20px;
+      bottom: 24px;
+      width: 68px;
+      height: 80px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 20;
+    }
+    #bombBtn::before {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 60px;
+      background: url('data:image/svg+xml;utf8,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="35" r="22" fill="black"/><rect x="26" y="12" width="8" height="18" rx="4" fill="black"/><rect x="28" y="7" width="4" height="10" rx="2" fill="orange"/><circle cx="30" cy="7" r="3" fill="yellow" stroke="red" stroke-width="2"/></svg>') center no-repeat;
+      background-size: contain;
+      margin-bottom: 0px;
+    }
+    #fuseBar {
+      width: 8px;
+      height: 100%;
+      background: linear-gradient(to top, orange, yellow);
+      border-radius: 4px;
+      margin-top: -38px;
+      transition: height 0.12s linear;
+      opacity: 0.8;
+    }
+    #cashappQr {
+      width: 120px;
+      border-radius: 12px;
+      border: 2px solid #222;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .donate-section {
+      margin: 0 auto 18px auto;
+      text-align: center;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 0 12px #aaa2;
+      padding: 14px 8px 10px 8px;
+      border: 1.5px solid #25d366;
+      width: 140px;
+    }
+    .disconnected-message {
+      text-align: center;
+      color: #e74c3c;
+      margin-top: 90px;
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
 <body>
   <div id="mainWrap">
     <div id="roomCodeDisplay"></div>
     <canvas id="qrCanvas"></canvas>
     <button id="showQrBtn">Show QR Fullscreen</button>
-
     <div id="chatHistory"></div>
     <form id="chatForm" autocomplete="off">
       <input id="chatInput" type="text" placeholder="Type a message..." autocomplete="off" />
       <button type="submit">Send</button>
     </form>
-
     <div class="donate-section">
       <h4>Support Us</h4>
       <img id="cashappQr" src="CashappQR.png" alt="Cash App QR">
       <div>Donate via Cash App</div>
     </div>
   </div>
-
   <!-- Fullscreen QR Overlay -->
   <div id="qrOverlay">
     <div style="display: flex; flex-direction:column; align-items:center;">
@@ -32,18 +212,221 @@
       <button id="closeQrBtn">Back to Chat</button>
     </div>
   </div>
-
   <!-- Bomb Button -->
   <button id="bombBtn" title="Hold to disconnect">
     <div id="fuseBar"></div>
   </button>
-
   <!-- QRious Library -->
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <!-- Firebase App/Database -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <!-- Main Script -->
-  <script src="main.js"></script>
+  <script>
+    // QUE PASA APP - Main Script
+
+    // --- Firebase Config ---
+    const firebaseConfig = {
+      apiKey: "AIZaSyDNz_qKPgZlfhVcXtKKtCTU-ynfBkLOSC4",
+      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
+      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
+      projectId: "quepasaapp-2e0f7",
+      storageBucket: "quepasaapp-2e0f7.appspot.com",
+      messagingSenderId: "500826556029",
+      appId: "1:500826556029:web:707b10faf864433d71d314"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // --- DOM Element References ---
+    const $roomCodeDisplay = document.getElementById('roomCodeDisplay');
+    const $qrCanvas = document.getElementById('qrCanvas');
+    const $showQrBtn = document.getElementById('showQrBtn');
+    const $qrOverlay = document.getElementById('qrOverlay');
+    const $qrFullscreenCanvas = document.getElementById('qrFullscreenCanvas');
+    const $closeQrBtn = document.getElementById('closeQrBtn');
+    const $chatHistory = document.getElementById('chatHistory');
+    const $chatForm = document.getElementById('chatForm');
+    const $chatInput = document.getElementById('chatInput');
+    const $bombBtn = document.getElementById('bombBtn');
+    const $fuseBar = document.getElementById('fuseBar');
+
+    // --- Global State ---
+    let myId = Math.random().toString(36).slice(2, 9);
+    let myRoomCode = null;
+    let isHost = false;
+    let chatListener = null;
+    let leftRoom = false;
+
+    // --- Utility: Room Code Generator ---
+    async function makeRoomCode() {
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      let code = "";
+      let codeExists = true;
+      while (codeExists) {
+        code = "";
+        for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
+        const snap = await db.ref('rooms/' + code).once('value');
+        codeExists = snap.exists();
+      }
+      return code;
+    }
+
+    // --- Create Room & Enter (or join if ?room=) ---
+    async function startChat() {
+      const params = new URLSearchParams(window.location.search);
+      let room = params.get("room");
+      if (!room) {
+        room = await makeRoomCode();
+        window.history.replaceState({}, '', '?room=' + room);
+        isHost = true;
+        await db.ref('rooms/' + room).set({
+          size: 2,
+          members: { [myId]: { id: myId } },
+          hostId: myId,
+          chat: {}
+        });
+      } else {
+        // Try to join existing room (enforce 2 users)
+        const snap = await db.ref('rooms/' + room).once('value');
+        if (!snap.exists()) {
+          alert("Room doesn't exist. Reloading...");
+          window.location = window.location.pathname;
+          return;
+        }
+        const data = snap.val();
+        if (data.members && Object.keys(data.members).length >= 2) {
+          alert("Room is full (max 2 users).");
+          window.location = window.location.pathname;
+          return;
+        }
+        await db.ref(`rooms/${room}/members/${myId}`).set({ id: myId });
+        isHost = false;
+      }
+      myRoomCode = room;
+      displayRoomInfo();
+      listenToChat(room);
+    }
+
+    // --- Display Room Info & QR ---
+    function displayRoomInfo() {
+      $roomCodeDisplay.textContent = myRoomCode;
+      if (window.QRious) {
+        new QRious({
+          element: $qrCanvas,
+          value: getRoomURL(),
+          size: 120,
+          background: '#fff',
+          foreground: '#23272a'
+        });
+      }
+    }
+    function getRoomURL() {
+      return window.location.origin + window.location.pathname + '?room=' + myRoomCode;
+    }
+
+    // --- Chat Listener ---
+    function listenToChat(code) {
+      if (chatListener) chatListener.off();
+      chatListener = db.ref(`rooms/${code}/chat`);
+      $chatHistory.innerHTML = "";
+      chatListener.on('child_added', function(snapshot) {
+        if (leftRoom) return;
+        const msg = snapshot.val();
+        addMessage(msg.senderId === myId, msg.text, msg.timestamp);
+      });
+    }
+
+    // --- Add Message ---
+    function addMessage(isMine, text, ts) {
+      const d = ts ? new Date(ts) : new Date();
+      const time = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      const div = document.createElement('div');
+      div.className = "chat-bubble" + (isMine ? " me" : " other");
+      div.innerHTML = `<span class="msg-text">${text}</span><span class="msg-meta">${time}</span>`;
+      $chatHistory.appendChild(div);
+      $chatHistory.scrollTop = $chatHistory.scrollHeight;
+    }
+
+    // --- Send Message ---
+    $chatForm.onsubmit = function(e) {
+      e.preventDefault();
+      if (!myRoomCode || leftRoom) return;
+      const text = $chatInput.value.trim();
+      if (!text) return;
+      db.ref(`rooms/${myRoomCode}/chat`).push({
+        text: text,
+        timestamp: Date.now(),
+        senderId: myId
+      });
+      $chatInput.value = "";
+    };
+
+    // --- QR Fullscreen Toggle ---
+    $showQrBtn.onclick = () => {
+      $qrOverlay.style.display = "flex";
+      if (window.QRious) {
+        new QRious({
+          element: $qrFullscreenCanvas,
+          value: getRoomURL(),
+          size: 320,
+          background: '#fff',
+          foreground: '#23272a'
+        });
+      }
+    };
+    $closeQrBtn.onclick = () => {
+      $qrOverlay.style.display = "none";
+    };
+
+    // --- Bomb Button (Hold to Disconnect) ---
+    let fuseInterval = null, fusePercent = 100;
+    $bombBtn.onmousedown = () => {
+      fusePercent = 100;
+      $fuseBar.style.height = fusePercent + "%";
+      $fuseBar.style.background = "linear-gradient(to top, orange, yellow)";
+      fuseInterval = setInterval(async () => {
+        fusePercent -= 5;
+        $fuseBar.style.height = Math.max(0, fusePercent) + "%";
+        if (fusePercent <= 0) {
+          clearInterval(fuseInterval);
+          await leaveRoom();
+          window.location = "https://www.google.com";
+        }
+      }, 80);
+    };
+    $bombBtn.onmouseup = $bombBtn.onmouseleave = () => {
+      clearInterval(fuseInterval);
+      $fuseBar.style.height = "100%";
+      $fuseBar.style.background = "linear-gradient(to top, orange, yellow)";
+    };
+
+    // --- Leave/Disconnect Logic ---
+    async function leaveRoom() {
+      if (myRoomCode && !leftRoom) {
+        leftRoom = true;
+        try {
+          await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
+          if (isHost) {
+            const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
+            if (!snap.exists() || Object.keys(snap.val()).length === 0) {
+              await db.ref(`rooms/${myRoomCode}`).remove();
+            }
+          }
+        } catch (e) {}
+        myRoomCode = null;
+        isHost = false;
+        if (chatListener) {
+          chatListener.off();
+          chatListener = null;
+        }
+        $chatHistory.innerHTML = `<div class="disconnected-message">💣 Chat closed.<br>Refresh to start again.</div>`;
+      }
+    }
+    window.onbeforeunload = async () => { await leaveRoom(); };
+
+    // --- Start Chat on Load ---
+    window.addEventListener('DOMContentLoaded', startChat);
+  </script>
 </body>
 </html>
