@@ -382,14 +382,16 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
   <script>
-    // Replace these values with your actual Firebase config from your Firebase Console!
+    // Your actual Firebase config goes here!
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "que-pasa-app-66174639.firebaseapp.com",
-      projectId: "que-pasa-app-66174639",
-      storageBucket: "que-pasa-app-66174639.appspot.com",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDNz_qKPg7LfhVcXtKKTcTU-ynfBLkOSC4",
+      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
+      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
+      projectId: "quepasaapp-2e0f7",
+      storageBucket: "quepasaapp-2e0f7.firebasestorage.app",
+      messagingSenderId: "500826556029",
+      appId: "1:500826556029:web:707b10faf864433d71d314",
+      measurementId: "G-ZL2TN8H31C"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -466,14 +468,14 @@
   <!-- Cash App Support Button -->
   <div class="cashapp-support">
     <a class="cashapp-btn"
-       href="https://cash.app/$YourCashTag"
+       href="https://cash.app/$QuePasaAPP"
        target="_blank"
        rel="noopener">
       <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
       Support me on Cash App
     </a>
     <div style="color:#fff8; font-size:1em;">
-      <b>Cash App:</b> $YourCashTag
+      <b>Cash App:</b> $QuePasaAPP
     </div>
   </div>
   <script>
@@ -483,14 +485,12 @@
     let isHost = false;
     let myName = "You";
     let chatRef = null;
-    // Helper: Generate random code (A-Z, 2-9), always unique, always random, 6 chars
     function makeRoomCode() {
       const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
       let code = "";
       for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
       return code;
     }
-    // Draw QR code to a canvas: Now encodes a join link!
     function drawQR(canvasId, code) {
       const url = `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`;
       new QRious({
@@ -501,18 +501,14 @@
         foreground: '#111'
       });
     }
-    // Show/hide screens
     function show(screen) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screen).classList.add('active');
     }
-    // Splash logic
     document.getElementById('splashEnter').onclick = () => show('menu');
     document.getElementById('splash').onclick = () => show('menu');
-    // Menu logic
     document.getElementById('createRoomBtn').onclick = () => show('createRoomScreen');
     document.getElementById('joinRoomBtn').onclick = () => show('joinRoomScreen');
-    // Back buttons
     document.getElementById('backToMenuFromCreate').onclick = () => {
       document.getElementById('createError').textContent = "";
       show('menu');
@@ -521,7 +517,6 @@
       document.getElementById('joinError').textContent = "";
       show('menu');
     };
-    // CREATE ROOM
     document.getElementById('confirmCreateBtn').onclick = () => {
       const max = parseInt(document.getElementById('maxSizeInput').value);
       if (!(max >= 2 && max <= 9)) {
@@ -531,7 +526,6 @@
       let code = makeRoomCode();
       myRoomCode = code;
       isHost = true;
-      // Write room info to Firebase for presence (optional)
       db.ref('rooms/' + code + '/meta').set({
         size: max,
         created: Date.now(),
@@ -539,7 +533,6 @@
       });
       joinRoomAndShow(code);
     };
-    // JOIN ROOM
     document.getElementById('confirmJoinBtn').onclick = () => {
       const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
       const err = document.getElementById('joinError');
@@ -548,19 +541,16 @@
         err.textContent = "Invalid code format.";
         return;
       }
-      // (Optional: could check if room exists in Firebase)
       myRoomCode = code;
       isHost = false;
       joinRoomAndShow(code);
     };
-    // Show Room UI, set up chat
     function joinRoomAndShow(code) {
       drawQR('qrCanvas', code);
       document.getElementById('roomCodeDisplay').textContent = code.split('').join(' ');
       setupChatFirebase(code);
       show('roomScreen');
     }
-    // Self Destruct Button Logic
     const destructBtn = document.getElementById('selfDestructBtn');
     const destructText = document.getElementById('selfDestructText');
     const destructProgress = document.getElementById('selfDestructProgress');
@@ -579,7 +569,6 @@
           clearInterval(destructInterval);
           destructBtn.classList.remove('holding');
           destructProgress.style.width = '100%';
-          // Destroy the room in Firebase
           db.ref('rooms/' + myRoomCode).remove();
           myRoomCode = null;
           isHost = false;
@@ -602,7 +591,6 @@
     destructBtn.onmouseup = handleDestructEnd;
     destructBtn.onmouseleave = handleDestructEnd;
     destructBtn.ontouchend = handleDestructEnd;
-    // FLASH UI logic (unchanged)
     document.getElementById('flashQrBtn').onclick = () => {
       flashSequence([
         { type: 'logo', duration: 800 },
@@ -663,9 +651,7 @@
         setTimeout(next, item.duration);
       }
     }
-    // CHAT: Use Firebase for real-time sync!
     function setupChatFirebase(room) {
-      // Remove old listener if any
       if (chatRef) chatRef.off();
       chatRef = db.ref('rooms/' + room + '/chat');
       chatRef.on('value', snap => {
@@ -697,23 +683,18 @@
       });
       chatDiv.scrollTop = chatDiv.scrollHeight;
     }
-    // Voting dialog: (still "local" - demo only)
     function triggerVoteDialog() {
       const dialog = document.getElementById('voteDialog');
       dialog.style.display = "flex";
       document.getElementById('voteText').textContent = "A new person wants to join. Approve?";
       document.getElementById('voteYesBtn').onclick = () => {
         dialog.style.display = "none";
-        // Could add member to room in Firebase here
-        // For real use, you would manage members in db as well
         joinRoomAndShow(myRoomCode);
       };
       document.getElementById('voteNoBtn').onclick = () => {
         dialog.style.display = "none";
-        // Could show denied message
       };
     }
-    // On load: auto-join if ?room= is in URL!
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       let code = urlParams.get('room');
@@ -724,7 +705,6 @@
         joinRoomAndShow(code);
       }
     });
-    // Demo: If host leaves, destroy room (optional)
     window.onbeforeunload = () => {
       if (isHost && myRoomCode) db.ref('rooms/' + myRoomCode).remove();
     };
