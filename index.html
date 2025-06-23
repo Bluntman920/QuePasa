@@ -7,67 +7,59 @@
   <link rel="icon" href="QuePasaLogo.png" type="image/png">
   <style>
     html, body {
-      min-height: 100vh;
       margin: 0;
       padding: 0;
+      min-height: 100vh;
+      width: 100%;
       background: #23272a url('QuePasaLogo.png');
       background-repeat: repeat;
       background-size: 120px 120px;
       font-family: 'Segoe UI', Arial, sans-serif;
-      width: 100vw;
+      display: flex;
+      flex-direction: column;
     }
-    body {
-      min-height: 100vh;
-      width: 100vw;
+
+    .main-wrap {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-    .main-wrap {
-      max-width: 700px;
-      width: 100vw;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      min-height: 100vh;
-      height: 100vh;
-      position: relative;
-      z-index: 2;
-    }
-    .chat-bar {
       width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .chat-bar {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      margin-top: 30px;
-      margin-bottom: 16px;
+      width: 100%;
+      margin-top: 20px;
     }
+
     .chat-box-wrap {
-      flex: 1 1 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       background: #252a2ecc;
       border-radius: 32px;
       box-shadow: 0 2px 20px #000a;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      min-height: 340px;
-      max-height: 60vh;
-      width: 100%;
-      margin: 0 0 20px 0;
+      margin-bottom: 20px;
+      padding-bottom: 0;
+      overflow: hidden;
     }
+
     .chat-history {
-      flex: 1;
+      flex-grow: 1;
       overflow-y: auto;
       padding: 24px 20px 0 20px;
       display: flex;
       flex-direction: column;
-      min-height: 170px;
-      max-height: 330px;
+      min-height: 0;
       background: transparent;
     }
+
     .chat-message {
       margin: 7px 0;
       padding: 10px 18px;
@@ -78,25 +70,25 @@
       font-size: 1.18em;
       font-weight: 500;
       word-break: break-word;
-      box-shadow: 0 1px 2px #0001;
-      transition: background 0.18s;
       white-space: pre-line;
     }
+
     .chat-message.me {
       align-self: flex-end;
       background: #1da365;
-      color: #fff;
       font-weight: bold;
       box-shadow: 0 2px 10px #1da36522;
     }
+
     .chat-form-row {
       display: flex;
       gap: 8px;
-      padding: 14px 18px 20px 18px;
+      padding: 14px 18px 18px;
       align-items: center;
       background: #23272a;
       border-radius: 0 0 30px 30px;
     }
+
     .chat-input {
       flex: 1;
       font-size: 1.2em;
@@ -108,6 +100,7 @@
       color: #fff;
       box-shadow: 0 1px 3px #0002;
     }
+
     .chat-send-btn {
       background: #1da365;
       color: #fff;
@@ -120,58 +113,19 @@
       transition: background 0.15s;
       box-shadow: 0 1px 4px #0002;
     }
+
     .chat-send-btn:hover {
       background: #149150;
     }
-    .qr-area {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 10px;
-      margin-bottom: 18px;
-      gap: 7px;
-    }
-    .room-label {
-      color: #fff9;
-      font-size: 1.15em;
-      margin-bottom: 2px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-    }
-    .room-code {
-      font-size: 2.1em;
-      color: #1da365;
-      background: #23272aee;
-      padding: 10px 38px;
-      border-radius: 17px;
-      font-family: 'Courier New', monospace;
-      user-select: all;
-      letter-spacing: 0.22em;
-      box-shadow: 0 1px 18px #0006;
-      margin-bottom: 8px;
-      margin-top: 0;
-      text-align: center;
-    }
-    .qr-img {
-      display: block;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 28px #000a;
-      margin: 0 auto;
-      width: 220px;
-      height: 220px;
-      max-width: 98vw;
-    }
+
     .room-join-bar {
-      width: 100%;
       display: flex;
-      flex-direction: row;
-      align-items: center;
       justify-content: center;
-      margin: 8px 0 18px 0;
+      align-items: center;
+      margin: 8px 0 18px;
       gap: 10px;
     }
+
     .room-join-input {
       font-size: 1.18em;
       padding: 10px 18px;
@@ -184,8 +138,8 @@
       letter-spacing: 0.18em;
       width: 140px;
       text-align: center;
-      margin-right: 0;
     }
+
     .room-join-btn {
       background: #1da365;
       color: #fff;
@@ -197,7 +151,49 @@
       cursor: pointer;
       transition: background 0.16s;
     }
-    .room-join-btn:hover { background: #119355; }
+
+    .room-join-btn:hover {
+      background: #119355;
+    }
+
+    .qr-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px 0 18px;
+      gap: 7px;
+    }
+
+    .room-label {
+      color: #fff9;
+      font-size: 1.15em;
+      margin-bottom: 2px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .room-code {
+      font-size: 2.1em;
+      color: #1da365;
+      background: #23272aee;
+      padding: 10px 38px;
+      border-radius: 17px;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.22em;
+      box-shadow: 0 1px 18px #0006;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .qr-img {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 28px #000a;
+      width: 220px;
+      height: 220px;
+      max-width: 98vw;
+    }
+
     .disconnect-btn {
       background: #e74c3c;
       color: #fff;
@@ -207,25 +203,26 @@
       border-radius: 20px;
       width: 100%;
       max-width: 220px;
-      min-width: 120px;
       padding: 18px 0;
       margin: 20px auto 0 auto;
       box-shadow: 0 2px 12px #c0392b33;
       cursor: pointer;
       transition: background 0.14s, transform 0.12s;
-      display: block;
     }
+
     .disconnect-btn:hover {
       background: #c0392b;
       transform: scale(1.05);
     }
+
     .donate-bar {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 36px 0 18px 0;
+      margin: 36px 0 18px;
     }
+
     .cashapp-btn {
       display: flex;
       align-items: center;
@@ -241,30 +238,29 @@
       box-shadow: 0 2px 12px #00d64b44;
       text-decoration: none;
       transition: background 0.17s, transform 0.14s;
-      margin-bottom: 10px;
     }
+
     .cashapp-btn:hover {
       background: #009c34;
       transform: scale(1.04);
-      color: #fff;
     }
+
     .cashapp-logo {
       width: 80px;
       height: 80px;
       border-radius: 13px;
       background: #fff;
-      box-shadow: 0 1px 8px #0002;
       object-fit: cover;
       border: 2.5px solid #fff;
     }
+
     .cashapp-desc {
       font-size: 1.18em;
       color: #fff8;
       margin-top: 2px;
-      margin-bottom: 0;
-      line-height: 1.3em;
       text-align: center;
     }
+
     .disconnected-message {
       color: #fff;
       background: #c0392b;
@@ -272,22 +268,24 @@
       border-radius: 20px;
       text-align: center;
       font-size: 1.3em;
-      margin: 60px 0 20px 0;
+      margin: 60px 0 20px;
       font-weight: bold;
       letter-spacing: 0.05em;
       box-shadow: 0 2px 16px #c0392b22;
     }
+
     @media (max-width: 900px) {
-      .main-wrap { max-width: 98vw;}
-      .chat-box-wrap { max-width: 99vw;}
-      .room-code { font-size: 1.2em; padding: 6px 16px;}
-      .qr-img { width: 120px; height: 120px;}
+      .main-wrap { max-width: 98vw; }
+      .chat-box-wrap { max-width: 99vw; }
+      .room-code { font-size: 1.2em; padding: 6px 16px; }
+      .qr-img { width: 120px; height: 120px; }
     }
+
     @media (max-width: 480px) {
       .chat-bar { margin-top: 8px; }
-      .chat-box-wrap { min-height: 210px;}
-      .donate-bar { margin-bottom: 8px;}
-      .qr-img { width: 70vw; height: 70vw;}
+      .chat-box-wrap { min-height: 210px; }
+      .donate-bar { margin-bottom: 8px; }
+      .qr-img { width: 70vw; height: 70vw; }
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
@@ -303,7 +301,6 @@
           <input class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off" />
           <button type="submit" class="chat-send-btn">Send</button>
         </form>
-        <!-- JOIN ROOM BAR -->
         <div class="room-join-bar">
           <input id="joinCodeInput" class="room-join-input" maxlength="6" placeholder="CODE" />
           <button class="room-join-btn" id="joinRoomBtn">Join Room</button>
@@ -316,19 +313,15 @@
         <button class="disconnect-btn" id="leaveRoomBtn">Disconnect</button>
       </div>
     </div>
-    <!-- Donate bar -->
     <div class="donate-bar">
       <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
         <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
         Donate / Support (Cash App)
       </a>
-      <div class="cashapp-desc">
-        Want to support the party? Every bit helps! Thanks bro!
-      </div>
+      <div class="cashapp-desc">Want to support the party? Every bit helps! Thanks bro!</div>
     </div>
   </div>
   <script>
-    // Your Firebase config from your screenshot
     const firebaseConfig = {
       apiKey: "AIZaSyDNz_qKPgZlfhVcXtKKtCTU-ynfBkLOSC4",
       authDomain: "quepasaapp-2e0f7.firebaseapp.com",
@@ -342,7 +335,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // === Chat Room State ===
     let myId = Math.random().toString(36).slice(2, 9);
     let myName = "Anon";
     let myRoomCode = null;
@@ -350,14 +342,12 @@
     let chatListener = null;
     let leftRoom = false;
 
-    // === DOM Elements ===
     const $chatHistory = document.getElementById('chatHistory');
     const $chatForm = document.getElementById('chatForm');
     const $chatInput = document.getElementById('chatInput');
     const $leaveRoomBtn = document.getElementById('leaveRoomBtn');
     const $roomCodeDisplay = document.getElementById('roomCodeDisplay');
     const $qrCanvas = document.getElementById('qrCanvas');
-    const $mainWrap = document.getElementById('mainWrap');
     const $chatBar = document.getElementById('chatBar');
     const $joinRoomBtn = document.getElementById('joinRoomBtn');
     const $joinCodeInput = document.getElementById('joinCodeInput');
@@ -370,7 +360,6 @@
       $chatHistory.scrollTop = $chatHistory.scrollHeight;
     }
 
-    // === ROOM LOGIC ===
     async function makeRoomCode() {
       const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
       let code = "";
@@ -390,9 +379,7 @@
       leftRoom = false;
       await db.ref('rooms/' + myRoomCode).set({
         size: 2,
-        members: {
-          [myId]: { id: myId }
-        },
+        members: { [myId]: { id: myId } },
         hostId: myId,
         chat: {}
       });
@@ -402,19 +389,12 @@
 
     async function joinRoomByCode(code) {
       code = code.toUpperCase().replace(/[^A-Z0-9]/g,'');
-      if (!code || code.length !== 6) {
-        alert("Please enter a valid 6-character room code.");
-        return;
-      }
+      if (!code || code.length !== 6) return alert("Please enter a valid 6-character room code.");
       const snap = await db.ref('rooms/' + code).once('value');
-      if (!snap.exists()) {
-        alert("That room doesn't exist.");
-        return;
-      }
+      if (!snap.exists()) return alert("That room doesn't exist.");
       myRoomCode = code;
       isHost = false;
       leftRoom = false;
-      // Add self to members
       await db.ref(`rooms/${myRoomCode}/members/${myId}`).set({ id: myId });
       displayRoomInfo();
       listenToChat(myRoomCode);
@@ -433,12 +413,10 @@
       });
     }
 
-    // Only call ONCE at start
     (async function init() {
       await createRoomAndEnter();
     })();
 
-    // === Chat logic ===
     function listenToChat(code) {
       if (chatListener) chatListener.off();
       chatListener = db.ref(`rooms/${code}/chat`);
@@ -473,17 +451,16 @@
       $chatHistory.scrollTop = $chatHistory.scrollHeight;
     }
 
-    // === Join Room logic ===
     $joinRoomBtn.onclick = async () => {
       if (leftRoom) return;
       const code = $joinCodeInput.value.trim();
       await joinRoomByCode(code);
     };
+
     $joinCodeInput.addEventListener('keyup', function(e) {
       if (e.key === "Enter") $joinRoomBtn.click();
     });
 
-    // === Disconnect logic ===
     $leaveRoomBtn.onclick = async () => {
       if (myRoomCode && !leftRoom) {
         leftRoom = true;
@@ -506,7 +483,6 @@
       }
     };
 
-    // === Clean up on close ===
     window.onbeforeunload = async () => {
       if (myRoomCode && !leftRoom) {
         leftRoom = true;
