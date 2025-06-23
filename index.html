@@ -2,333 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>QUE PASA APP</title>
+  <title>QUE PASA APP - Debug Test</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      min-height: 100vh;
-      font-family: 'Roboto', Arial, sans-serif;
-      height: 100%;
+    body { background: #f5f5f5; font-family: Arial, sans-serif; margin: 0; }
+    #logoBg { 
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; 
+      opacity: 0.11; z-index: 0; display: flex; justify-content: center; align-items: center; pointer-events: none;
     }
-    #mainWrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      width: 100vw;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 1;
-    }
-    /* LOGO BACKGROUND */
-    #logoBg {
-      position: fixed;
-      left: 0; top: 0;
-      width: 100vw; height: 100vh;
-      z-index: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0.11;
-      background: none;
-    }
-    #logoBg img {
-      max-width: 65vw;
-      width: 500px;
-      height: auto;
-      filter: drop-shadow(0 0 2px #0006);
-      opacity: 0.95;
-      object-fit: contain;
-      user-select: none;
-    }
-    #roomCodeDisplay {
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin: 22px 0 2px 0;
-      letter-spacing: 0.18em;
-      color: #25d366;
-      z-index: 2;
-      text-shadow: 0 1px 8px #fff, 0 1px 1px #eee;
-    }
-    #qrCanvas {
-      margin-bottom: 10px;
-      border-radius: 15px;
-      background: #fff;
-      border: 2px solid #25d366;
-      box-shadow: 0 2px 10px #25d36644;
-      z-index: 2;
-    }
-    #showQrBtn {
-      padding: 8px 16px;
-      background: #25d366;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 1px 4px #25d36644;
-      margin-bottom: 18px;
-      transition: background 0.2s;
-      z-index: 2;
-    }
-    #showQrBtn:hover {
-      background: #21b358;
-    }
-    #chatHistory {
-      background: #fff;
-      border-radius: 16px;
-      width: 97vw;
-      max-width: 440px;
-      min-height: 340px;
-      max-height: 350px;
-      margin: 10px 0;
-      padding: 18px 10px 10px 10px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      border: 2px solid #25d366;
-      box-shadow: 0 0 12px #aaa2;
-      z-index: 2;
-    }
-    .chat-bubble {
-      max-width: 77vw;
-      max-width: 77%;
-      padding: 11px 16px;
-      border-radius: 22px;
-      font-size: 1.05rem;
-      word-break: break-word;
-      display: inline-block;
-      background: #dcf8c6;
-      align-self: flex-end;
-      margin-bottom: 4px;
-      box-shadow: 0 1px 6px #25d36618;
-      position: relative;
-      transition: background 0.2s;
-    }
-    .chat-bubble.other {
-      background: #fff;
-      align-self: flex-start;
-      border: 1.5px solid #eee;
-      box-shadow: 0 1px 6px #aaa2;
-    }
-    .msg-meta {
-      font-size: 0.79em;
-      color: #888;
-      margin-left: 8px;
-      float: right;
-    }
-    #chatForm {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 8px;
-      width: 100vw;
-      max-width: 440px;
-      z-index: 2;
-    }
-    #chatInput {
-      width: 76%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-size: 1.06rem;
-      background: #fafafa;
-      outline: none;
-      transition: border 0.2s;
-    }
-    #chatInput:focus {
-      border: 1.5px solid #25d366;
-    }
-    #chatForm button {
-      margin-left: 8px;
-      padding: 11px 15px;
-      background: #25d366;
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    #chatForm button:hover {
-      background: #21b358;
-    }
-    #qrOverlay {
-      position: fixed;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.83);
-      z-index: 100;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    #qrFullscreenCanvas {
-      width: 340px !important;
-      height: 340px !important;
-      margin-bottom: 22px;
-    }
-    #closeQrBtn {
-      padding: 12px 38px;
-      background: #25d366;
-      color: #fff;
-      border: none;
-      border-radius: 13px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      margin-top: 8px;
-      box-shadow: 0 2px 10px #25d36644;
-    }
-    #closeQrBtn:hover {
-      background: #21b358;
-    }
-    #bombBtn {
-      position: fixed;
-      left: 22px;
-      bottom: 28px;
-      width: 68px;
-      height: 80px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 20;
-      outline: none;
-    }
-    #bombBtn::before {
-      content: '';
-      display: block;
-      width: 60px;
-      height: 60px;
-      background: url('data:image/svg+xml;utf8,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="35" r="22" fill="black"/><rect x="26" y="12" width="8" height="18" rx="4" fill="black"/><rect x="28" y="7" width="4" height="10" rx="2" fill="orange"/><circle cx="30" cy="7" r="3" fill="yellow" stroke="red" stroke-width="2"/></svg>') center no-repeat;
-      background-size: contain;
-      margin-bottom: 0px;
-    }
-    #fuseBar {
-      width: 9px;
-      height: 100%;
-      background: linear-gradient(to top, orange, yellow);
-      border-radius: 4px;
-      margin-top: -39px;
-      transition: height 0.12s linear;
-      opacity: 0.8;
-    }
-    #cashappQr {
-      width: 120px;
-      border-radius: 12px;
-      border: 2px solid #222;
-      margin-top: 16px;
-      margin-bottom: 6px;
-      display: block;
-      z-index: 2;
-    }
-    .donate-section {
-      margin: 0 auto 18px auto;
-      text-align: center;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 0 12px #aaa2;
-      padding: 14px 8px 10px 8px;
-      border: 1.5px solid #25d366;
-      width: 170px;
-      z-index: 2;
-      position: relative;
-    }
-    .donate-section .donate-icons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      align-items: center;
-      margin-top: 4px;
-      margin-bottom: 2px;
-    }
-    .donate-section .donate-icons img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-      border-radius: 8px;
-      border: 1.5px solid #ccc;
-      background: #fff;
-      box-shadow: 0 1px 5px #aaa1;
-    }
-    .disconnected-message {
-      text-align: center;
-      color: #e74c3c;
-      margin-top: 90px;
-      font-size: 1.2rem;
-      z-index: 2;
-    }
-    @media (max-width: 600px) {
-      #chatHistory, #chatForm {
-        max-width: 97vw;
-      }
-      .chat-bubble {
-        max-width: 94vw;
-      }
-      #logoBg img {
-        max-width: 90vw;
-      }
-      .donate-section {
-        width: 95vw;
-        min-width: 120px;
-        max-width: 170px;
-      }
-    }
+    #logoBg img { max-width: 500px; width: 70vw; }
+    #mainWrap { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    #roomCodeDisplay { font-size: 1.5em; color: #25d366; margin: 22px 0 8px 0; letter-spacing: 0.16em;}
+    #chatHistory { width: 95vw; max-width: 430px; height: 320px; overflow-y: auto; background: #fff; border-radius: 14px; border: 2px solid #25d366; margin-bottom: 10px; padding: 10px; }
+    .chat-bubble { margin: 5px 0; padding: 10px 16px; border-radius: 22px; display: inline-block; max-width: 80%; font-size: 1.05rem; }
+    .chat-bubble.me { background: #dcf8c6; align-self: flex-end; }
+    .chat-bubble.other { background: #fff; border: 1.2px solid #eee; align-self: flex-start; }
+    #chatForm { display: flex; max-width: 430px; width: 95vw; }
+    #chatInput { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc;}
+    #chatForm button { margin-left: 8px; border: none; border-radius: 7px; background: #25d366; color: #fff; padding: 10px 18px; cursor: pointer;}
+    .donate-section { text-align: center; background: #fff; border-radius: 12px; margin-top: 14px; padding: 12px; width: 130px; border: 1.5px solid #25d366; }
+    .donate-icons { display: flex; justify-content: center; gap: 9px; margin-bottom: 5px;}
+    .donate-icons img { width: 30px; height: 30px; border-radius: 6px; border: 1px solid #ccc;}
   </style>
 </head>
 <body>
-  <!-- Logo background -->
-  <div id="logoBg">
-    <img src="QuePasaLogo.png" alt="QUE PASA Logo">
-  </div>
+  <div id="logoBg"><img src="QuePasaLogo.png" alt="Logo"></div>
   <div id="mainWrap">
-    <div id="roomCodeDisplay"></div>
-    <canvas id="qrCanvas"></canvas>
-    <button id="showQrBtn">Show QR Fullscreen</button>
+    <div id="roomCodeDisplay">Loading...</div>
     <div id="chatHistory"></div>
     <form id="chatForm" autocomplete="off">
       <input id="chatInput" type="text" placeholder="Type a message..." autocomplete="off" />
       <button type="submit">Send</button>
     </form>
     <div class="donate-section">
-      <h4>Support Us</h4>
       <div class="donate-icons">
-        <img src="CashappQR.png" alt="Cash App QR" title="Cash App">
-        <img src="PaypalIcon.jpg" alt="Paypal Icon" title="PayPal">
+        <img src="CashappQR.png" alt="Cash App">
+        <img src="PaypalIcon.jpg" alt="PayPal">
       </div>
-      <img id="cashappQr" src="CashappQR.png" alt="Cash App QR">
-      <div>Donate via Cash App or PayPal</div>
+      <div>Support Us!</div>
     </div>
   </div>
-  <!-- Fullscreen QR Overlay -->
-  <div id="qrOverlay">
-    <div style="display: flex; flex-direction:column; align-items:center;">
-      <canvas id="qrFullscreenCanvas"></canvas>
-      <button id="closeQrBtn">Back to Chat</button>
-    </div>
-  </div>
-  <!-- Bomb Button -->
-  <button id="bombBtn" title="Hold to disconnect">
-    <div id="fuseBar"></div>
-  </button>
-  <!-- QRious Library -->
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-  <!-- Firebase App/Database -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
-    // QUE PASA APP - Main Script
-
-    // --- Firebase Config ---
+    // ----------- CONFIG: Replace with your own if you changed it -----------
     const firebaseConfig = {
       apiKey: "AIZaSyDNz_qKPgZlfhVcXtKKtCTU-ynfBkLOSC4",
       authDomain: "quepasaapp-2e0f7.firebaseapp.com",
@@ -341,94 +59,51 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- DOM Element References ---
+    // ----------- Chat Logic -----------
     const $roomCodeDisplay = document.getElementById('roomCodeDisplay');
-    const $qrCanvas = document.getElementById('qrCanvas');
-    const $showQrBtn = document.getElementById('showQrBtn');
-    const $qrOverlay = document.getElementById('qrOverlay');
-    const $qrFullscreenCanvas = document.getElementById('qrFullscreenCanvas');
-    const $closeQrBtn = document.getElementById('closeQrBtn');
     const $chatHistory = document.getElementById('chatHistory');
     const $chatForm = document.getElementById('chatForm');
     const $chatInput = document.getElementById('chatInput');
-    const $bombBtn = document.getElementById('bombBtn');
-    const $fuseBar = document.getElementById('fuseBar');
-
-    // --- Global State ---
     let myId = Math.random().toString(36).slice(2, 9);
     let myRoomCode = null;
-    let isHost = false;
     let chatListener = null;
     let leftRoom = false;
 
-    // --- Utility: Room Code Generator ---
     async function makeRoomCode() {
       const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-      let code = "";
-      let codeExists = true;
+      let code = "", codeExists = true;
       while (codeExists) {
         code = "";
-        for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
+        for (let i=0;i<6;++i) code += chars[Math.floor(Math.random()*chars.length)];
         const snap = await db.ref('rooms/' + code).once('value');
         codeExists = snap.exists();
       }
       return code;
     }
 
-    // --- Create Room & Enter (or join if ?room=) ---
     async function startChat() {
-      const params = new URLSearchParams(window.location.search);
+      let params = new URLSearchParams(window.location.search);
       let room = params.get("room");
       if (!room) {
         room = await makeRoomCode();
         window.history.replaceState({}, '', '?room=' + room);
-        isHost = true;
-        await db.ref('rooms/' + room).set({
-          size: 2,
-          members: { [myId]: { id: myId } },
-          hostId: myId,
-          chat: {}
-        });
+        await db.ref('rooms/' + room).set({ members: { [myId]: { id: myId } }, chat: {} });
       } else {
-        // Try to join existing room (enforce 2 users)
         const snap = await db.ref('rooms/' + room).once('value');
         if (!snap.exists()) {
-          alert("Room doesn't exist. Reloading...");
-          window.location = window.location.pathname;
-          return;
+          alert("Room doesn't exist. Reloading..."); window.location = window.location.pathname; return;
         }
         const data = snap.val();
         if (data.members && Object.keys(data.members).length >= 2) {
-          alert("Room is full (max 2 users).");
-          window.location = window.location.pathname;
-          return;
+          alert("Room is full (max 2 users)."); window.location = window.location.pathname; return;
         }
         await db.ref(`rooms/${room}/members/${myId}`).set({ id: myId });
-        isHost = false;
       }
       myRoomCode = room;
-      displayRoomInfo();
-      listenToChat(room);
+      $roomCodeDisplay.textContent = "Room: " + myRoomCode;
+      listenToChat(myRoomCode);
     }
 
-    // --- Display Room Info & QR ---
-    function displayRoomInfo() {
-      $roomCodeDisplay.textContent = myRoomCode;
-      if (window.QRious) {
-        new QRious({
-          element: $qrCanvas,
-          value: getRoomURL(),
-          size: 120,
-          background: '#fff',
-          foreground: '#23272a'
-        });
-      }
-    }
-    function getRoomURL() {
-      return window.location.origin + window.location.pathname + '?room=' + myRoomCode;
-    }
-
-    // --- Chat Listener ---
     function listenToChat(code) {
       if (chatListener) chatListener.off();
       chatListener = db.ref(`rooms/${code}/chat`);
@@ -436,22 +111,22 @@
       chatListener.on('child_added', function(snapshot) {
         if (leftRoom) return;
         const msg = snapshot.val();
-        addMessage(msg.senderId === myId, msg.text, msg.timestamp);
+        const isMe = (msg && msg.senderId === myId);
+        addMessage(isMe, msg && msg.text, msg && msg.timestamp);
       });
     }
 
-    // --- Add Message ---
-    function addMessage(isMine, text, ts) {
+    function addMessage(isMe, text, ts) {
+      if (!text) return;
       const d = ts ? new Date(ts) : new Date();
       const time = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
       const div = document.createElement('div');
-      div.className = "chat-bubble" + (isMine ? " me" : " other");
-      div.innerHTML = `<span class="msg-text">${text}</span><span class="msg-meta">${time}</span>`;
+      div.className = "chat-bubble " + (isMe ? "me" : "other");
+      div.textContent = text + "  [" + time + "]";
       $chatHistory.appendChild(div);
       $chatHistory.scrollTop = $chatHistory.scrollHeight;
     }
 
-    // --- Send Message ---
     $chatForm.onsubmit = function(e) {
       e.preventDefault();
       if (!myRoomCode || leftRoom) return;
@@ -465,70 +140,6 @@
       $chatInput.value = "";
     };
 
-    // --- QR Fullscreen Toggle ---
-    $showQrBtn.onclick = () => {
-      $qrOverlay.style.display = "flex";
-      if (window.QRious) {
-        new QRious({
-          element: $qrFullscreenCanvas,
-          value: getRoomURL(),
-          size: 320,
-          background: '#fff',
-          foreground: '#23272a'
-        });
-      }
-    };
-    $closeQrBtn.onclick = () => {
-      $qrOverlay.style.display = "none";
-    };
-
-    // --- Bomb Button (Hold to Disconnect) ---
-    let fuseInterval = null, fusePercent = 100;
-    $bombBtn.onmousedown = () => {
-      fusePercent = 100;
-      $fuseBar.style.height = fusePercent + "%";
-      $fuseBar.style.background = "linear-gradient(to top, orange, yellow)";
-      fuseInterval = setInterval(async () => {
-        fusePercent -= 5;
-        $fuseBar.style.height = Math.max(0, fusePercent) + "%";
-        if (fusePercent <= 0) {
-          clearInterval(fuseInterval);
-          await leaveRoom();
-          window.location = "https://www.google.com";
-        }
-      }, 80);
-    };
-    $bombBtn.onmouseup = $bombBtn.onmouseleave = () => {
-      clearInterval(fuseInterval);
-      $fuseBar.style.height = "100%";
-      $fuseBar.style.background = "linear-gradient(to top, orange, yellow)";
-    };
-
-    // --- Leave/Disconnect Logic ---
-    async function leaveRoom() {
-      if (myRoomCode && !leftRoom) {
-        leftRoom = true;
-        try {
-          await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
-          if (isHost) {
-            const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
-            if (!snap.exists() || Object.keys(snap.val()).length === 0) {
-              await db.ref(`rooms/${myRoomCode}`).remove();
-            }
-          }
-        } catch (e) {}
-        myRoomCode = null;
-        isHost = false;
-        if (chatListener) {
-          chatListener.off();
-          chatListener = null;
-        }
-        $chatHistory.innerHTML = `<div class="disconnected-message">💣 Chat closed.<br>Refresh to start again.</div>`;
-      }
-    }
-    window.onbeforeunload = async () => { await leaveRoom(); };
-
-    // --- Start Chat on Load ---
     window.addEventListener('DOMContentLoaded', startChat);
   </script>
 </body>
