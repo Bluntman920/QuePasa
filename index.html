@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Que Pasa</title>
+  <!-- Favicon for logo in browser tab -->
+  <link rel="icon" href="QuePasaLogo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
     html, body { height: 100%; margin: 0; padding: 0; }
@@ -343,7 +345,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
   <script>
-    // Replace with your project's actual config values
+    // Replace these values with your actual Firebase config from your Firebase Console!
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "que-pasa-app-66174639.firebaseapp.com",
@@ -412,6 +414,7 @@
   <!-- Big flash overlay (for code/QR/logo) -->
   <div class="big-flash" id="bigFlash" style="display:none;">
     <!-- Will be filled dynamically -->
+    <!-- Logo will appear here dynamically as needed -->
   </div>
   <!-- Voting Dialog -->
   <div class="vote-dialog" id="voteDialog" style="display:none;">
