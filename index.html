@@ -6,7 +6,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #f2f2f2; color: #222; text-align:center; margin:0; }
-    .container { max-width: 370px; margin: 38px auto; background: #fff; border-radius: 9px; padding: 36px 24px 28px; box-shadow: 0 4px 24px #0002; }
+    .container { max-width: 370px; margin: 38px auto; background: #fff; border-radius: 9px; padding: 36px 24px 28px; box-shadow: 0 4px 24px #0002; position: relative;}
     #logo { width: 120px; margin-bottom: 22px; }
     #createBtn { font-size:1.2em; padding: 12px 32px; background:#1da365; color:#fff; border:none; border-radius:6px; cursor:pointer; margin-bottom: 20px;}
     #roomSection { display:none; }
@@ -14,6 +14,24 @@
     #qr { margin: 22px auto 16px; }
     .comboGrid { display:grid; grid-template-columns:1fr 1fr 1fr; gap: 10px; margin: 18px auto 0; max-width: 260px;}
     .comboCell { border-radius: 18px; font-size:1.05em; font-weight:bold; padding: 10px 0; color:#fff; text-shadow:0 2px 6px #0005; }
+    .cashapp-section {
+      margin: 20px 0 0 0;
+      text-align: center;
+    }
+    .cashapp-qr {
+      display: block;
+      margin: 0 auto 6px auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      border: 2px solid #00d632;
+      box-shadow: 0 2px 12px #00d63244;
+      transition: box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .cashapp-qr:hover {
+      box-shadow: 0 4px 28px #00d63299;
+    }
     .cashapp-link {
       display: inline-flex;
       align-items: center;
@@ -24,7 +42,7 @@
       font-size: 1.1em;
       border-radius: 8px;
       padding: 8px 18px;
-      margin: 18px 0 0 0;
+      margin: 8px 0 0 0;
       box-shadow: 0 2px 12px #00d63233;
       transition: background 0.2s;
     }
@@ -37,6 +55,61 @@
       border-radius: 6px;
       background: #fff;
       padding: 2px;
+    }
+    /* Help icon */
+    #helpBtn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #eee;
+      color: #333;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 1.25em;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.15s;
+    }
+    #helpBtn:hover { background: #f1c40f; color: #fff; }
+    /* Help modal */
+    #helpModalBg {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      justify-content: center;
+      align-items: center;
+    }
+    #helpModal {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 335px;
+      margin: auto;
+      padding: 28px 22px 20px 22px;
+      box-shadow: 0 6px 32px #0002;
+      text-align: left;
+      position: relative;
+      font-size: 1.04em;
+    }
+    #closeHelp {
+      position: absolute;
+      top: 10px; right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.3em;
+      color: #888;
+      cursor: pointer;
+    }
+    #closeHelp:hover { color: #e74c3c; }
+    #helpModal h2 {
+      font-size: 1.25em;
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #3498db;
     }
     /* Chat styles */
     #chatSection { display:none; }
@@ -95,11 +168,17 @@
 </head>
 <body>
   <div class="container">
+    <!-- Help icon -->
+    <button id="helpBtn" title="What is Que Pasa?">?</button>
     <img id="logo" src="QuePasaLogo.png" alt="Que Pasa Logo" />
     <h2>Que Pasa Private Room</h2>
     <button id="createBtn">Create Room</button>
-    <!-- Cash App link on landing page -->
-    <div id="cashapp-landing">
+    <!-- Cash App QR + link on landing page -->
+    <div id="cashapp-landing" class="cashapp-section">
+      <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+        <img class="cashapp-qr" src="CashappQR.png" alt="Cash App QR - $QuePasaAPP" title="Click to support via Cash App" />
+      </a>
+      <br/>
       <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
         <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
         Support via Cash App
@@ -114,8 +193,12 @@
       <div id="qr"></div>
       <div style="margin: 8px 0 6px;">Sample entry options:</div>
       <div class="comboGrid" id="comboGrid"></div>
-      <!-- Cash App link on room screen -->
-      <div style="margin-top:24px;">
+      <!-- Cash App QR + link on room screen -->
+      <div class="cashapp-section" style="margin-top:24px;">
+        <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+          <img class="cashapp-qr" src="CashappQR.png" alt="Cash App QR - $QuePasaAPP" title="Click to support via Cash App" />
+        </a>
+        <br/>
         <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
           <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
           Support via Cash App
@@ -140,8 +223,12 @@
           <div id="sliderKnob"></div>
         </div>
       </div>
-      <!-- Cash App link in chat -->
-      <div style="margin-top:16px;">
+      <!-- Cash App QR + link in chat -->
+      <div class="cashapp-section" style="margin-top:16px;">
+        <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+          <img class="cashapp-qr" src="CashappQR.png" alt="Cash App QR - $QuePasaAPP" title="Click to support via Cash App" />
+        </a>
+        <br/>
         <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
           <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
           Support via Cash App
@@ -149,6 +236,30 @@
       </div>
     </div>
   </div>
+
+  <!-- Help Modal -->
+  <div id="helpModalBg">
+    <div id="helpModal">
+      <button id="closeHelp" title="Close">&times;</button>
+      <h2>What is Que Pasa?</h2>
+      <div>
+        <p>
+          <strong>Que Pasa</strong> is a private, disposable chat room for ultimate privacy—ideal for sensitive, temporary, or “quiet” conversations where confidentiality matters.
+        </p>
+        <ul>
+          <li>No usernames or accounts required</li>
+          <li>Everything is private and confidential</li>
+          <li>Nothing is stored or saved after you’re done—rooms and messages self-destruct</li>
+          <li>Perfect for quiet situations or when you want to talk but don’t want a record</li>
+        </ul>
+        <p>
+          <strong>Your support helps!</strong><br>
+          The more you donate, the more we can improve Que Pasa with features like stronger encryption, better security, and a platform where even we can’t access your conversations.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Color palette for aliases
     const COLORS = [
@@ -281,6 +392,20 @@
       document.removeEventListener('mouseup', stopDrag);
       document.removeEventListener('touchend', stopDrag);
     }
+
+    // Help modal logic
+    const helpBtn = document.getElementById('helpBtn');
+    const helpModalBg = document.getElementById('helpModalBg');
+    const closeHelp = document.getElementById('closeHelp');
+    helpBtn.onclick = function() {
+      helpModalBg.style.display = 'flex';
+    };
+    closeHelp.onclick = function() {
+      helpModalBg.style.display = 'none';
+    };
+    helpModalBg.onclick = function(e) {
+      if(e.target === helpModalBg) helpModalBg.style.display = 'none';
+    };
   </script>
 </body>
 </html>
