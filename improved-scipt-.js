@@ -1,4 +1,4 @@
-console.log('QUE PASA APP Script loaded');
+// QUE PASA APP - Single File Main Script
 
 // --- Firebase Config ---
 const firebaseConfig = {
@@ -13,31 +13,26 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- Global State ---
-let myId = Math.random().toString(36).slice(2, 9);
-let myName = "Anon";
-let myRoomCode = null;
-let isHost = false;
-let chatListener = null;
-let leftRoom = false;
-
-// --- DOM Elements ---
-const $mainWrap = document.getElementById('mainWrap');
-const $splash = document.getElementById('splash');
+// --- DOM Element References ---
 const $roomCodeDisplay = document.getElementById('roomCodeDisplay');
 const $qrCanvas = document.getElementById('qrCanvas');
 const $showQrBtn = document.getElementById('showQrBtn');
-const $qrFullscreenOverlay = document.getElementById('qrFullscreenOverlay');
+const $qrOverlay = document.getElementById('qrOverlay');
 const $qrFullscreenCanvas = document.getElementById('qrFullscreenCanvas');
 const $closeQrBtn = document.getElementById('closeQrBtn');
 const $chatHistory = document.getElementById('chatHistory');
 const $chatForm = document.getElementById('chatForm');
 const $chatInput = document.getElementById('chatInput');
-const $leaveRoomBtn = document.getElementById('leaveRoomBtn');
 const $bombBtn = document.getElementById('bombBtn');
 const $fuseBar = document.getElementById('fuseBar');
-const $joinRoomBtn = document.getElementById('joinRoomBtn');
-const $joinCodeInput = document.getElementById('joinCodeInput');
+const $cashappQr = document.getElementById('cashappQr');
+
+// --- Global State ---
+let myId = Math.random().toString(36).slice(2, 9);
+let myRoomCode = null;
+let isHost = false;
+let chatListener = null;
+let leftRoom = false;
 
 // --- Utility: Room Code Generator ---
 async function makeRoomCode() {
@@ -53,52 +48,60 @@ async function makeRoomCode() {
   return code;
 }
 
-// --- Create Room & Enter ---
-async function createRoomAndEnter() {
-  myRoomCode = await makeRoomCode();
-  isHost = true;
-  leftRoom = false;
-  await db.ref('rooms/' + myRoomCode).set({
-    size: 2,
-    members: { [myId]: { id: myId } },
-    hostId: myId,
-    chat: {}
-  });
+// --- Create Room & Enter (or join if ?room=) ---
+async function startChat() {
+  const params = new URLSearchParams(window.location.search);
+  let room = params.get("room");
+  if (!room) {
+    room = await makeRoomCode();
+    window.history.replaceState({}, '', '?room=' + room);
+    isHost = true;
+    await db.ref('rooms/' + room).set({
+      size: 2,
+      members: { [myId]: { id: myId } },
+      hostId: myId,
+      chat: {}
+    });
+  } else {
+    // Try to join existing room (enforce 2 users)
+    const snap = await db.ref('rooms/' + room).once('value');
+    if (!snap.exists()) {
+      alert("Room doesn't exist. Reloading...");
+      window.location = window.location.pathname;
+      return;
+    }
+    const data = snap.val();
+    if (data.members && Object.keys(data.members).length >= 2) {
+      alert("Room is full (max 2 users).");
+      window.location = window.location.pathname;
+      return;
+    }
+    await db.ref(`rooms/${room}/members/${myId}`).set({ id: myId });
+    isHost = false;
+  }
+  myRoomCode = room;
   displayRoomInfo();
-  listenToChat(myRoomCode);
-  showMainWrap();
+  listenToChat(room);
 }
 
-// --- Show Main Chat Area ---
-function showMainWrap() {
-  if ($splash) $splash.style.display = 'none';
-  if ($mainWrap) $mainWrap.style.display = 'flex';
-}
-
-// --- Display Room Info, QR, Code ---
+// --- Display Room Info & QR ---
 function displayRoomInfo() {
-  if (!myRoomCode) return;
-  $roomCodeDisplay.textContent = myRoomCode.split('').join(' ');
+  $roomCodeDisplay.textContent = myRoomCode;
   if (window.QRious) {
     new QRious({
       element: $qrCanvas,
       value: getRoomURL(),
-      size: 180,
+      size: 120,
       background: '#fff',
       foreground: '#23272a'
     });
-    $qrCanvas.style.display = "block";
-  } else {
-    $qrCanvas.style.display = "none";
   }
 }
-
-// --- Room URL for QR ---
 function getRoomURL() {
   return window.location.origin + window.location.pathname + '?room=' + myRoomCode;
 }
 
-// --- Listen to Chat Changes ---
+// --- Chat Listener ---
 function listenToChat(code) {
   if (chatListener) chatListener.off();
   chatListener = db.ref(`rooms/${code}/chat`);
@@ -106,12 +109,12 @@ function listenToChat(code) {
   chatListener.on('child_added', function(snapshot) {
     if (leftRoom) return;
     const msg = snapshot.val();
-    addMessage(msg.who, msg.text, msg.timestamp, msg.senderId === myId);
+    addMessage(msg.senderId === myId, msg.text, msg.timestamp);
   });
 }
 
-// --- Add Message to DOM (WhatsApp style) ---
-function addMessage(who, text, ts, isMine) {
+// --- Add Message ---
+function addMessage(isMine, text, ts) {
   const d = ts ? new Date(ts) : new Date();
   const time = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   const div = document.createElement('div');
@@ -128,7 +131,6 @@ $chatForm.onsubmit = function(e) {
   const text = $chatInput.value.trim();
   if (!text) return;
   db.ref(`rooms/${myRoomCode}/chat`).push({
-    who: myName,
     text: text,
     timestamp: Date.now(),
     senderId: myId
@@ -136,90 +138,9 @@ $chatForm.onsubmit = function(e) {
   $chatInput.value = "";
 };
 
-// --- Join Room by Code ---
-$joinRoomBtn.onclick = async () => {
-  if (leftRoom) return;
-  const code = $joinCodeInput.value.trim();
-  await joinRoomByCode(code);
-};
-
-async function joinRoomByCode(code) {
-  code = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (!code || code.length !== 6) return alert("Enter valid 6-character code.");
-  const snap = await db.ref('rooms/' + code).once('value');
-  if (!snap.exists()) return alert("Room doesn't exist.");
-  const data = snap.val();
-  if (data.members && Object.keys(data.members).length >= 2) {
-    return alert("Room is full (max 2 users).");
-  }
-  myRoomCode = code;
-  isHost = false;
-  leftRoom = false;
-  await db.ref(`rooms/${myRoomCode}/members/${myId}`).set({ id: myId });
-  displayRoomInfo();
-  listenToChat(myRoomCode);
-  showMainWrap();
-}
-
-$joinCodeInput.addEventListener('keyup', function(e) {
-  if (e.key === "Enter") $joinRoomBtn.click();
-});
-
-// --- Leave/Disconnect Logic ---
-$leaveRoomBtn.onclick = async () => {
-  await leaveRoom();
-  showDisconnected();
-};
-
-async function leaveRoom() {
-  if (myRoomCode && !leftRoom) {
-    leftRoom = true;
-    try {
-      await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
-      if (isHost) {
-        const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
-        if (!snap.exists() || Object.keys(snap.val()).length === 0) {
-          await db.ref(`rooms/${myRoomCode}`).remove();
-        }
-      }
-    } catch (e) {}
-    myRoomCode = null;
-    isHost = false;
-    if (chatListener) {
-      chatListener.off();
-      chatListener = null;
-    }
-  }
-}
-
-function showDisconnected() {
-  $mainWrap.innerHTML = `<div class="disconnected-message">💣 Chat closed.<br>Refresh to start again.</div>`;
-}
-
-// --- Splash: Create Room on Load ---
-window.addEventListener('load', async () => {
-  setTimeout(async () => {
-    if ($splash) $splash.style.display = 'none';
-    if ($mainWrap) $mainWrap.style.display = 'flex';
-    // If ?room= param exists, join that room
-    const params = new URLSearchParams(window.location.search);
-    const joinRoom = params.get("room");
-    if (joinRoom) {
-      await joinRoomByCode(joinRoom);
-    } else {
-      await createRoomAndEnter();
-    }
-  }, 1500);
-});
-
-// --- On Unload: Clean up room ---
-window.onbeforeunload = async () => {
-  await leaveRoom();
-};
-
 // --- QR Fullscreen Toggle ---
 $showQrBtn.onclick = () => {
-  $qrFullscreenOverlay.style.display = "flex";
+  $qrOverlay.style.display = "flex";
   if (window.QRious) {
     new QRious({
       element: $qrFullscreenCanvas,
@@ -231,7 +152,7 @@ $showQrBtn.onclick = () => {
   }
 };
 $closeQrBtn.onclick = () => {
-  $qrFullscreenOverlay.style.display = "none";
+  $qrOverlay.style.display = "none";
 };
 
 // --- Bomb Button (Hold to Disconnect) ---
@@ -255,3 +176,30 @@ $bombBtn.onmouseup = $bombBtn.onmouseleave = () => {
   $fuseBar.style.height = "100%";
   $fuseBar.style.background = "linear-gradient(to top, orange, yellow)";
 };
+
+// --- Leave/Disconnect Logic ---
+async function leaveRoom() {
+  if (myRoomCode && !leftRoom) {
+    leftRoom = true;
+    try {
+      await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
+      if (isHost) {
+        const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
+        if (!snap.exists() || Object.keys(snap.val()).length === 0) {
+          await db.ref(`rooms/${myRoomCode}`).remove();
+        }
+      }
+    } catch (e) {}
+    myRoomCode = null;
+    isHost = false;
+    if (chatListener) {
+      chatListener.off();
+      chatListener = null;
+    }
+    $chatHistory.innerHTML = `<div class="disconnected-message">💣 Chat closed.<br>Refresh to start again.</div>`;
+  }
+}
+window.onbeforeunload = async () => { await leaveRoom(); };
+
+// --- Start Chat on Load ---
+window.addEventListener('DOMContentLoaded', startChat);
