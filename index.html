@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Que Pasa</title>
-  <!-- Favicon for logo in browser tab -->
+  <!-- Favicon for browser tab -->
   <link rel="icon" href="QuePasaLogo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
@@ -332,6 +332,45 @@
       left: 0;
       bottom: 0;
     }
+    /* Cash App Support Area */
+    .cashapp-support {
+      margin-top: 38px;
+      margin-bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .cashapp-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #00d64b;
+      color: #fff;
+      font-size: 1.25em;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 32px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0003;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .cashapp-btn:hover {
+      background: #009c34;
+      transform: scale(1.03);
+      text-decoration: none;
+      color: #fff;
+    }
+    .cashapp-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 1px 5px #0002;
+      object-fit: cover;
+    }
     @media (max-width: 480px) {
       .logo { max-width: 160px; }
       .app-title { font-size: 2em; }
@@ -339,6 +378,7 @@
       .big-flash { font-size: 2.7em; }
       .big-flash img { max-width: 120px; }
       .big-flash .flash-cashapp { max-width: 120px; }
+      .cashapp-support { margin-top: 20px; }
     }
   </style>
   <!-- Firebase SDKs and Config START -->
@@ -414,7 +454,6 @@
   <!-- Big flash overlay (for code/QR/logo) -->
   <div class="big-flash" id="bigFlash" style="display:none;">
     <!-- Will be filled dynamically -->
-    <!-- Logo will appear here dynamically as needed -->
   </div>
   <!-- Voting Dialog -->
   <div class="vote-dialog" id="voteDialog" style="display:none;">
@@ -424,6 +463,19 @@
         <button class="vote-btn yes" id="voteYesBtn">👍 Yes</button>
         <button class="vote-btn no" id="voteNoBtn">👎 No</button>
       </div>
+    </div>
+  </div>
+  <!-- Cash App Support Button -->
+  <div class="cashapp-support">
+    <a class="cashapp-btn"
+       href="https://cash.app/$YourCashTag"
+       target="_blank"
+       rel="noopener">
+      <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
+      Support me on Cash App
+    </a>
+    <div style="color:#fff8; font-size:1em;">
+      <b>Cash App:</b> $YourCashTag
     </div>
   </div>
   <script>
