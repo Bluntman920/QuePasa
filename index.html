@@ -7,26 +7,25 @@
   <link rel="icon" href="QuePasaLogo.png" type="image/png">
   <style>
     html, body {
-      height: 100%;
       min-height: 100vh;
       margin: 0;
       padding: 0;
       background: #23272a url('QuePasaLogo.png');
       background-repeat: repeat;
-      background-size: 110px 110px;
+      background-size: 120px 120px;
       font-family: 'Segoe UI', Arial, sans-serif;
+      width: 100vw;
     }
     body {
       min-height: 100vh;
       width: 100vw;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
+      align-items: center;
     }
     .main-wrap {
+      max-width: 700px;
       width: 100vw;
-      max-width: 600px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -39,43 +38,43 @@
     .chat-bar {
       width: 100%;
       display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      padding: 24px 12px 8px 12px;
-      box-sizing: border-box;
-      gap: 10px;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      margin-top: 30px;
+      margin-bottom: 16px;
     }
     .chat-box-wrap {
       flex: 1 1 auto;
       background: #252a2ecc;
-      border-radius: 24px;
+      border-radius: 32px;
       box-shadow: 0 2px 20px #000a;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      min-height: 320px;
-      max-height: 58vh;
+      min-height: 340px;
+      max-height: 60vh;
       width: 100%;
-      margin: 0 0 16px 0;
+      margin: 0 0 20px 0;
     }
     .chat-history {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 16px 0 16px;
+      padding: 24px 20px 0 20px;
       display: flex;
       flex-direction: column;
-      min-height: 190px;
-      max-height: 310px;
+      min-height: 170px;
+      max-height: 330px;
     }
     .chat-message {
       margin: 7px 0;
-      padding: 9px 13px;
+      padding: 10px 18px;
       max-width: 85%;
-      border-radius: 9px;
+      border-radius: 12px;
       background: #1da36522;
       color: #fff;
-      font-size: 1.13em;
+      font-size: 1.18em;
       font-weight: 500;
       word-break: break-word;
       box-shadow: 0 1px 2px #0001;
@@ -92,16 +91,16 @@
     .chat-form-row {
       display: flex;
       gap: 8px;
-      padding: 8px 12px 14px 12px;
+      padding: 14px 18px 20px 18px;
       align-items: center;
       background: #23272a;
-      border-radius: 0 0 18px 18px;
+      border-radius: 0 0 30px 30px;
     }
     .chat-input {
       flex: 1;
-      font-size: 1.13em;
-      padding: 10px 13px;
-      border-radius: 8px;
+      font-size: 1.2em;
+      padding: 13px 17px;
+      border-radius: 10px;
       border: none;
       outline: none;
       background: #31343a;
@@ -112,9 +111,9 @@
       background: #1da365;
       color: #fff;
       border: none;
-      border-radius: 8px;
-      padding: 10px 19px;
-      font-size: 1em;
+      border-radius: 10px;
+      padding: 12px 27px;
+      font-size: 1.13em;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.15s;
@@ -128,39 +127,40 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 6px;
-      margin-bottom: 16px;
-      gap: 5px;
+      margin-top: 10px;
+      margin-bottom: 18px;
+      gap: 7px;
     }
     .room-label {
       color: #fff9;
-      font-size: 1em;
+      font-size: 1.15em;
       margin-bottom: 2px;
-      font-weight: normal;
+      font-weight: 500;
       letter-spacing: 0.04em;
     }
     .room-code {
-      font-size: 1.55em;
+      font-size: 2.1em;
       color: #1da365;
       background: #23272aee;
-      padding: 6px 24px;
-      border-radius: 14px;
+      padding: 10px 38px;
+      border-radius: 17px;
       font-family: 'Courier New', monospace;
       user-select: all;
-      letter-spacing: 0.18em;
-      box-shadow: 0 1px 13px #0006;
-      margin-bottom: 2px;
+      letter-spacing: 0.22em;
+      box-shadow: 0 1px 18px #0006;
+      margin-bottom: 8px;
       margin-top: 0;
+      text-align: center;
     }
     .qr-img {
       display: block;
       background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 2px 18px #000a;
+      border-radius: 18px;
+      box-shadow: 0 2px 28px #000a;
       margin: 0 auto;
-      width: 160px;
-      height: 160px;
-      max-width: 90vw;
+      width: 220px;
+      height: 220px;
+      max-width: 98vw;
     }
     .disconnect-btn {
       background: #e74c3c;
@@ -168,12 +168,12 @@
       font-size: 1.3em;
       font-weight: bold;
       border: none;
-      border-radius: 14px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 200px;
+      max-width: 220px;
       min-width: 120px;
-      padding: 15px 0;
-      margin: 18px auto 0 auto;
+      padding: 18px 0;
+      margin: 20px auto 0 auto;
       box-shadow: 0 2px 12px #c0392b33;
       cursor: pointer;
       transition: background 0.14s, transform 0.12s;
@@ -181,31 +181,31 @@
     }
     .disconnect-btn:hover {
       background: #c0392b;
-      transform: scale(1.04);
+      transform: scale(1.05);
     }
     .donate-bar {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 18px;
+      margin: 36px 0 18px 0;
     }
     .cashapp-btn {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 20px;
       background: #00d64b;
       color: #fff;
-      font-size: 1.2em;
+      font-size: 1.6em;
       font-weight: bold;
       border: none;
-      border-radius: 12px;
-      padding: 13px 28px;
+      border-radius: 16px;
+      padding: 21px 48px;
       cursor: pointer;
-      box-shadow: 0 2px 8px #0003;
+      box-shadow: 0 2px 12px #00d64b44;
       text-decoration: none;
       transition: background 0.17s, transform 0.14s;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
     .cashapp-btn:hover {
       background: #009c34;
@@ -213,16 +213,16 @@
       color: #fff;
     }
     .cashapp-logo {
-      width: 55px;
-      height: 55px;
-      border-radius: 9px;
+      width: 80px;
+      height: 80px;
+      border-radius: 13px;
       background: #fff;
       box-shadow: 0 1px 8px #0002;
       object-fit: cover;
-      border: 2px solid #fff;
+      border: 2.5px solid #fff;
     }
     .cashapp-desc {
-      font-size: 1.07em;
+      font-size: 1.18em;
       color: #fff8;
       margin-top: 2px;
       margin-bottom: 0;
@@ -232,24 +232,26 @@
     .disconnected-message {
       color: #fff;
       background: #c0392b;
-      padding: 18px;
-      border-radius: 16px;
+      padding: 24px;
+      border-radius: 20px;
       text-align: center;
-      font-size: 1.2em;
-      margin: 48px 0 20px 0;
+      font-size: 1.3em;
+      margin: 60px 0 20px 0;
       font-weight: bold;
       letter-spacing: 0.05em;
       box-shadow: 0 2px 16px #c0392b22;
     }
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
       .main-wrap { max-width: 98vw;}
       .chat-box-wrap { max-width: 99vw;}
+      .room-code { font-size: 1.2em; padding: 6px 16px;}
+      .qr-img { width: 120px; height: 120px;}
     }
     @media (max-width: 480px) {
-      .chat-bar { padding: 7px 2vw 2px 2vw;}
+      .chat-bar { margin-top: 8px; }
       .chat-box-wrap { min-height: 210px;}
       .donate-bar { margin-bottom: 8px;}
-      .qr-img { width: 110px; height: 110px;}
+      .qr-img { width: 70vw; height: 70vw;}
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
@@ -266,9 +268,9 @@
           <button type="submit" class="chat-send-btn">Send</button>
         </form>
         <div class="qr-area">
-          <div class="room-label">Room Code (Share this QR or code):</div>
+          <div class="room-label">Room QR Code & Code (Share this):</div>
+          <canvas id="qrCanvas" class="qr-img" width="220" height="220"></canvas>
           <div class="room-code" id="roomCodeDisplay"></div>
-          <canvas id="qrCanvas" class="qr-img" width="160" height="160"></canvas>
         </div>
         <button class="disconnect-btn" id="leaveRoomBtn">Disconnect</button>
       </div>
@@ -285,15 +287,16 @@
     </div>
   </div>
   <script>
-    // === Replace with your actual Firebase config ===
+    // Firebase config from your screenshot
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIZaSyDNz_qKPgZlfhVcXtKKtCTU-ynfBkLOSC4",
+      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
+      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
+      projectId: "quepasaapp-2e0f7",
+      storageBucket: "quepasaapp-2e0f7.appspot.com",
+      messagingSenderId: "500826556029",
+      appId: "1:500826556029:web:707b10faf864433d71d314",
+      measurementId: "G-ZL2TN8H31C"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -329,6 +332,7 @@
       }
       return code;
     }
+
     async function createRoomAndEnter() {
       myRoomCode = await makeRoomCode();
       isHost = true;
@@ -344,18 +348,23 @@
       displayRoomInfo();
       listenToChat(myRoomCode);
     }
+
     function displayRoomInfo() {
-      $roomCodeDisplay.textContent = myRoomCode ? myRoomCode.split('').join(' ') : '';
+      if (!myRoomCode) return;
+      $roomCodeDisplay.textContent = myRoomCode.split('').join(' ');
       new QRious({
         element: $qrCanvas,
-        value: myRoomCode || "",
-        size: 160,
+        value: myRoomCode,
+        size: 220,
         background: '#fff',
         foreground: '#23272a'
       });
     }
 
-    createRoomAndEnter();
+    // Only call ONCE
+    (async function init() {
+      await createRoomAndEnter();
+    })();
 
     // === Chat logic ===
     function listenToChat(code) {
@@ -368,6 +377,7 @@
         addMessage(msg.who, msg.text, msg.timestamp);
       });
     }
+
     $chatForm.onsubmit = function(e) {
       e.preventDefault();
       if (!myRoomCode || leftRoom) return;
@@ -380,6 +390,7 @@
       });
       $chatInput.value = "";
     };
+
     function addMessage(who, text, ts) {
       const d = ts ? new Date(ts) : new Date();
       const time = d.toLocaleTimeString();
