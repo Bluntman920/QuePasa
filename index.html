@@ -5,13 +5,341 @@
   <title>Que Pasa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    /* ... [all your existing styles unchanged] ... */
-    /* (I kept your full CSS above, unchanged for brevity) */
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #23272a;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+    .screen {
+      width: 100vw;
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: absolute;
+      left: 0; top: 0;
+      background: #23272a;
+      z-index: 1;
+      padding-bottom: 56px;
+    }
+    .screen.active {
+      display: flex;
+      z-index: 10;
+    }
+    .logo {
+      width: 37vw;
+      max-width: 280px;
+      min-width: 120px;
+      aspect-ratio: 1/1;
+      margin-bottom: 28px;
+      user-select: none;
+      display: block;
+    }
+    .app-title {
+      font-size: 3em;
+      color: #1da365;
+      font-weight: bold;
+      letter-spacing: 0.03em;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 24px #0009;
+      user-select: none;
+    }
+    .tap-to-enter {
+      margin-top: 52px;
+      color: #fff7;
+      font-size: 1.1em;
+      animation: blink 1.2s linear infinite alternate;
+      user-select: none;
+      cursor: pointer;
+    }
+    @keyframes blink {
+      0% { opacity: 1;}
+      100% { opacity: 0.2;}
+    }
+    .menu-btn {
+      width: 70vw;
+      max-width: 330px;
+      min-width: 160px;
+      padding: 20px 0;
+      margin: 18px 0;
+      border-radius: 10px;
+      border: none;
+      background: #1da365;
+      color: #fff;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.15s;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .menu-btn:hover {
+      background: #149150;
+      transform: translateY(-2px) scale(1.03);
+    }
+    .input {
+      padding: 15px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 18px;
+      width: 70vw;
+      max-width: 320px;
+      background: #31343a;
+      color: #fffc;
+      outline: none;
+      box-shadow: 0 1px 4px #0002;
+    }
+    .input:focus {
+      background: #41444a;
+    }
+    .label {
+      font-size: 1.1em;
+      margin-bottom: 8px;
+      color: #fff8;
+    }
+    .leave-btn, .self-destruct-btn {
+      background: #e74c3c;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 9px;
+      border: none;
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: background 0.13s;
+      user-select: none;
+      position: relative;
+    }
+    .leave-btn:hover, .self-destruct-btn:hover, .self-destruct-btn.holding {
+      background: #c0392b;
+    }
+    .room-code {
+      font-size: 1.8em;
+      color: #1da365;
+      background: #222b;
+      padding: 16px 30px;
+      border-radius: 14px;
+      margin-top: 20px;
+      margin-bottom: 18px;
+      letter-spacing: 0.25em;
+      user-select: all;
+      font-family: 'Courier New', Courier, monospace;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .room-qr {
+      margin: 18px 0 8px 0;
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 8px #0003;
+      display: inline-block;
+    }
+    .chat-box {
+      width: 94vw;
+      max-width: 500px;
+      min-width: 220px;
+      background: #252a2e;
+      border-radius: 14px;
+      box-shadow: 0 1px 8px #0003;
+      padding: 14px 0 6px 0;
+      margin: 12px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      height: 36vh;
+      min-height: 170px;
+      max-height: 260px;
+      overflow: hidden;
+    }
+    .chat-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 18px 0 18px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-message {
+      margin: 7px 0;
+      padding: 8px 13px;
+      max-width: 80%;
+      border-radius: 10px;
+      background: #1da36522;
+      color: #fff;
+      font-size: 1.08em;
+      font-weight: 500;
+      word-break: break-word;
+      box-shadow: 0 1px 2px #0001;
+    }
+    .chat-message.me {
+      align-self: flex-end;
+      background: #1da365;
+      color: #fff;
+      font-weight: bold;
+    }
+    .chat-message.system {
+      background: #23272a;
+      color: #1da365;
+      font-size: 0.98em;
+      align-self: center;
+      font-style: italic;
+      box-shadow: none;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 7px 10px 8px 10px;
+      align-items: center;
+    }
+    .chat-input {
+      flex: 1;
+      font-size: 1.11em;
+      padding: 11px 14px;
+      border-radius: 7px;
+      border: none;
+      outline: none;
+      background: #31343a;
+      color: #fff;
+    }
+    .chat-send-btn {
+      background: #1da365;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 18px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.17s;
+    }
+    .chat-send-btn:hover {
+      background: #149150;
+    }
+    .vote-dialog {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #222c;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-size: 1.25em;
+      color: #fff;
+    }
+    .vote-box {
+      background: #23272a;
+      border-radius: 18px;
+      padding: 38px 28px 24px 28px;
+      box-shadow: 0 2px 16px #0006;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 240px;
+      max-width: 88vw;
+    }
+    .vote-btn-row {
+      margin-top: 18px;
+      display: flex;
+      gap: 24px;
+    }
+    .vote-btn {
+      font-size: 2.1em;
+      background: #1da365;
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 8px 28px;
+      margin: 0 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.2s;
+    }
+    .vote-btn.no {
+      background: #e74c3c;
+    }
+    .vote-btn.yes:hover {
+      background: #149150;
+    }
+    .vote-btn.no:hover {
+      background: #c0392b;
+    }
+    .big-flash {
+      width: 100vw;
+      height: 100vh;
+      background: #23272a;
+      position: fixed;
+      left: 0; top: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7em;
+      color: #1da365;
+      user-select: none;
+      transition: background 0.2s;
+      text-align: center;
+      flex-direction: column;
+    }
+    .big-flash img {
+      width: 44vw;
+      max-width: 340px;
+      min-width: 110px;
+      margin-bottom: 0;
+    }
+    .big-flash .flash-logo {
+      color: #1da365;
+      font-size: 0.7em;
+    }
+    .big-flash .flash-qr {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 12px #0007;
+    }
+    .big-flash.flash-green {
+      background: #1da365 !important;
+      color: #fff !important;
+    }
+    .big-flash .flash-letter {
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.3em;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 16px #111a;
+    }
+    .big-flash .flash-cashapp {
+      width: 44vw;
+      max-width: 340px;
+      min-width: 110px;
+      margin-bottom: 0;
+    }
+    /* Self-Destruct Progress Bar */
+    #selfDestructProgress {
+      height: 5px;
+      width: 0;
+      background: #e74c3c;
+      margin-top: 2px;
+      border-radius: 3px;
+      transition: width 0.15s;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+    }
+    @media (max-width: 480px) {
+      .logo { max-width: 160px; }
+      .app-title { font-size: 2em; }
+      .room-code { font-size: 1.1em; }
+      .big-flash { font-size: 2.7em; }
+      .big-flash img { max-width: 120px; }
+      .big-flash .flash-cashapp { max-width: 120px; }
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <!-- Splash Screen -->
@@ -59,7 +387,11 @@
         <button type="submit" class="chat-send-btn">Send</button>
       </form>
     </div>
-    <button class="leave-btn" id="leaveRoomBtn">Leave Room</button>
+    <!-- Self Destruct Button (replacing leave room) -->
+    <button class="self-destruct-btn" id="selfDestructBtn">
+      <span id="selfDestructText">Self Destruct Room</span>
+      <div id="selfDestructProgress"></div>
+    </button>
   </div>
   <!-- Big flash overlay (for code/QR/logo) -->
   <div class="big-flash" id="bigFlash" style="display:none;">
@@ -75,7 +407,252 @@
       </div>
     </div>
   </div>
-  <!-- Link your new app.js here -->
-  <script src="app.js"></script>
+  <script>
+    // Room logic (in-memory for demo)
+    let rooms = {}; // { code: {size, members: [{id, name}], hostId, votes:[], chat:[], pendingJoin:null } }
+    let myId = Math.random().toString(36).slice(2,9);
+    let myRoomCode = null;
+    let isHost = false;
+    let myName = "You";
+    function makeRoomCode() {
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
+    }
+    function drawQR(canvasId, text, size=180) {
+      new QRious({
+        element: document.getElementById(canvasId),
+        value: text,
+        size,
+        background: '#fff',
+        foreground: '#111'
+      });
+    }
+    function show(screen) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screen).classList.add('active');
+    }
+    document.getElementById('splashEnter').onclick = () => show('menu');
+    document.getElementById('splash').onclick = () => show('menu');
+    document.getElementById('createRoomBtn').onclick = () => show('createRoomScreen');
+    document.getElementById('joinRoomBtn').onclick = () => show('joinRoomScreen');
+    document.getElementById('backToMenuFromCreate').onclick = () => {
+      document.getElementById('createError').textContent = "";
+      show('menu');
+    };
+    document.getElementById('backToMenuFromJoin').onclick = () => {
+      document.getElementById('joinError').textContent = "";
+      show('menu');
+    };
+    document.getElementById('confirmCreateBtn').onclick = () => {
+      const max = parseInt(document.getElementById('maxSizeInput').value);
+      if (!(max >= 2 && max <= 9)) {
+        document.getElementById('createError').textContent = "Choose a size between 2 and 9.";
+        return;
+      }
+      let code;
+      do { code = makeRoomCode(); } while (rooms[code]);
+      rooms[code] = {
+        size: max,
+        members: [{id: myId, name: myName}],
+        hostId: myId,
+        votes: [],
+        chat: [],
+        pendingJoin: null
+      };
+      myRoomCode = code;
+      isHost = true;
+      showRoom();
+    };
+    document.getElementById('confirmJoinBtn').onclick = () => {
+      const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+      const err = document.getElementById('joinError');
+      err.textContent = "";
+      if (!/^[A-Z2-9]{6}$/.test(code)) {
+        err.textContent = "Invalid code format.";
+        return;
+      }
+      if (!rooms[code]) {
+        err.textContent = "Room not found or no longer exists.";
+        return;
+      }
+      if (rooms[code].members.length >= rooms[code].size) {
+        err.textContent = "Room is full.";
+        return;
+      }
+      if (rooms[code].members.length < 2) {
+        rooms[code].members.push({id: myId, name: myName});
+        myRoomCode = code;
+        isHost = false;
+        showRoom();
+      } else {
+        rooms[code].pendingJoin = {id: myId, name: "Guest"};
+        myRoomCode = code;
+        isHost = false;
+        triggerVoteDialog();
+      }
+    };
+    function showRoom() {
+      drawQR('qrCanvas', myRoomCode);
+      document.getElementById('roomCodeDisplay').textContent = myRoomCode.split('').join(' ');
+      updateChatHistory();
+      show('roomScreen');
+    }
+    // Self Destruct Button Logic
+    const destructBtn = document.getElementById('selfDestructBtn');
+    const destructText = document.getElementById('selfDestructText');
+    const destructProgress = document.getElementById('selfDestructProgress');
+    let destructInterval, holdStart;
+    function handleDestructStart(e) {
+      if (!myRoomCode || !rooms[myRoomCode] || !isHost) return;
+      holdStart = Date.now();
+      destructBtn.classList.add('holding');
+      destructProgress.style.width = '0';
+      let duration = 1500;
+      destructInterval = setInterval(() => {
+        let elapsed = Date.now() - holdStart;
+        let percent = Math.min(100, (elapsed / duration) * 100);
+        destructProgress.style.width = percent + '%';
+        if (elapsed >= duration) {
+          clearInterval(destructInterval);
+          destructBtn.classList.remove('holding');
+          destructProgress.style.width = '100%';
+          // Self destruct action
+          if (rooms[myRoomCode]) delete rooms[myRoomCode];
+          myRoomCode = null;
+          isHost = false;
+          show('menu');
+          destructProgress.style.width = '0';
+          destructText.textContent = 'Self Destruct Room';
+        }
+      }, 30);
+      e.preventDefault && e.preventDefault();
+      return false;
+    }
+    function handleDestructEnd() {
+      clearInterval(destructInterval);
+      destructBtn.classList.remove('holding');
+      destructProgress.style.width = '0';
+      destructText.textContent = 'Self Destruct Room';
+    }
+    destructBtn.onmousedown = handleDestructStart;
+    destructBtn.ontouchstart = handleDestructStart;
+    destructBtn.onmouseup = handleDestructEnd;
+    destructBtn.onmouseleave = handleDestructEnd;
+    destructBtn.ontouchend = handleDestructEnd;
+    // Chat logic (local broadcast)
+    document.getElementById('chatForm').onsubmit = function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || !myRoomCode || !rooms[myRoomCode]) return;
+      rooms[myRoomCode].chat.push({ who: myId, text });
+      input.value = "";
+      updateChatHistory();
+    };
+    function updateChatHistory() {
+      const chat = (myRoomCode && rooms[myRoomCode]) ? rooms[myRoomCode].chat : [];
+      const members = (myRoomCode && rooms[myRoomCode]) ? rooms[myRoomCode].members : [];
+      const chatDiv = document.getElementById('chatHistory');
+      chatDiv.innerHTML = "";
+      chat.forEach(msg => {
+        let div = document.createElement('div');
+        div.className = "chat-message" + (msg.who === myId ? " me" : "");
+        if (typeof msg.system !== "undefined") div.className += " system";
+        div.textContent = (msg.system ? "" : (msg.who === myId ? "You: " : "")) + msg.text;
+        chatDiv.appendChild(div);
+      });
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+    document.getElementById('flashQrBtn').onclick = () => {
+      flashSequence([
+        { type: 'logo', duration: 800 },
+        { type: 'qr', duration: 2000 },
+        { type: 'logo', duration: 700 }
+      ]);
+    };
+    document.getElementById('flashCodeBtn').onclick = () => {
+      const code = myRoomCode;
+      const seq = [{ type: 'logo', duration: 800 }];
+      for (let ch of code) {
+        seq.push({ type: 'letter', letter: ch, duration: 800 });
+      }
+      seq.push({ type: 'logo', duration: 700 });
+      flashSequence(seq);
+    };
+    document.getElementById('flashCashBtn').onclick = () => {
+      flashSequence([
+        { type: 'logo', duration: 600 },
+        { type: 'cashapp', duration: 1700 },
+        { type: 'logo', duration: 600 }
+      ]);
+    };
+    function flashSequence(seq) {
+      const flash = document.getElementById('bigFlash');
+      let i = 0;
+      flash.style.display = 'flex';
+      next();
+      function next() {
+        if (i >= seq.length) {
+          flash.style.display = 'none';
+          flash.classList.remove('flash-green');
+          return;
+        }
+        flash.innerHTML = "";
+        const item = seq[i++];
+        flash.classList.remove('flash-green');
+        if (item.type === "logo") {
+          flash.innerHTML = `<img src="QuePasaLogo.png" alt="Que Pasa logo" class="flash-logo" />`;
+        } else if (item.type === "letter") {
+          flash.classList.add('flash-green');
+          flash.innerHTML = `<span class="flash-letter">${item.letter}</span>`;
+        } else if (item.type === "qr") {
+          const qrCanvas = document.createElement('canvas');
+          qrCanvas.width = qrCanvas.height = 320;
+          qrCanvas.className = "flash-qr";
+          flash.appendChild(qrCanvas);
+          new QRious({
+            element: qrCanvas,
+            value: myRoomCode,
+            size: 320,
+            background: '#fff',
+            foreground: '#23272a'
+          });
+        } else if (item.type === "cashapp") {
+          flash.innerHTML = `<img src="CashappQR.png" alt="Cash App" class="flash-cashapp" />`;
+        }
+        setTimeout(next, item.duration);
+      }
+    }
+    function triggerVoteDialog() {
+      const dialog = document.getElementById('voteDialog');
+      dialog.style.display = "flex";
+      document.getElementById('voteText').textContent = "A new person wants to join. Approve?";
+      document.getElementById('voteYesBtn').onclick = () => {
+        dialog.style.display = "none";
+        if (myRoomCode && rooms[myRoomCode] && rooms[myRoomCode].pendingJoin) {
+          rooms[myRoomCode].members.push(rooms[myRoomCode].pendingJoin);
+          rooms[myRoomCode].chat.push({ system: true, text: "A new person joined." });
+          rooms[myRoomCode].pendingJoin = null;
+          showRoom();
+        }
+      };
+      document.getElementById('voteNoBtn').onclick = () => {
+        dialog.style.display = "none";
+        if (myRoomCode && rooms[myRoomCode]) {
+          rooms[myRoomCode].chat.push({ system: true, text: "A new person was denied entry." });
+          rooms[myRoomCode].pendingJoin = null;
+          showRoom();
+        }
+      };
+    }
+    window.onbeforeunload = () => {
+      if (isHost && myRoomCode && rooms[myRoomCode]) delete rooms[myRoomCode];
+      if (!isHost && myRoomCode && rooms[myRoomCode]) {
+        rooms[myRoomCode].members = rooms[myRoomCode].members.filter(u => u.id !== myId);
+      }
+    };
+  </script>
 </body>
 </html>
