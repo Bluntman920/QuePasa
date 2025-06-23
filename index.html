@@ -2,410 +2,311 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Que Pasa – Demo Chat</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <title>Que Pasa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; color: #222; text-align:center; margin:0; }
-    .container { max-width: 370px; margin: 38px auto; background: #fff; border-radius: 9px; padding: 36px 24px 28px; box-shadow: 0 4px 24px #0002; position: relative;}
-    #logo { width: 120px; margin-bottom: 22px; }
-    #createBtn { font-size:1.2em; padding: 12px 32px; background:#1da365; color:#fff; border:none; border-radius:6px; cursor:pointer; margin-bottom: 20px;}
-    #roomSection { display:none; }
-    #flashBubble { width: 70px; height: 70px; border-radius:50%; display:inline-block; font-size:2em; line-height:70px; color:#fff; margin: 12px 0 16px;}
-    #qr { margin: 22px auto 16px; }
-    .comboGrid { display:grid; grid-template-columns:1fr 1fr 1fr; gap: 10px; margin: 18px auto 0; max-width: 260px;}
-    .comboCell { border-radius: 18px; font-size:1.05em; font-weight:bold; padding: 10px 0; color:#fff; text-shadow:0 2px 6px #0005; }
-    .cashapp-section {
-      margin: 20px 0 0 0;
-      text-align: center;
-    }
-    .cashapp-qr {
-      display: block;
-      margin: 0 auto 6px auto;
-      width: 120px;
-      height: 120px;
-      border-radius: 12px;
-      border: 2px solid #00d632;
-      box-shadow: 0 2px 12px #00d63244;
-      transition: box-shadow 0.2s;
-      cursor: pointer;
-    }
-    .cashapp-qr:hover {
-      box-shadow: 0 4px 28px #00d63299;
-    }
-    .cashapp-link {
-      display: inline-flex;
-      align-items: center;
-      background: #00d632;
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #23272a;
       color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.1em;
-      border-radius: 8px;
-      padding: 8px 18px;
-      margin: 8px 0 0 0;
-      box-shadow: 0 2px 12px #00d63233;
-      transition: background 0.2s;
-    }
-    .cashapp-link:hover { background: #00b828; }
-    .cashapp-logo {
-      width: 28px;
-      height: 28px;
-      margin-right: 10px;
-      vertical-align: middle;
-      border-radius: 6px;
-      background: #fff;
-      padding: 2px;
-    }
-    /* Help icon */
-    #helpBtn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: #eee;
-      color: #333;
-      border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      font-size: 1.25em;
-      cursor: pointer;
-      z-index: 10;
-      box-shadow: 0 2px 8px #0003;
-      transition: background 0.15s;
-    }
-    #helpBtn:hover { background: #f1c40f; color: #fff; }
-    /* Help modal */
-    #helpModalBg {
-      display: none;
-      position: fixed;
-      z-index: 99;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.25);
-      justify-content: center;
-      align-items: center;
-    }
-    #helpModal {
-      background: #fff;
-      border-radius: 16px;
-      max-width: 335px;
-      margin: auto;
-      padding: 28px 22px 20px 22px;
-      box-shadow: 0 6px 32px #0002;
-      text-align: left;
-      position: relative;
-      font-size: 1.04em;
-    }
-    #closeHelp {
-      position: absolute;
-      top: 10px; right: 16px;
-      background: none;
-      border: none;
-      font-size: 1.3em;
-      color: #888;
-      cursor: pointer;
-    }
-    #closeHelp:hover { color: #e74c3c; }
-    #helpModal h2 {
-      font-size: 1.25em;
-      margin-top: 0;
-      margin-bottom: 12px;
-      color: #3498db;
-    }
-    /* Chat styles */
-    #chatSection { display:none; }
-    .chatbox { background: #f7f7f7; border-radius: 12px; min-height: 240px; max-height: 320px; overflow-y: auto; padding: 14px 8px; margin-bottom: 12px; border:1px solid #e0e0e0;}
-    .bubble { padding: 9px 13px; border-radius: 16px; margin: 7px 0; width: fit-content; max-width: 82%; font-size:1em; }
-    .me { background: #d1f8d1; margin-left: auto; }
-    .other { background: #f1f0f0; margin-right: auto; }
-    .chat-input-row { display: flex; align-items: center; gap:8px;}
-    #chatMsg { flex:1; padding:9px 12px; border-radius: 8px; border:1px solid #bbb; font-size:1em;}
-    #sendBtn { background:#3498db; color:#fff; border:none; border-radius:6px; padding: 8px 18px; font-size:1em; cursor:pointer;}
-    /* Self-destruct slider */
-    #selfDestructContainer {
-      width: 99%;
-      margin: 24px auto 0;
-      text-align: center;
-    }
-    #selfDestructBar {
-      position: relative;
-      width: 320px;
-      height: 46px;
-      margin: 0 auto;
-      background: #2d3436;
-      border-radius: 23px;
-      box-shadow: 0 2px 8px #0002;
+      font-family: 'Segoe UI', Arial, sans-serif;
       overflow: hidden;
-      user-select: none;
     }
-    #selfDestructText {
-      position: absolute;
-      left: 0; right: 0; top: 0; bottom: 0;
-      line-height: 46px;
-      color: #fff;
-      font-size: 1.1em;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0.75;
-    }
-    #sliderKnob {
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       position: absolute;
       left: 0; top: 0;
-      width: 46px; height: 46px;
-      background: #e74c3c;
-      border-radius: 50%;
-      box-shadow: 0 2px 8px #e74c3c44;
-      transition: background 0.18s;
+      background: #23272a;
+      z-index: 1;
+    }
+    .screen.active {
+      display: flex;
+      z-index: 10;
+    }
+    .logo {
+      width: 37vw;
+      max-width: 280px;
+      min-width: 120px;
+      aspect-ratio: 1/1;
+      margin-bottom: 28px;
+      user-select: none;
+    }
+    .app-title {
+      font-size: 3em;
+      color: #f1c40f;
+      font-weight: bold;
+      letter-spacing: 0.03em;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 24px #0009;
+      user-select: none;
+    }
+    .tap-to-enter {
+      margin-top: 52px;
+      color: #fff7;
+      font-size: 1.1em;
+      animation: blink 1.2s linear infinite alternate;
+      user-select: none;
       cursor: pointer;
-      z-index: 2;
-      display: flex; justify-content: center; align-items: center;
     }
-    #sliderKnob:after {
-      content: "💣";
-      font-size: 1.5em;
+    @keyframes blink {
+      0% { opacity: 1;}
+      100% { opacity: 0.2;}
     }
-    #sliderKnob.dragging { background: #c0392b; }
+    .menu-btn {
+      width: 70vw;
+      max-width: 330px;
+      min-width: 160px;
+      padding: 20px 0;
+      margin: 18px 0;
+      border-radius: 10px;
+      border: none;
+      background: #1da365;
+      color: #fff;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.15s;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .menu-btn:hover {
+      background: #149150;
+      transform: translateY(-2px) scale(1.03);
+    }
+    /* Host Room */
+    .room-code {
+      font-size: 1.8em;
+      color: #f1c40f;
+      background: #222b;
+      padding: 16px 30px;
+      border-radius: 14px;
+      margin-top: 32px;
+      margin-bottom: 18px;
+      letter-spacing: 0.25em;
+      user-select: all;
+      font-family: 'Courier New', Courier, monospace;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .room-qr {
+      margin: 18px 0 8px 0;
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 8px #0003;
+      display: inline-block;
+    }
+    .label {
+      font-size: 1.1em;
+      margin-bottom: 8px;
+      color: #fff8;
+    }
+    .big-flash {
+      width: 100vw;
+      height: 100vh;
+      background: #23272a;
+      position: fixed;
+      left: 0; top: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7em;
+      color: #f1c40f;
+      user-select: none;
+      transition: background 0.2s;
+      text-align: center;
+      flex-direction: column;
+    }
+    .big-flash img {
+      width: 44vw;
+      max-width: 340px;
+      min-width: 110px;
+      margin-bottom: 0;
+    }
+    .big-flash .flash-logo {
+      color: #f1c40f;
+      font-size: 0.7em;
+    }
+    .big-flash .flash-qr {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 12px #0007;
+    }
+    .flash-btn {
+      background: #fff3;
+      color: #f1c40f;
+      font-size: 1.25em;
+      border: none;
+      padding: 14px 34px;
+      border-radius: 10px;
+      margin: 20px 12px;
+      cursor: pointer;
+      font-weight: bold;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.17s, color 0.17s;
+    }
+    .flash-btn:hover {
+      background: #f1c40f;
+      color: #23272a;
+    }
+    .leave-btn {
+      background: #e74c3c;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 9px;
+      border: none;
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: background 0.13s;
+    }
+    .leave-btn:hover {
+      background: #c0392b;
+    }
+    @media (max-width: 480px) {
+      .logo { max-width: 160px; }
+      .app-title { font-size: 2em; }
+      .room-code { font-size: 1.1em; }
+      .big-flash { font-size: 2.7em; }
+      .big-flash img { max-width: 120px; }
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <!-- Help icon -->
-    <button id="helpBtn" title="What is Que Pasa?">?</button>
-    <img id="logo" src="QuePasaLogo.png" alt="Que Pasa Logo" />
-    <h2>Que Pasa Private Room</h2>
-    <button id="createBtn">Create Room</button>
-    <!-- Cash App QR + link on landing page -->
-    <div id="cashapp-landing" class="cashapp-section">
-      <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-        <img class="cashapp-qr" src="CashappQR.png" alt="Cash App QR - $QuePasaAPP" title="Click to support via Cash App" />
-      </a>
-      <br/>
-      <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-        <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
-        Support via Cash App
-      </a>
-    </div>
-    <!-- Room onboarding -->
-    <div id="roomSection">
-      <div>
-        <div id="flashBubble"></div>
-        <div style="margin-bottom:8px;">Your entry code</div>
-      </div>
-      <div id="qr"></div>
-      <div style="margin: 8px 0 6px;">Sample entry options:</div>
-      <div class="comboGrid" id="comboGrid"></div>
-      <!-- Cash App QR + link on room screen -->
-      <div class="cashapp-section" style="margin-top:24px;">
-        <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-          <img class="cashapp-qr" src="CashappQR.png" alt="Cash App QR - $QuePasaAPP" title="Click to support via Cash App" />
-        </a>
-        <br/>
-        <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-          <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
-          Support via Cash App
-        </a>
-      </div>
-      <!-- Start Chat button -->
-      <div style="margin-top:20px;">
-        <button id="startChatBtn" style="padding:10px 30px;font-size:1.1em;background:#3498db;color:#fff;border:none;border-radius:7px;cursor:pointer;">Enter Chat Room</button>
-      </div>
-    </div>
-    <!-- Chat section -->
-    <div id="chatSection">
-      <div class="chatbox" id="chatbox"></div>
-      <div class="chat-input-row">
-        <input id="chatMsg" type="text" placeholder="Type your message..." autocomplete="off" />
-        <button id="sendBtn">Send</button>
-      </div>
-      <!-- Self-destruct slider -->
-      <div id="selfDestructContainer">
-        <div id="selfDestructBar">
-          <span id="selfDestructText">Slide to Self-Destruct</span>
-          <div id="sliderKnob"></div>
-        </div>
-      </div>
-      <!-- Cash App QR + link in chat -->
-      <div class="cashapp-section" style="margin-top:16px;">
-        <a href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-          <img class="cashapp-qr" src="CashappQR.png" alt="Cash App QR - $QuePasaAPP" title="Click to support via Cash App" />
-        </a>
-        <br/>
-        <a class="cashapp-link" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-          <img class="cashapp-logo" src="https://seeklogo.com/images/C/cash-app-logo-452C8F1C3E-seeklogo.com.png" alt="Cash App"/>
-          Support via Cash App
-        </a>
-      </div>
-    </div>
+  <!-- Splash Screen -->
+  <div class="screen active" id="splash">
+    <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Que_Pasa_logo_placeholder.svg" alt="Que Pasa logo" />
+    <div class="app-title">Que Pasa</div>
+    <div class="tap-to-enter" id="splashEnter">Tap to Start</div>
   </div>
-
-  <!-- Help Modal -->
-  <div id="helpModalBg">
-    <div id="helpModal">
-      <button id="closeHelp" title="Close">&times;</button>
-      <h2>What is Que Pasa?</h2>
-      <div>
-        <p>
-          <strong>Que Pasa</strong> is a private, disposable chat room for ultimate privacy—ideal for sensitive, temporary, or “quiet” conversations where confidentiality matters.
-        </p>
-        <ul>
-          <li>No usernames or accounts required</li>
-          <li>Everything is private and confidential</li>
-          <li>Nothing is stored or saved after you’re done—rooms and messages self-destruct</li>
-          <li>Perfect for quiet situations or when you want to talk but don’t want a record</li>
-        </ul>
-        <p>
-          <strong>Your support helps!</strong><br>
-          The more you donate, the more we can improve Que Pasa with features like stronger encryption, better security, and a platform where even we can’t access your conversations.
-        </p>
-      </div>
+  <!-- Host Room Screen -->
+  <div class="screen" id="hostRoomScreen">
+    <div class="label">Room QR Code (flash to invite):</div>
+    <canvas id="qrCanvas" class="room-qr"></canvas>
+    <div class="room-code" id="roomCodeDisplay"></div>
+    <div>
+      <button class="flash-btn" id="flashQrBtn">Show QR Fullscreen</button>
+      <button class="flash-btn" id="flashCodeBtn">Flash Code Letters</button>
     </div>
+    <button class="leave-btn" id="leaveHostBtn">End Room</button>
   </div>
-
+  <!-- Big flash overlay (for code/QR/logo) -->
+  <div class="big-flash" id="bigFlash" style="display:none;">
+    <!-- Will be filled dynamically -->
+  </div>
   <script>
-    // Color palette for aliases
-    const COLORS = [
-      {name: "Red", hex:"#e74c3c"}, {name:"Blue",hex:"#3498db"}, {name:"Green",hex:"#27ae60"},
-      {name:"Yellow",hex:"#f1c40f"}, {name:"Purple",hex:"#8e44ad"}, {name:"Orange",hex:"#e67e22"},
-      {name:"Pink",hex:"#fd79a8"}, {name:"Teal",hex:"#00b894"}, {name:"Gray",hex:"#636e72"}
-    ];
-    const createBtn = document.getElementById('createBtn');
-    const roomSection = document.getElementById('roomSection');
-    const flashBubble = document.getElementById('flashBubble');
-    const qrDiv = document.getElementById('qr');
-    const comboGrid = document.getElementById('comboGrid');
-    const cashappLanding = document.getElementById('cashapp-landing');
-    const startChatBtn = document.getElementById('startChatBtn');
-    const chatSection = document.getElementById('chatSection');
-    const chatbox = document.getElementById('chatbox');
-    const sendBtn = document.getElementById('sendBtn');
-    const chatMsg = document.getElementById('chatMsg');
-    // Step 1: Room creation/onboarding
-    createBtn.onclick = function() {
-      // 1. Generate room ID and flash combo
-      const roomId = Math.random().toString(36).substr(2,8);
-      const flash = randomCombo();
-      // 2. Show the flash bubble (big color+number)
-      flashBubble.textContent = flash.num;
-      flashBubble.style.background = flash.color.hex;
-      flashBubble.title = `${flash.color.name} ${flash.num}`;
-      // 3. Generate a QR code with room info and entry combo
-      qrDiv.innerHTML = '';
-      const qrPayload = JSON.stringify({
-        room: roomId,
-        code: `${flash.color.name} ${flash.num}`
-      });
-      new QRCode(qrDiv, { text: qrPayload, width: 140, height: 140 });
-      // 4. Show a grid of random combos (including the right one)
-      let combos = [flash];
-      while (combos.length < 6) {
-        const c = randomCombo();
-        if (!combos.some(x=>x.color.name===c.color.name && x.num===c.num)) combos.push(c);
-      }
-      combos = combos.sort(()=>Math.random()-0.5); // Shuffle
-      comboGrid.innerHTML = '';
-      combos.forEach(c => {
-        const cell = document.createElement('div');
-        cell.className = "comboCell";
-        cell.style.background = c.color.hex;
-        cell.textContent = `${c.color.name} ${c.num}`;
-        comboGrid.appendChild(cell);
-      });
-      roomSection.style.display = 'block';
-      createBtn.style.display = 'none';
-      cashappLanding.style.display = 'none';
-    };
-    function randomCombo() {
-      const color = COLORS[Math.floor(Math.random()*COLORS.length)];
-      const num = Math.floor(Math.random()*9)+1; // 1-9
-      return {color, num};
-    }
-    // Step 2: Enter chat room
-    startChatBtn.onclick = function() {
-      roomSection.style.display = 'none';
-      chatSection.style.display = 'block';
-      chatbox.innerHTML = '';
-      // Optionally, set up your alias here
-      addBubble("Welcome to Que Pasa! Chat is private and ephemeral.", "other");
-    };
-    // Step 3: Local chat logic (demo only, not networked)
-    sendBtn.onclick = sendMsg;
-    chatMsg.addEventListener('keypress', function(e){
-      if(e.key==='Enter') sendMsg();
-    });
-    function sendMsg(){
-      const txt = chatMsg.value.trim();
-      if(!txt) return;
-      addBubble(txt, "me");
-      chatMsg.value = '';
-      // Demo: auto-reply after 1 sec
-      setTimeout(()=>addBubble("👍", "other"), 1000);
-    }
-    function addBubble(msg, who){
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble ' + who;
-      bubble.textContent = msg;
-      chatbox.appendChild(bubble);
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
-    // Self-destruct slider logic
-    const bar = document.getElementById('selfDestructBar');
-    const knob = document.getElementById('sliderKnob');
-    let dragging = false, startX = 0, offsetX = 0;
-    knob.addEventListener('mousedown', startDrag);
-    knob.addEventListener('touchstart', startDrag);
-    function startDrag(e) {
-      dragging = true;
-      startX = e.touches ? e.touches[0].clientX : e.clientX;
-      knob.classList.add('dragging');
-      document.addEventListener('mousemove', onDrag);
-      document.addEventListener('touchmove', onDrag);
-      document.addEventListener('mouseup', stopDrag);
-      document.addEventListener('touchend', stopDrag);
-    }
-    function onDrag(e) {
-      if (!dragging) return;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      offsetX = Math.max(0, Math.min(clientX - startX, bar.clientWidth - knob.clientWidth));
-      knob.style.left = offsetX + 'px';
-      document.getElementById('selfDestructText').style.opacity = 0.75 - 0.7 * (offsetX / (bar.clientWidth - knob.clientWidth));
-    }
-    function stopDrag() {
-      if (!dragging) return;
-      dragging = false;
-      knob.classList.remove('dragging');
-      // If knob is at the end, trigger self-destruct
-      if (offsetX > (bar.clientWidth - knob.clientWidth - 6)) {
-        // Self-destruct: wipe chat and return to home
-        chatbox.innerHTML = '';
-        chatSection.style.display = 'none';
-        createBtn.style.display = 'block';
-        cashappLanding.style.display = 'block';
-        knob.style.left = '0px';
-        document.getElementById('selfDestructText').style.opacity = 0.75;
-        alert('💥 Chat self-destructed!');
-        return;
-      }
-      // Reset slider
-      knob.style.left = '0px';
-      document.getElementById('selfDestructText').style.opacity = 0.75;
-      document.removeEventListener('mousemove', onDrag);
-      document.removeEventListener('touchmove', onDrag);
-      document.removeEventListener('mouseup', stopDrag);
-      document.removeEventListener('touchend', stopDrag);
+    // Helper: Generate random code (A-Z, 2-9), always unique, always random, 6 chars
+    function makeRoomCode() {
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
     }
 
-    // Help modal logic
-    const helpBtn = document.getElementById('helpBtn');
-    const helpModalBg = document.getElementById('helpModalBg');
-    const closeHelp = document.getElementById('closeHelp');
-    helpBtn.onclick = function() {
-      helpModalBg.style.display = 'flex';
+    // Helper: Draw QR code to a canvas
+    function drawQR(canvasId, text, size=180) {
+      new QRious({
+        element: document.getElementById(canvasId),
+        value: text,
+        size,
+        background: '#fff',
+        foreground: '#111'
+      });
+    }
+
+    // State
+    let hostRoomCode = null;
+
+    // Splash logic
+    document.getElementById('splashEnter').onclick = () => setupHostRoom();
+    document.getElementById('splash').onclick = () => setupHostRoom();
+
+    // Setup host room screen (simulate: just the code/QR for this demo)
+    function setupHostRoom() {
+      // Generate a new random code each time
+      hostRoomCode = makeRoomCode();
+      document.getElementById('roomCodeDisplay').textContent = hostRoomCode.split('').join(' ');
+      drawQR('qrCanvas', hostRoomCode);
+      show('hostRoomScreen');
+    }
+
+    // Show/hide screens
+    function show(screen) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screen).classList.add('active');
+    }
+
+    // Show QR code full screen
+    document.getElementById('flashQrBtn').onclick = () => {
+      // Flash logo, then QR, then logo again
+      flashSequence([
+        { type: 'logo', duration: 800 },
+        { type: 'qr', duration: 2000 },
+        { type: 'logo', duration: 700 }
+      ]);
     };
-    closeHelp.onclick = function() {
-      helpModalBg.style.display = 'none';
+
+    // Show each letter/number big, with logo flash before and after
+    document.getElementById('flashCodeBtn').onclick = () => {
+      const code = hostRoomCode;
+      const seq = [{ type: 'logo', duration: 800 }];
+      for (let ch of code) {
+        seq.push({ type: 'letter', letter: ch, duration: 800 });
+      }
+      seq.push({ type: 'logo', duration: 700 });
+      flashSequence(seq);
     };
-    helpModalBg.onclick = function(e) {
-      if(e.target === helpModalBg) helpModalBg.style.display = 'none';
+
+    // End room
+    document.getElementById('leaveHostBtn').onclick = () => {
+      hostRoomCode = null;
+      show('splash');
     };
+
+    // Flash sequence (for letters/qr/logo)
+    function flashSequence(seq) {
+      const flash = document.getElementById('bigFlash');
+      let i = 0;
+      flash.style.display = 'flex';
+      next();
+      function next() {
+        if (i >= seq.length) {
+          flash.style.display = 'none';
+          return;
+        }
+        flash.innerHTML = ""; // Clear
+        const item = seq[i++];
+        if (item.type === "logo") {
+          // You can swap this with your real logo!
+          flash.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Que_Pasa_logo_placeholder.svg" alt="Que Pasa logo" class="flash-logo" />`;
+        } else if (item.type === "letter") {
+          flash.textContent = item.letter;
+        } else if (item.type === "qr") {
+          // Dynamically create a canvas for QR
+          const qrCanvas = document.createElement('canvas');
+          qrCanvas.width = qrCanvas.height = 320;
+          qrCanvas.className = "flash-qr";
+          flash.appendChild(qrCanvas);
+          new QRious({
+            element: qrCanvas,
+            value: hostRoomCode,
+            size: 320,
+            background: '#fff',
+            foreground: '#23272a'
+          });
+        }
+        setTimeout(next, item.duration);
+      }
+    }
   </script>
 </body>
 </html>
