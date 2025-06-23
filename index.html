@@ -339,6 +339,22 @@
       .big-flash .flash-cashapp { max-width: 120px; }
     }
   </style>
+  <!-- Firebase SDKs and Config START -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <script>
+    // Replace with your project's actual config values
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "que-pasa-app-66174639.firebaseapp.com",
+      projectId: "que-pasa-app-66174639",
+      storageBucket: "que-pasa-app-66174639.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <!-- Firebase SDKs and Config END -->
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 </head>
 <body>
