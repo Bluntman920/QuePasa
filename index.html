@@ -11,6 +11,7 @@
       color: #fff;
       font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
+      padding: 0;
       min-height: 100vh;
       width: 100vw;
       box-sizing: border-box;
@@ -24,16 +25,79 @@
     }
     .header {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      padding: 32px 0 10px 0;
+      margin: 30px 0 10px 0;
       width: 100vw;
-      z-index: 1;
+    }
+    .cashapp-support {
+      margin: 0 0 28px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: #151a1d;
+      border-radius: 18px;
+      padding: 28px 18px 18px 18px;
+      box-shadow: 0 2px 24px #00d64b33;
+      max-width: 480px;
+      width: 95vw;
+    }
+    .cashapp-btn {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      background: #00d64b;
+      color: #fff;
+      font-size: 1.3em;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      padding: 18px 42px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0003;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .cashapp-btn:hover {
+      background: #009c34;
+      transform: scale(1.03);
+      text-decoration: none;
+      color: #fff;
+    }
+    .cashapp-logo {
+      width: 110px;
+      height: 110px;
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: 0 1px 8px #0002;
+      object-fit: cover;
+      border: 2px solid #fff;
+    }
+    .cashapp-user {
+      font-size: 1.15em;
+      color: #00d64b;
+      font-weight: bold;
+      letter-spacing: 0.03em;
+      background: #23272a;
+      padding: 11px 36px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0 1px 8px #00d64b11;
+    }
+    .cashapp-desc {
+      font-size: 1.13em;
+      color: #fff8;
+      margin-top: 2px;
+      margin-bottom: 0;
+      line-height: 1.4em;
+      text-align: center;
     }
     .logo {
-      width: 94px;
-      margin-right: 15px;
+      width: 92px;
+      margin-bottom: 12px;
       vertical-align: middle;
+      filter: drop-shadow(0 2px 28px #1da36555);
     }
     .title {
       font-size: 2.3em;
@@ -52,37 +116,42 @@
       max-width: 1200px;
       margin: 0 auto;
       position: relative;
+      min-height: 420px;
     }
-    .side-btn {
+    .side-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
       position: absolute;
       left: 0;
       top: 50%;
       transform: translateY(-50%);
+      z-index: 3;
+      margin-left: 12px;
+    }
+    .side-btn {
       background: #191f1c;
       border: none;
       border-radius: 50%;
-      width: 64px;
-      height: 64px;
+      width: 62px;
+      height: 62px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
       box-shadow: 0 2px 12px #0006;
       transition: background 0.16s, transform 0.11s;
-      z-index: 10;
-      margin-left: 16px;
+      font-size: 2em;
+      margin-bottom: 0;
     }
-    .side-btn.info-btn {
-      left: 80px;
-      background: #23272a;
-    }
-    .side-btn:hover, .side-btn.info-btn:hover {
+    .side-btn:hover {
       background: #1da365;
-      transform: translateY(-50%) scale(1.05);
+      transform: scale(1.05);
     }
     .side-btn img, .side-btn svg {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
     }
     .leave-btn {
       position: absolute;
@@ -93,12 +162,12 @@
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 64px;
-      height: 64px;
+      width: 62px;
+      height: 62px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.5em;
+      font-size: 1.7em;
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 2px 12px #0006;
@@ -108,9 +177,9 @@
     }
     .leave-btn:hover {
       background: #c0392b;
-      transform: translateY(-50%) scale(1.05);
+      transform: scale(1.05);
     }
-    .chat-area-wrap {
+    .center-content {
       margin: 0 auto;
       flex: 1 0 0;
       display: flex;
@@ -156,6 +225,7 @@
       word-break: break-word;
       box-shadow: 0 1px 2px #0001;
       transition: background 0.18s;
+      white-space: pre-line;
     }
     .chat-message.me {
       align-self: flex-end;
@@ -198,7 +268,63 @@
     .chat-send-btn:hover {
       background: #149150;
     }
-    .modal-bg, .info-modal-bg {
+    .big-flash {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: #23272aee;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .big-flash-title {
+      font-size: 4em;
+      font-weight: bold;
+      color: #1da365;
+      text-align: center;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 28px #000c;
+      letter-spacing: 0.06em;
+    }
+    .big-flash-qr {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 32px #000a;
+      width: 320px;
+      height: 320px;
+      margin-bottom: 16px;
+      margin-top: 4px;
+      display: block;
+    }
+    .big-flash-code {
+      font-size: 2.1em;
+      color: #1da365;
+      background: #23272a;
+      padding: 17px 40px;
+      border-radius: 18px;
+      font-family: 'Courier New', monospace;
+      user-select: all;
+      box-shadow: 0 1px 18px #0006;
+      margin-bottom: 18px;
+    }
+    .big-flash-close {
+      margin-top: 18px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 14px 42px;
+      font-size: 1.4em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.16s;
+      box-shadow: 0 2px 12px #0007;
+    }
+    .big-flash-close:hover { background: #c0392b; }
+    .info-modal-bg {
       position: fixed;
       left: 0; top: 0;
       width: 100vw; height: 100vh;
@@ -209,37 +335,24 @@
       justify-content: center;
       transition: background 0.2s;
     }
-    .modal, .info-modal {
+    .info-modal {
       background: #252a2e;
       border-radius: 18px;
       box-shadow: 0 2px 24px #0009;
-      padding: 34px 38px 24px 38px;
+      padding: 30px 38px 24px 38px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 280px;
+      min-width: 260px;
       max-width: 90vw;
     }
-    .room-qr {
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 12px #0006;
-      width: 220px;
-      height: 220px;
-      margin-bottom: 16px;
-      margin-top: 4px;
-    }
-    .room-code {
-      font-size: 1.5em;
-      color: #1da365;
-      background: #23272a;
-      padding: 9px 22px;
-      border-radius: 12px;
-      letter-spacing: 0.15em;
-      font-family: 'Courier New', monospace;
-      user-select: all;
-      box-shadow: 0 1px 8px #0002;
-      margin-bottom: 6px;
+    .info-modal-content {
+      max-width: 410px;
+      font-size: 1.18em;
+      text-align: center;
+      color: #fff;
+      line-height: 1.6em;
+      margin-bottom: 10px;
     }
     .modal-close {
       margin-top: 18px;
@@ -254,83 +367,11 @@
       transition: background 0.16s;
     }
     .modal-close:hover { background: #c0392b; }
-    .info-modal-content {
-      max-width: 410px;
-      font-size: 1.26em;
-      text-align: center;
-      color: #fff;
-      line-height: 1.6em;
-      margin-bottom: 10px;
-    }
-    .cashapp-support {
-      margin: 45px auto 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 13px;
-      background: #151a1d;
-      border-radius: 18px;
-      padding: 35px 18px 22px 18px;
-      box-shadow: 0 2px 24px #00d64b33;
-      max-width: 550px;
-      width: 100vw;
-    }
-    .cashapp-btn {
-      display: flex;
-      align-items: center;
-      gap: 30px;
-      background: #00d64b;
-      color: #fff;
-      font-size: 1.5em;
-      font-weight: bold;
-      border: none;
-      border-radius: 15px;
-      padding: 18px 60px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px #0003;
-      text-decoration: none;
-      transition: background 0.18s, transform 0.15s;
-    }
-    .cashapp-btn:hover {
-      background: #009c34;
-      transform: scale(1.03);
-      text-decoration: none;
-      color: #fff;
-    }
-    .cashapp-logo {
-      width: 130px;
-      height: 130px;
-      border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 1px 8px #0002;
-      object-fit: cover;
-      border: 2px solid #fff;
-    }
-    .cashapp-user {
-      font-size: 1.25em;
-      color: #00d64b;
-      font-weight: bold;
-      letter-spacing: 0.04em;
-      background: #23272a;
-      padding: 13px 42px;
-      border-radius: 12px;
-      display: inline-block;
-      box-shadow: 0 1px 8px #00d64b11;
-    }
-    .cashapp-desc {
-      font-size: 1.26em;
-      color: #fff8;
-      margin-top: 2px;
-      margin-bottom: 0;
-      line-height: 1.4em;
-      text-align: center;
-    }
     @media (max-width: 900px) {
       .main-content { flex-direction: column; align-items: center; gap: 7px; }
-      .side-btn, .leave-btn { position: static; margin: 0 0 18px 0; transform: none; }
-      .header { flex-direction: column; padding: 18px 0 8px 0; }
-      .main-content { margin: 0; }
-      .chat-area-wrap { width: 98vw !important; }
+      .side-bar { position: static; flex-direction: row; gap: 15px; margin: 22px 0 0 0; transform: none; }
+      .leave-btn { position: static; margin: 22px 0 0 0; transform: none; }
+      .center-content { width: 98vw !important; }
     }
     @media (max-width: 600px) {
       .logo { width: 54px; }
@@ -339,6 +380,9 @@
       .cashapp-logo { width: 80vw; height: 80vw; max-width: 120px; max-height: 120px;}
       .cashapp-btn { font-size: 1.08em; padding: 8px 7vw;}
       .cashapp-support { padding: 16px 4vw 9px 4vw;}
+      .big-flash-title { font-size: 2.2em;}
+      .big-flash-code { font-size: 1.2em; padding: 9px 10px;}
+      .big-flash-qr { width: 80vw; height: 80vw;}
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
@@ -347,17 +391,30 @@
 </head>
 <body>
   <div class="header">
+    <div class="cashapp-support">
+      <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+        <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
+        Support Que Pasa on Cash App
+      </a>
+      <span class="cashapp-user">$QuePasaAPP</span>
+      <div class="cashapp-desc">
+        Yo, honestly I just want to kick it with friends and have a good time.<br>
+        If you want to support the party, you’re a legend—thanks bro!
+      </div>
+    </div>
     <img class="logo" src="QuePasaLogo.png" alt="Que Pasa logo"/>
     <span class="title">Que Pasa</span>
   </div>
   <div class="main-content">
-    <button class="side-btn info-btn" id="infoBtn" title="About this App">
-      <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="#191f1c" stroke="#1da365" stroke-width="4"/><text x="50%" y="62%" text-anchor="middle" fill="#1da365" font-size="32" font-family="Arial" dy=".3em">?</text></svg>
-    </button>
-    <button class="side-btn" id="showQrBtn" title="Show Room QR Code">
-      <img src="camera.svg" alt="Show QR">
-    </button>
-    <div class="chat-area-wrap">
+    <div class="side-bar">
+      <button class="side-btn info-btn" id="infoBtn" title="About this App">
+        <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="#191f1c" stroke="#1da365" stroke-width="4"/><text x="50%" y="62%" text-anchor="middle" fill="#1da365" font-size="32" font-family="Arial" dy=".3em">?</text></svg>
+      </button>
+      <button class="side-btn" id="showQrBtn" title="Show Room QR Code">
+        <img src="camera.svg" alt="Show QR">
+      </button>
+    </div>
+    <div class="center-content">
       <div class="chat-box">
         <div class="chat-history" id="chatHistory"></div>
         <form class="chat-input-row" id="chatForm" autocomplete="off">
@@ -368,21 +425,20 @@
     </div>
     <button class="leave-btn" id="leaveBtn" title="Leave Room">&#x2715;</button>
   </div>
-  <div id="qrModal" style="display:none;">
-    <div class="modal-bg" id="modalBg">
-      <div class="modal">
-        <canvas id="qrCanvas" class="room-qr" width="220" height="220"></canvas>
-        <div class="room-code" id="roomCodeDisplay"></div>
-        <button class="modal-close" id="closeQrBtn">Close</button>
-      </div>
-    </div>
+  <!-- Flash QR Overlay -->
+  <div class="big-flash" id="bigFlash" style="display:none;">
+    <div class="big-flash-title">QUE PASA</div>
+    <canvas id="bigFlashQr" class="big-flash-qr" width="320" height="320"></canvas>
+    <div class="big-flash-code" id="bigFlashCode"></div>
+    <button class="big-flash-close" id="bigFlashCloseBtn">Close</button>
   </div>
+  <!-- Info Modal -->
   <div id="infoModal" style="display:none;">
     <div class="info-modal-bg" id="infoModalBg">
       <div class="info-modal">
         <div class="info-modal-content">
           <b>What is Que Pasa?</b><br><br>
-          This is a super simple, private group chat—just for you and your friends.<br>
+          This is a super simple, private group chat — just for you and your friends.<br>
           When you open the app, you get a unique room. Share the room QR code, and others can join instantly.<br><br>
           <b>What’s the catch?</b><br>
           None. No signups, no history, no tracking.<br>
@@ -392,17 +448,6 @@
         </div>
         <button class="modal-close" id="closeInfoBtn">Close</button>
       </div>
-    </div>
-  </div>
-  <div class="cashapp-support">
-    <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
-      <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
-      Support Que Pasa on Cash App
-    </a>
-    <span class="cashapp-user">$QuePasaAPP</span>
-    <div class="cashapp-desc">
-      Yo, honestly I just want to kick it with friends and have a good time.<br>
-      If you want to support the party, you’re a legend—thanks bro!
     </div>
   </div>
   <script>
@@ -426,41 +471,44 @@
       for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
       return code;
     }
-    function drawQR(code) {
-      if (!code) return;
-      setTimeout(() => {
-        new QRious({
-          element: document.getElementById('qrCanvas'),
-          value: `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`,
-          size: 220,
-          background: '#fff',
-          foreground: '#23272a'
-        });
-      }, 0);
-    }
 
     // State
     let myId = Math.random().toString(36).slice(2,9);
     let myRoomCode = null;
     let isHost = false;
     let chatRef = null;
+    let bigFlashTimer = null;
 
-    // QR Modal logic
-    function openQrModal() {
-      document.getElementById('qrModal').style.display = 'block';
-      drawQR(myRoomCode);
-      document.getElementById('roomCodeDisplay').textContent = myRoomCode.split('').join(' ');
+    // QR FLASH FUNCTIONALITY
+    function showBigFlash() {
+      const flash = document.getElementById('bigFlash');
+      flash.style.display = 'flex';
+      // Draw QR
+      setTimeout(() => {
+        new QRious({
+          element: document.getElementById('bigFlashQr'),
+          value: `${location.origin}${location.pathname}?room=${encodeURIComponent(myRoomCode)}`,
+          size: 320,
+          background: '#fff',
+          foreground: '#23272a'
+        });
+      }, 0);
+      document.getElementById('bigFlashCode').textContent = myRoomCode.split('').join(' ');
+      // Auto hide after 20 seconds
+      clearTimeout(bigFlashTimer);
+      bigFlashTimer = setTimeout(hideBigFlash, 20000);
     }
-    function closeQrModal() {
-      document.getElementById('qrModal').style.display = 'none';
+    function hideBigFlash() {
+      document.getElementById('bigFlash').style.display = 'none';
+      clearTimeout(bigFlashTimer);
     }
-    document.getElementById('showQrBtn').onclick = openQrModal;
-    document.getElementById('closeQrBtn').onclick = closeQrModal;
-    document.getElementById('modalBg').onclick = function(e) {
-      if (e.target === this) closeQrModal();
-    };
+    document.getElementById('showQrBtn').onclick = showBigFlash;
+    document.getElementById('bigFlashCloseBtn').onclick = hideBigFlash;
+    document.getElementById('bigFlash').onclick = function(e) {
+      if (e.target === this) hideBigFlash();
+    }
 
-    // Info Modal logic
+    // INFO MODAL FUNCTIONALITY
     function openInfoModal() {
       document.getElementById('infoModal').style.display = 'block';
     }
@@ -479,11 +527,11 @@
       if (e.target === this) closeInfoModal();
     };
 
+    // CHAT FUNCTIONALITY
     function joinRoomAndShow(code, setHost) {
       myRoomCode = code;
       isHost = !!setHost;
       setupChatFirebase(code);
-      if (window.html5QrCodeObj) window.html5QrCodeObj.stop();
     }
     function setupChatFirebase(room) {
       if (chatRef) chatRef.off();
@@ -525,7 +573,7 @@
       location.reload();
     };
 
-    // On load: If ?room=CODE join, else create new
+    // ROOM INIT
     function startRoom() {
       const urlParams = new URLSearchParams(window.location.search);
       let code = urlParams.get('room');
@@ -553,8 +601,6 @@
         joinRoomAndShow(code, true);
       });
     }
-
-    // When anyone leaves, destroy the room
     window.onbeforeunload = () => {
       if (isHost && myRoomCode) db.ref('rooms/' + myRoomCode).remove();
     };
