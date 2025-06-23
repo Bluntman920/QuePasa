@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QUE PASA Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="QuePasaLogo.png" type="image/png">
+  <style>
+    html, body {
+      height: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #23272a;
+    }
+    body {
+      min-height: 100vh;
+      height: 100vh;
+      width: 100vw;
+      background: #23272a url('QuePasaLogo.png');
+      background-repeat: repeat;
+      background-size: 110px 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+    .main-wrap {
+      width: 100vw;
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 100vh;
+      height: 100vh;
+      position: relative;
+      z-index: 2;
+    }
+    .chat-bar {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      padding: 24px 12px 8px 12px;
+      box-sizing: border-box;
+      gap: 10px;
+    }
+    .side-btn {
+      background: #191f1c;
+      border: none;
+      border-radius: 14px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #0006;
+      transition: background 0.13s, transform 0.11s;
+      font-size: 2em;
+      margin: 0;
+    }
+    .side-btn:hover {
+      background: #1da365;
+      transform: scale(1.05);
+    }
+    .disconnect-btn {
+      background: #e74c3c;
+      color: #fff;
+      font-size: 1.7em;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #c0392b33;
+      transition: background 0.14s, transform 0.13s;
+    }
+    .disconnect-btn:hover {
+      background: #c0392b;
+      transform: scale(1.06);
+    }
+    .chat-box-wrap {
+      flex: 1 1 auto;
+      background: #252a2ecc;
+      border-radius: 24px;
+      box-shadow: 0 2px 20px #000a;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      min-height: 320px;
+      max-height: 58vh;
+      width: 100%;
+      margin: 0 0 20px 0;
+    }
+    .chat-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 0 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 190px;
+      max-height: 310px;
+    }
+    .chat-message {
+      margin: 7px 0;
+      padding: 9px 13px;
+      max-width: 85%;
+      border-radius: 9px;
+      background: #1da36522;
+      color: #fff;
+      font-size: 1.13em;
+      font-weight: 500;
+      word-break: break-word;
+      box-shadow: 0 1px 2px #0001;
+      transition: background 0.18s;
+      white-space: pre-line;
+    }
+    .chat-message.me {
+      align-self: flex-end;
+      background: #1da365;
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 2px 10px #1da36522;
+    }
+    .chat-form-row {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px 14px 12px;
+      align-items: center;
+      background: #23272a;
+      border-radius: 0 0 18px 18px;
+    }
+    .chat-input {
+      flex: 1;
+      font-size: 1.13em;
+      padding: 10px 13px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #31343a;
+      color: #fff;
+      box-shadow: 0 1px 3px #0002;
+    }
+    .chat-send-btn {
+      background: #1da365;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 19px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.15s;
+      box-shadow: 0 1px 4px #0002;
+    }
+    .chat-send-btn:hover {
+      background: #149150;
+    }
+    .donate-bar {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .cashapp-btn {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: #00d64b;
+      color: #fff;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 28px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0003;
+      text-decoration: none;
+      transition: background 0.17s, transform 0.14s;
+      margin-bottom: 6px;
+    }
+    .cashapp-btn:hover {
+      background: #009c34;
+      transform: scale(1.04);
+      color: #fff;
+    }
+    .cashapp-logo {
+      width: 55px;
+      height: 55px;
+      border-radius: 9px;
+      background: #fff;
+      box-shadow: 0 1px 8px #0002;
+      object-fit: cover;
+      border: 2px solid #fff;
+    }
+    .cashapp-desc {
+      font-size: 1.07em;
+      color: #fff8;
+      margin-top: 2px;
+      margin-bottom: 0;
+      line-height: 1.3em;
+      text-align: center;
+    }
+    /* QR modal */
+    .qr-modal-bg {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: #23272add;
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .qr-modal {
+      background: #252a2e;
+      border-radius: 18px;
+      box-shadow: 0 2px 24px #0009;
+      padding: 30px 38px 24px 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 240px;
+      max-width: 90vw;
+    }
+    .qr-modal-title {
+      font-size: 2.1em;
+      font-weight: bold;
+      color: #1da365;
+      text-align: center;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 18px #0008;
+      letter-spacing: 0.06em;
+    }
+    .qr-modal-qr {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 32px #000a;
+      width: 180px;
+      height: 180px;
+      margin-bottom: 16px;
+      margin-top: 4px;
+      display: block;
+    }
+    .qr-modal-code {
+      font-size: 1.6em;
+      color: #1da365;
+      background: #23272a;
+      padding: 9px 28px;
+      border-radius: 16px;
+      font-family: 'Courier New', monospace;
+      user-select: all;
+      box-shadow: 0 1px 18px #0006;
+      margin-bottom: 13px;
+    }
+    .qr-modal-close {
+      margin-top: 10px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 10px 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .qr-modal-close:hover { background: #c0392b; }
+    @media (max-width: 700px) {
+      .main-wrap { max-width: 98vw;}
+      .chat-box-wrap { max-width: 99vw;}
+    }
+    @media (max-width: 480px) {
+      .chat-bar { padding: 7px 2vw 2px 2vw;}
+      .chat-box-wrap { min-height: 210px;}
+      .donate-bar { margin-bottom: 8px;}
+      .qr-modal { padding: 18px 3vw 14px 3vw;}
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+</head>
+<body>
+  <div class="main-wrap">
+    <!-- Chat Bar (Left: QR | Center: Chat | Right: Disconnect) -->
+    <div class="chat-bar">
+      <button class="side-btn" id="showQrBtn" title="Show QR / Code">
+        <svg viewBox="0 0 48 48" fill="none" width="36" height="36"><rect x="3" y="3" width="42" height="42" rx="7" fill="none" stroke="#1da365" stroke-width="4"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#1da365"/><rect x="27" y="13" width="8" height="8" rx="2" fill="#1da365"/><rect x="13" y="27" width="8" height="8" rx="2" fill="#1da365"/><rect x="27" y="27" width="8" height="8" rx="2" fill="#1da365"/></svg>
+      </button>
+      <div class="chat-box-wrap">
+        <div class="chat-history" id="chatHistory"></div>
+        <form class="chat-form-row" id="chatForm" autocomplete="off">
+          <input class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off" />
+          <button type="submit" class="chat-send-btn">Send</button>
+        </form>
+      </div>
+      <button class="disconnect-btn" id="leaveRoomBtn" title="Disconnect">&#128465;</button>
+    </div>
+    <!-- Donate bar -->
+    <div class="donate-bar">
+      <a class="cashapp-btn" href="https://cash.app/$QuePasaAPP" target="_blank" rel="noopener">
+        <img class="cashapp-logo" src="CashappQR.png" alt="Cash App Logo"/>
+        Donate / Support (Cash App)
+      </a>
+      <div class="cashapp-desc">
+        Want to support the party? Every bit helps! Thanks bro!
+      </div>
+    </div>
+  </div>
+  <!-- QR code modal -->
+  <div style="display:none;" class="qr-modal-bg" id="qrModalBg">
+    <div class="qr-modal">
+      <div class="qr-modal-title">Room QR Code</div>
+      <canvas id="qrModalCanvas" class="qr-modal-qr" width="180" height="180"></canvas>
+      <div class="qr-modal-code" id="qrModalCode"></div>
+      <button class="qr-modal-close" id="qrModalCloseBtn">Close</button>
+    </div>
+  </div>
+  <script>
+    // === Replace with your actual Firebase config ===
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // === Chat Room State ===
+    let myId = Math.random().toString(36).slice(2, 9);
+    let myName = "Anon";
+    let myRoomCode = null;
+    let isHost = false;
+    let chatListener = null;
+
+    // === DOM Elements ===
+    const $chatHistory = document.getElementById('chatHistory');
+    const $chatForm = document.getElementById('chatForm');
+    const $chatInput = document.getElementById('chatInput');
+    const $leaveRoomBtn = document.getElementById('leaveRoomBtn');
+    const $showQrBtn = document.getElementById('showQrBtn');
+    const $qrModalBg = document.getElementById('qrModalBg');
+    const $qrModalCanvas = document.getElementById('qrModalCanvas');
+    const $qrModalCode = document.getElementById('qrModalCode');
+    const $qrModalCloseBtn = document.getElementById('qrModalCloseBtn');
+
+    // === ROOM LOGIC ===
+    async function makeRoomCode() {
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      let code = "";
+      let codeExists = true;
+      while (codeExists) {
+        code = "";
+        for (let i = 0; i < 6; ++i) code += chars[Math.floor(Math.random() * chars.length)];
+        const snap = await db.ref('rooms/' + code).once('value');
+        codeExists = snap.exists();
+      }
+      return code;
+    }
+    async function createRoomAndEnter() {
+      myRoomCode = await makeRoomCode();
+      isHost = true;
+      await db.ref('rooms/' + myRoomCode).set({
+        size: 2,
+        members: {
+          [myId]: { id: myId }
+        },
+        hostId: myId,
+        chat: {}
+      });
+      listenToChat(myRoomCode);
+    }
+    createRoomAndEnter();
+
+    // === Chat logic ===
+    function listenToChat(code) {
+      if (chatListener) chatListener.off();
+      chatListener = db.ref(`rooms/${code}/chat`);
+      $chatHistory.innerHTML = "";
+      chatListener.on('child_added', function(snapshot) {
+        const msg = snapshot.val();
+        addMessage(msg.who, msg.text, msg.timestamp);
+      });
+    }
+    $chatForm.onsubmit = function(e) {
+      e.preventDefault();
+      if (!myRoomCode) return;
+      const text = $chatInput.value.trim();
+      if (!text) return;
+      db.ref(`rooms/${myRoomCode}/chat`).push({
+        who: myName,
+        text: text,
+        timestamp: Date.now()
+      });
+      $chatInput.value = "";
+    };
+    function addMessage(who, text, ts) {
+      const d = ts ? new Date(ts) : new Date();
+      const time = d.toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = "chat-message" + (who === myName ? " me" : "");
+      div.textContent = `[${time}] ${text}`;
+      $chatHistory.appendChild(div);
+      $chatHistory.scrollTop = $chatHistory.scrollHeight;
+    }
+
+    // === QR Modal logic ===
+    $showQrBtn.onclick = function() {
+      $qrModalBg.style.display = 'flex';
+      // Show QR and code
+      new QRious({
+        element: $qrModalCanvas,
+        value: myRoomCode,
+        size: 180,
+        background: '#fff',
+        foreground: '#23272a'
+      });
+      $qrModalCode.textContent = myRoomCode.split('').join(' ');
+    };
+    $qrModalCloseBtn.onclick = function() {
+      $qrModalBg.style.display = 'none';
+    };
+    $qrModalBg.onclick = function(e) {
+      if (e.target === $qrModalBg) $qrModalBg.style.display = 'none';
+    };
+
+    // === Disconnect logic ===
+    $leaveRoomBtn.onclick = async () => {
+      if (myRoomCode) {
+        await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
+        if (isHost) {
+          const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
+          if (!snap.exists() || Object.keys(snap.val()).length === 0) {
+            await db.ref(`rooms/${myRoomCode}`).remove();
+          }
+        }
+        myRoomCode = null;
+        isHost = false;
+        if (chatListener) {
+          chatListener.off();
+          chatListener = null;
+        }
+        $chatHistory.innerHTML = "";
+        window.location.reload();
+      }
+    };
+
+    // === Clean up on close ===
+    window.onbeforeunload = async () => {
+      if (myRoomCode) {
+        await db.ref(`rooms/${myRoomCode}/members/${myId}`).remove();
+        if (isHost) {
+          const snap = await db.ref(`rooms/${myRoomCode}/members`).once('value');
+          if (!snap.exists() || Object.keys(snap.val()).length === 0) {
+            await db.ref(`rooms/${myRoomCode}`).remove();
+          }
+        }
+      }
+    };
+  </script>
+</body>
+</html>
