@@ -219,185 +219,25 @@
     .chat-send-btn:hover {
       background: #149150;
     }
-    .vote-dialog {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: #222c;
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      font-size: 1.25em;
-      color: #fff;
-    }
-    .vote-box {
-      background: #23272a;
-      border-radius: 18px;
-      padding: 38px 28px 24px 28px;
-      box-shadow: 0 2px 16px #0006;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 240px;
-      max-width: 88vw;
-    }
-    .vote-btn-row {
-      margin-top: 18px;
-      display: flex;
-      gap: 24px;
-    }
-    .vote-btn {
-      font-size: 2.1em;
-      background: #1da365;
-      color: #fff;
-      border: none;
-      border-radius: 11px;
-      padding: 8px 28px;
-      margin: 0 8px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px #0003;
-      transition: background 0.2s;
-    }
-    .vote-btn.no {
-      background: #e74c3c;
-    }
-    .vote-btn.yes:hover {
-      background: #149150;
-    }
-    .vote-btn.no:hover {
-      background: #c0392b;
-    }
-    .big-flash {
-      width: 100vw;
-      height: 100vh;
-      background: #23272a;
-      position: fixed;
-      left: 0; top: 0;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 7em;
-      color: #1da365;
-      user-select: none;
-      transition: background 0.2s;
-      text-align: center;
-      flex-direction: column;
-    }
-    .big-flash img {
-      width: 44vw;
-      max-width: 340px;
-      min-width: 110px;
-      margin-bottom: 0;
-    }
-    .big-flash .flash-logo {
-      color: #1da365;
-      font-size: 0.7em;
-    }
-    .big-flash .flash-qr {
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 12px #0007;
-    }
-    .big-flash.flash-green {
-      background: #1da365 !important;
-      color: #fff !important;
-    }
-    .big-flash .flash-letter {
-      color: #fff;
-      font-weight: bold;
-      font-size: 1.3em;
-      letter-spacing: 0.05em;
-      text-shadow: 0 2px 16px #111a;
-    }
-    .big-flash .flash-cashapp {
-      width: 44vw;
-      max-width: 340px;
-      min-width: 110px;
-      margin-bottom: 0;
-    }
-    #selfDestructProgress {
-      height: 5px;
-      width: 0;
-      background: #e74c3c;
-      margin-top: 2px;
-      border-radius: 3px;
-      transition: width 0.15s;
-      position: absolute;
-      left: 0;
-      bottom: 0;
-    }
-    .cashapp-support {
-      margin-top: 38px;
-      margin-bottom: 36px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-    }
-    .cashapp-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #00d64b;
-      color: #fff;
-      font-size: 1.25em;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      padding: 13px 32px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px #0003;
-      text-decoration: none;
-      transition: background 0.18s, transform 0.15s;
-    }
-    .cashapp-btn:hover {
+    .scan-btn {
       background: #009c34;
-      transform: scale(1.03);
-      text-decoration: none;
       color: #fff;
+      border-radius: 7px;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      cursor: pointer;
     }
-    .cashapp-logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: 0 1px 5px #0002;
-      object-fit: cover;
-    }
-    @media (max-width: 480px) {
-      .logo { max-width: 160px; }
-      .app-title { font-size: 2em; }
-      .room-code { font-size: 1.1em; }
-      .big-flash { font-size: 2.7em; }
-      .big-flash img { max-width: 120px; }
-      .big-flash .flash-cashapp { max-width: 120px; }
-      .cashapp-support { margin-top: 20px; }
-    }
+    .scan-btn:hover { background: #006a22; }
+    #qr-reader { margin: 12px auto; width: 240px; }
+    /* ...rest of your styles... */
   </style>
-  <!-- Firebase SDKs and Config START -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-  <script>
-    // Your actual Firebase config goes here!
-    const firebaseConfig = {
-      apiKey: "AIzaSyDNz_qKPg7LfhVcXtKKTcTU-ynfBLkOSC4",
-      authDomain: "quepasaapp-2e0f7.firebaseapp.com",
-      databaseURL: "https://quepasaapp-2e0f7-default-rtdb.firebaseio.com",
-      projectId: "quepasaapp-2e0f7",
-      storageBucket: "quepasaapp-2e0f7.firebasestorage.app",
-      messagingSenderId: "500826556029",
-      appId: "1:500826556029:web:707b10faf864433d71d314",
-      measurementId: "G-ZL2TN8H31C"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-  </script>
-  <!-- Firebase SDKs and Config END -->
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
   <!-- Splash Screen -->
@@ -424,9 +264,11 @@
     <div class="label">Enter Room Code:</div>
     <input class="input" id="joinCodeInput" maxlength="12" placeholder="Paste or type code..." />
     <button class="menu-btn" id="confirmJoinBtn">Join</button>
+    <button class="scan-btn" id="scanQrBtn">Scan QR</button>
+    <div id="qr-reader" style="display:none;"></div>
     <button class="leave-btn" id="backToMenuFromJoin">Back</button>
     <div class="error" id="joinError"></div>
-    <div style="margin-top:24px;color:#fff7;font-size:0.93em;">(QR scan coming soon)</div>
+    <div style="margin-top:24px;color:#fff7;font-size:0.93em;">Use camera to scan a room QR code!</div>
   </div>
   <!-- Room Screen -->
   <div class="screen" id="roomScreen">
@@ -452,9 +294,7 @@
     </button>
   </div>
   <!-- Big flash overlay (for code/QR/logo) -->
-  <div class="big-flash" id="bigFlash" style="display:none;">
-    <!-- Will be filled dynamically -->
-  </div>
+  <div class="big-flash" id="bigFlash" style="display:none;"></div>
   <!-- Voting Dialog -->
   <div class="vote-dialog" id="voteDialog" style="display:none;">
     <div class="vote-box">
@@ -516,6 +356,10 @@
     document.getElementById('backToMenuFromJoin').onclick = () => {
       document.getElementById('joinError').textContent = "";
       show('menu');
+      if (window.html5QrCodeObj) {
+        window.html5QrCodeObj.stop();
+        document.getElementById('qr-reader').style.display = 'none';
+      }
     };
     document.getElementById('confirmCreateBtn').onclick = () => {
       const max = parseInt(document.getElementById('maxSizeInput').value);
@@ -530,8 +374,9 @@
         size: max,
         created: Date.now(),
         hostId: myId
+      }).then(() => {
+        joinRoomAndShow(code);
       });
-      joinRoomAndShow(code);
     };
     document.getElementById('confirmJoinBtn').onclick = () => {
       const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
@@ -541,9 +386,44 @@
         err.textContent = "Invalid code format.";
         return;
       }
-      myRoomCode = code;
-      isHost = false;
-      joinRoomAndShow(code);
+      db.ref('rooms/' + code + '/meta').once('value').then(snap => {
+        if (!snap.exists()) {
+          err.textContent = "Room not found.";
+          return;
+        }
+        myRoomCode = code;
+        isHost = false;
+        joinRoomAndShow(code);
+      });
+    };
+    // QR Camera Scan for Join Room
+    document.getElementById('scanQrBtn').onclick = () => {
+      const qrReader = document.getElementById('qr-reader');
+      qrReader.style.display = 'block';
+      if (window.html5QrCodeObj) window.html5QrCodeObj.stop();
+      window.html5QrCodeObj = new Html5Qrcode("qr-reader");
+      window.html5QrCodeObj.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrCodeMessage => {
+          try {
+            let url = new URL(qrCodeMessage, location.origin);
+            let code = (url.searchParams.get("room") || "").toUpperCase();
+            if (/^[A-Z2-9]{6}$/.test(code)) {
+              document.getElementById('joinCodeInput').value = code;
+              document.getElementById('joinError').textContent = "";
+              window.html5QrCodeObj.stop();
+              qrReader.style.display = 'none';
+              document.getElementById('confirmJoinBtn').click();
+            } else {
+              document.getElementById('joinError').textContent = "Invalid QR code.";
+            }
+          } catch (e) {
+            document.getElementById('joinError').textContent = "Invalid QR code.";
+          }
+        },
+        errorMessage => {}
+      );
     };
     function joinRoomAndShow(code) {
       drawQR('qrCanvas', code);
